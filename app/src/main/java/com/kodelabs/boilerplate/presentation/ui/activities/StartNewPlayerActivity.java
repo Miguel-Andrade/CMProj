@@ -1,5 +1,6 @@
 package com.kodelabs.boilerplate.presentation.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -58,7 +59,10 @@ public class StartNewPlayerActivity extends AppCompatActivity
 
     @Override
     public void onStartedPlayer() {
+
         Toast.makeText(this, "Saved!", Toast.LENGTH_LONG).show();
+        Intent inten = new Intent(this, PickDisease.class);
+        startActivity(inten);
     }
 
     public void buttonpress() {

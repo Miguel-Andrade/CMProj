@@ -80,12 +80,6 @@ within 1 to seven days." />
             android:layout_height="165dp"
             android:layout_weight="1"
             android:src="@drawable/bubonic_plague_doc_icon_3" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnTEST"
-            android:text="TESTBTN 1"/>
     </LinearLayout>
 
 </LinearLayout>

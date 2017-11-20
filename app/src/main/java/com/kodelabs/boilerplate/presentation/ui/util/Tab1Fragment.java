@@ -1,4 +1,4 @@
-package com.kodelabs.boilerplate.presentation.presenters.impl.util;
+package com.kodelabs.boilerplate.presentation.ui.util;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,6 +24,7 @@ public class Tab1Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab1_fragment,container,false);
+
         return view;
     }
 }
