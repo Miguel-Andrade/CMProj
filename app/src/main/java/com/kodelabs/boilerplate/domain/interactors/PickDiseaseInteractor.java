@@ -9,6 +9,6 @@ import com.kodelabs.boilerplate.domain.interactors.base.Interactor;
 public interface PickDiseaseInteractor extends Interactor {
 
     interface Callback {
-        void onStartedPlayer();
+        void onPickedDisease();
     }
 }

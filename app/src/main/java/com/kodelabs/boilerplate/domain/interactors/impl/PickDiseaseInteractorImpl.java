@@ -4,6 +4,7 @@ import com.kodelabs.boilerplate.domain.executor.Executor;
 import com.kodelabs.boilerplate.domain.executor.MainThread;
 import com.kodelabs.boilerplate.domain.interactors.PickDiseaseInteractor;
 import com.kodelabs.boilerplate.domain.interactors.base.AbstractInteractor;
+import com.kodelabs.boilerplate.domain.model.Disease;
 import com.kodelabs.boilerplate.domain.model.Player;
 import com.kodelabs.boilerplate.domain.repository.AppRepository;
 
@@ -16,31 +17,30 @@ public class PickDiseaseInteractorImpl extends AbstractInteractor implements Pic
     private PickDiseaseInteractor.Callback mCallback;
     private AppRepository mRepository;
     private Player mPlayer;
+    private int mDisease;
 
     public PickDiseaseInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                      PickDiseaseInteractor.Callback callback, AppRepository repository,
-                                        String userName, String email, String pw, String foto) {
+                                     int disease) {
         super(threadExecutor, mainThread);
         mCallback = callback;
         mRepository = repository;
-        mUserName = userName;
-        mEmail = email;
-        mPw = pw;
-        mFoto = foto;
+        mDisease = disease;
     }
 
     @Override
     public void run() {
 
-        mPlayer = new Player(mUserName, mFoto);
+        mPlayer = mRepository.getCurrentPlayer();
+        mPlayer.setDisease(new Disease(mDisease));
 
-        mRepository.insertPlayer(mPlayer);
+        mRepository.updatePlayer(mPlayer);
 
         // notify on the main thread that we have inserted this item
         mMainThread.post(new Runnable() {
             @Override
             public void run() {
-                mCallback.onStartedPlayer();
+                mCallback.onPickedDisease();
             }
         });
     }

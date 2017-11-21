@@ -2,26 +2,17 @@ package com.kodelabs.boilerplate.presentation.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kodelabs.boilerplate.R;
-import com.kodelabs.boilerplate.Storage.AppRepositoryImpl;
-import com.kodelabs.boilerplate.domain.executor.MainThread;
+import com.kodelabs.boilerplate.storage.AppRepositoryImpl;
 import com.kodelabs.boilerplate.domain.executor.impl.ThreadExecutor;
-import com.kodelabs.boilerplate.domain.repository.AppRepository;
 import com.kodelabs.boilerplate.presentation.presenters.StartNewPlayerPresenter;
 import com.kodelabs.boilerplate.presentation.presenters.impl.StartNewPlayerPresenterImpl;
-import com.kodelabs.boilerplate.presentation.presenters.impl.util.SectionsPageAdapter;
-import com.kodelabs.boilerplate.presentation.presenters.impl.util.Tab1Fragment;
-import com.kodelabs.boilerplate.presentation.presenters.impl.util.Tab2Fragment;
-import com.kodelabs.boilerplate.presentation.presenters.impl.util.Tab3Fragment;
 import com.kodelabs.boilerplate.threading.MainThreadImpl;
 
 /**
@@ -37,6 +28,7 @@ public class StartNewPlayerActivity extends AppCompatActivity
     private EditText email;
     private EditText pw;
     private Button resg;
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,15 +45,13 @@ public class StartNewPlayerActivity extends AppCompatActivity
         });
 
         mPresenter = new StartNewPlayerPresenterImpl(ThreadExecutor.getInstance(),
-                MainThreadImpl.getInstance(), this, new AppRepositoryImpl() {
-        });
+                MainThreadImpl.getInstance(), this, AppRepositoryImpl.getInstance());
     }
 
     @Override
     public void onStartedPlayer() {
-
         Toast.makeText(this, "Saved!", Toast.LENGTH_LONG).show();
-        Intent inten = new Intent(this, PickDisease.class);
+        Intent inten = new Intent(this, PickDiseaseActivity.class);
         startActivity(inten);
     }
 

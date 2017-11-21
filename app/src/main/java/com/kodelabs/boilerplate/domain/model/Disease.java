@@ -6,6 +6,7 @@ package com.kodelabs.boilerplate.domain.model;
 
 public class Disease {
 
+    private int id;
     private String name;
     private String image;
 
@@ -20,9 +21,9 @@ public class Disease {
     private int btAttack;
     private int btDefense;
 
-    public Disease (String name) {
+    public Disease (int id) {
     	//this.image = image;
-    	this.name = name;
+    	this.id = id;
     	this.level = 1;
     	this.currXP = 0;
     	this.range = 0;
@@ -51,7 +52,9 @@ public class Disease {
     public int getResistence () { return resistence; }
     
     public String getImage () { return image; }
-    
+
+    public int getId() { return id; }
+
     public String getName () { return name; }
     
     public int getBtAttack () { return btAttack; }

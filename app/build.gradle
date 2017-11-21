@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "com.kodelabs.boilerplate"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
     }
@@ -33,6 +33,9 @@ dependencies {
 
     //implementation 'com.jakewharton:butterknife:8.8.1'
     //annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //map
+    compile 'com.google.android.gms:play-services:11.0.4'
 
     // network
     compile 'com.squareup.retrofit2:retrofit:2.0.0'

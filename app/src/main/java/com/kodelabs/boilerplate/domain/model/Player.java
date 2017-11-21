@@ -4,6 +4,9 @@ import com.kodelabs.boilerplate.domain.model.utilities.DiseasesTypes;
 import com.kodelabs.boilerplate.domain.model.utilities.Infection;
 import com.kodelabs.boilerplate.domain.model.utilities.PlayerLevels;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Created by Andrade on 07/11/2017.
  */
@@ -28,6 +31,7 @@ public class Player {
     private int currXP;
 
     //COMMONS
+	private int id;
     private String name;
     private String image;
     
@@ -36,6 +40,7 @@ public class Player {
     
     
     public Player(String name, String image) {
+    	this.id = new Random().nextInt();
         this.name = name;
         this.image = image;
         this.level = PlayerLevels.LEVEL_1.level();
@@ -58,7 +63,7 @@ public class Player {
         	resistance += pl.resistance();
         	damage += pl.damage();
     	}
-    	disease = new Disease(DiseasesTypes.INFLUENZA.getName());
+    	disease = new Disease(DiseasesTypes.INFLUENZA.getId());
     	for (int i = level; i > 0; i--) {
 
     			disease.levelUp();
@@ -118,7 +123,9 @@ public class Player {
 		return name;
 	}
 
-	public String getImage() {
+    public int getId() { return id; }
+
+    public String getImage() {
 		return image;
 	}
 

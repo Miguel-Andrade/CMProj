@@ -11,6 +11,8 @@ public interface PickDiseasePresenter extends BasePresenter {
 
     interface View extends BaseView {
 
-        void onStartedPlayer();
+        void onPickedDisease();
     }
+
+    void pickDisease (int disease);
 }
