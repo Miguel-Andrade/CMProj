@@ -41,7 +41,7 @@ public class PickDiseaseInteractorImpl extends AbstractInteractor implements Pic
         mAttacker.setDisease(new Disease(round((mDisease+3)%3)));
 
         mRepository.updatePlayer(mPlayer);
-        mRepository.updatePlayer(mAttacker);
+        mRepository.updateAttacker(mAttacker);
 
         // notify on the main thread that we have inserted this item
         mMainThread.post(new Runnable() {

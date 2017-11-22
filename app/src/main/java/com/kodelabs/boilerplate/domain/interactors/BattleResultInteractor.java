@@ -1,14 +1,14 @@
 package com.kodelabs.boilerplate.domain.interactors;
 
-
 import com.kodelabs.boilerplate.domain.interactors.base.Interactor;
 
+/**
+ * Created by Andrade on 22/11/2017.
+ */
 
-public interface SampleInteractor extends Interactor {
+public interface BattleResultInteractor extends Interactor{
 
     interface Callback {
-        // TODO: Add interactor callback methods here
+        void onResults(int[] result);
     }
-
-    // TODO: Add interactor methods here
 }

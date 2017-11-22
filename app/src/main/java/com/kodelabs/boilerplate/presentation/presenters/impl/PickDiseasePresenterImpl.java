@@ -16,19 +16,19 @@ public class PickDiseasePresenterImpl extends AbstractPresenter implements PickD
         PickDiseaseInteractor.Callback{
 
     private PickDiseasePresenter.View mView;
-    private AppRepository mCostRepository;
+    private AppRepository mRepository;
 
     public PickDiseasePresenterImpl(Executor executor, MainThread mainThread,
                                     PickDiseasePresenter.View view, AppRepository costRepository) {
         super(executor, mainThread);
         mView = view;
-        mCostRepository = costRepository;
+        mRepository = costRepository;
     }
 
     @Override
     public void pickDisease(int disease) {
         PickDiseaseInteractor interactor = new PickDiseaseInteractorImpl(mExecutor, mMainThread,
-                this, mCostRepository, disease);
+                this, mRepository, disease);
         interactor.execute();
     }
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relativeLayoutID"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bubonic"
-    tools:context=".presentation.ui.activities.PlayerInfoActivity">
+    android:background="@drawable/viado">
 
     <ProgressBar
         android:id="@+id/pbPLVL"
@@ -18,143 +18,145 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"/>
 
-
     <TextView
         android:id="@+id/kills"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:layout_alignBaseline="@+id/damage"
+        android:layout_alignBottom="@+id/damage"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_toStartOf="@+id/pbDLVL"
+        android:layout_toLeftOf="@+id/pbDLVL"
         android:background="@drawable/edittext"
+        android:textAlignment="center"
         android:textColor="#080706"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:textAlignment="center"
-        android:layout_width="150dp"
-        android:layout_height="25dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/hp"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="323dp" />
 
     <TextView
         android:id="@+id/deaths"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:layout_above="@+id/infected"
+        android:layout_alignStart="@+id/kills"
+        android:layout_alignLeft="@+id/kills"
+        android:layout_marginBottom="15dp"
         android:background="@drawable/edittext"
+        android:textAlignment="center"
         android:textColor="#080706"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:textAlignment="center"
-        android:layout_width="150dp"
-        android:layout_height="25dp"
-        android:layout_alignStart="@+id/kills"
-        android:layout_alignLeft="@+id/kills"
-        android:layout_alignTop="@+id/kills"
-        android:layout_marginTop="38dp"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="350dp" />
 
     <TextView
         android:id="@+id/infected"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:layout_above="@+id/recoveries"
+        android:layout_alignStart="@+id/deaths"
+        android:layout_alignLeft="@+id/deaths"
+        android:layout_marginBottom="13dp"
         android:background="@drawable/edittext"
+        android:textAlignment="center"
         android:textColor="#080706"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:textAlignment="center"
-        android:layout_width="150dp"
-        android:layout_height="25dp"
-        android:layout_alignStart="@+id/deaths"
-        android:layout_alignLeft="@+id/deaths"
-        android:layout_below="@+id/deaths"
-        android:layout_marginTop="10dp"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="375dp" />
 
     <TextView
         android:id="@+id/recoveries"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:layout_alignBaseline="@+id/defense"
+        android:layout_alignBottom="@+id/defense"
+        android:layout_alignStart="@+id/infected"
+        android:layout_alignLeft="@+id/infected"
         android:background="@drawable/edittext"
+        android:textAlignment="center"
         android:textColor="#080706"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:textAlignment="center"
-        android:layout_width="150dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="11dp"
         tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="400dp"
-        android:layout_below="@+id/infected"
-        android:layout_alignStart="@+id/infected"
-        android:layout_alignLeft="@+id/infected"/>
+        tools:layout_editor_absoluteY="400dp" />
 
     <TextView
         android:id="@+id/hp"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:layout_above="@+id/range"
+        android:layout_alignStart="@+id/range"
+        android:layout_alignLeft="@+id/range"
+        android:layout_marginBottom="11dp"
         android:background="@drawable/edittext"
+        android:textAlignment="center"
         android:textColor="#080706"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:textAlignment="center"
-        android:layout_width="150dp"
-        android:layout_height="25dp"
         tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="426dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"/>
+        tools:layout_editor_absoluteY="426dp" />
 
     <TextView
         android:id="@+id/range"
-        android:background="@drawable/edittext"
-        android:textColor="#080706"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textAlignment="center"
         android:layout_width="150dp"
         android:layout_height="25dp"
-        android:layout_below="@+id/kills"
-        android:layout_alignStart="@+id/hp"
-        android:layout_alignLeft="@+id/hp"/>
+        android:layout_above="@+id/damage"
+        android:layout_alignStart="@+id/damage"
+        android:layout_alignLeft="@+id/damage"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/edittext"
+        android:textAlignment="center"
+        android:textColor="#080706"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/damage"
-        android:background="@drawable/edittext"
-        android:textColor="#080706"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textAlignment="center"
         android:layout_width="150dp"
         android:layout_height="25dp"
-        android:layout_alignBaseline="@+id/infected"
-        android:layout_alignBottom="@+id/infected"
-        android:layout_alignStart="@+id/range"
-        android:layout_alignLeft="@+id/range"/>
+        android:layout_above="@+id/resistence"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="14dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
+        android:background="@drawable/edittext"
+        android:textAlignment="center"
+        android:textColor="#080706"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/resistence"
-        android:background="@drawable/edittext"
-        android:textColor="#080706"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textAlignment="center"
         android:layout_width="150dp"
         android:layout_height="25dp"
-        android:layout_marginTop="12dp"
-        android:layout_alignTop="@+id/recoveries"
+        android:layout_alignBaseline="@+id/deaths"
+        android:layout_alignBottom="@+id/deaths"
         android:layout_alignStart="@+id/damage"
-        android:layout_alignLeft="@+id/damage"/>
+        android:layout_alignLeft="@+id/damage"
+        android:background="@drawable/edittext"
+        android:textAlignment="center"
+        android:textColor="#080706"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/defense"
-        android:background="@drawable/edittext"
-        android:textColor="#080706"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textAlignment="center"
         android:layout_width="150dp"
         android:layout_height="25dp"
+        android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/resistence"
         android:layout_alignLeft="@+id/resistence"
-        android:layout_below="@+id/resistence"
-        android:layout_marginTop="18dp" />
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/edittext"
+        android:textAlignment="center"
+        android:textColor="#080706"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/playerName"
@@ -170,48 +172,35 @@
         android:layout_alignLeft="@+id/Dlevel"
         android:layout_marginTop="10dp" />
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/defense"
-        android:layout_alignBottom="@+id/defense"
-        android:layout_alignEnd="@+id/recoveries"
-        android:layout_alignRight="@+id/recoveries"
-        android:layout_alignStart="@+id/recoveries"
-        android:layout_alignLeft="@+id/recoveries"
-        android:background="#d1b280"
-        android:text="INFECT" />
-
     <TextView
         android:id="@+id/Plevel"
         android:layout_width="150dp"
         android:layout_height="25dp"
+        android:layout_alignStart="@+id/playerName"
+        android:layout_alignLeft="@+id/playerName"
+        android:layout_below="@+id/playerName"
+        android:layout_marginTop="46dp"
         android:background="@drawable/edittext"
         android:paddingHorizontal="5dp"
         android:textAlignment="center"
         android:textColor="#080706"
         android:textSize="15sp"
-        android:textStyle="bold"
-        android:layout_above="@+id/Dlevel"
-        android:layout_alignStart="@+id/Dlevel"
-        android:layout_alignLeft="@+id/Dlevel"
-        android:layout_marginBottom="9dp" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/Dlevel"
         android:layout_width="150dp"
         android:layout_height="25dp"
+        android:layout_alignStart="@+id/kills"
+        android:layout_alignLeft="@+id/kills"
+        android:layout_below="@+id/Plevel"
+        android:layout_marginTop="43dp"
         android:background="@drawable/edittext"
         android:paddingHorizontal="5dp"
         android:textAlignment="center"
         android:textColor="#080706"
         android:textSize="15sp"
-        android:textStyle="bold"
-        android:layout_above="@+id/hp"
-        android:layout_alignStart="@+id/kills"
-        android:layout_alignLeft="@+id/kills"
-        android:layout_marginBottom="22dp" />
+        android:textStyle="bold" />
 
     <ProgressBar
         android:id="@+id/pbDLVL"
@@ -223,4 +212,20 @@
         android:layout_alignTop="@+id/Dlevel"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/attack"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:layout_alignBaseline="@+id/infected"
+        android:layout_alignBottom="@+id/infected"
+        android:layout_alignStart="@+id/defense"
+        android:layout_alignLeft="@+id/defense"
+        android:background="@drawable/edittext"
+        android:textAlignment="center"
+        android:textColor="#080706"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+
 </RelativeLayout>

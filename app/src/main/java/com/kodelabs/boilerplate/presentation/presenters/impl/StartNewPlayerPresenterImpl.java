@@ -5,7 +5,6 @@ import com.kodelabs.boilerplate.domain.executor.MainThread;
 import com.kodelabs.boilerplate.domain.interactors.StartNewPlayerInteractor;
 import com.kodelabs.boilerplate.domain.interactors.impl.StartNewPlayerInteractorImpl;
 import com.kodelabs.boilerplate.domain.repository.AppRepository;
-import com.kodelabs.boilerplate.domain.repository.Repository;
 import com.kodelabs.boilerplate.presentation.presenters.StartNewPlayerPresenter;
 import com.kodelabs.boilerplate.presentation.presenters.base.AbstractPresenter;
 

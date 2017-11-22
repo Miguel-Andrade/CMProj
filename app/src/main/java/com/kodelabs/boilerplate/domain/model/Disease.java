@@ -21,6 +21,8 @@ public class Disease {
     private int btAttack;
     private int btDefense;
 
+    private int numUpgrades;
+
     public Disease (int id) {
     	//this.image = image;
     	this.id = id;
@@ -31,6 +33,7 @@ public class Disease {
     	this.resistence = 0;
     	this.btAttack = 1;
     	this.btDefense = 1;
+    	this.numUpgrades = 0;
     }
 
     public int getLevel () { return level; }
@@ -60,7 +63,11 @@ public class Disease {
     public int getBtAttack () { return btAttack; }
     
     public int getBtDefense () { return btDefense; }
-    
+
+    public int getNumUpgrades() { return numUpgrades; }
+
+    public void setNumUpgrades(int numUpgrades) { this.numUpgrades += numUpgrades; }
+
     public void levelUp () {
     	level++;
     }

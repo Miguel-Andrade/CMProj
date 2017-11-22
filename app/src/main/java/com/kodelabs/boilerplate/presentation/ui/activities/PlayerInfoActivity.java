@@ -10,23 +10,45 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kodelabs.boilerplate.R;
+import com.kodelabs.boilerplate.domain.model.Player;
+import com.kodelabs.boilerplate.domain.repository.AppRepository;
+import com.kodelabs.boilerplate.storage.AppRepositoryImpl;
 
 public class PlayerInfoActivity extends AppCompatActivity {
 
-    private TextView deaths, infected, recoveries, hp, range, damage, resistence, defense;
+    private TextView deaths, infected, recoveries, hp, range, damage, resistence, defense, playerName, playerLevel, diseaseLevel;
     TextView killed;
-    private int nKills, nDeaths, nInfected, nRecoveries, nHp, nRange, nDamage, nResistence, nDefense;
+    private int nKills, nDeaths, nInfected, nRecoveries, nHp, nRange, nDamage, nResistence, nDefense, nPLvl, nDLvl;
     private RelativeLayout rl;
+    private String pName;
     private Button b1;
-    private ProgressBar pb;
+    private ProgressBar pbPLVL, pbDLVL;
+    private AppRepository mRepository = AppRepositoryImpl.getInstance();
+    private Player attacker = mRepository.getAttacker();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_info);
 
-        pb = (ProgressBar) findViewById(R.id.progressBar);
-        pb.setProgress(78);
+        pbPLVL = (ProgressBar) findViewById(R.id.pbPLVL);
+        pbPLVL.setProgress(attacker.getCurrXP());
+
+        pbDLVL = (ProgressBar) findViewById(R.id.pbDLVL);
+        pbDLVL.setProgress(attacker.getDisease().getCurrXP());
+
+        playerName = (TextView) findViewById(R.id.playerName);
+        pName = attacker.getName();
+        //playerName.setTextColor(Color.parseColor("#EFEFEF"));
+        playerName.setText(pName);
+
+        playerLevel = (TextView) findViewById(R.id.Plevel);
+        nPLvl = attacker.getLevel();
+        playerLevel.setText("Player Lvl: "+nPLvl);
+
+        diseaseLevel = (TextView) findViewById(R.id.Dlevel);
+        nDLvl = attacker.getDisease().getLevel();
+        diseaseLevel.setText("Disease Lvl: "+nDLvl);
 
         killed = (TextView) findViewById(R.id.kills);
         nKills = 2;

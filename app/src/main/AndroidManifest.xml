@@ -47,6 +47,9 @@
         <activity
             android:name=".presentation.ui.activities.BattleActivity"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".presentation.ui.activities.UpgradesActivity"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

@@ -39,6 +39,7 @@ public class StartNewPlayerInteractorImpl extends AbstractInteractor implements 
 
         mPlayer = new Player(mUserName, mFoto);
         mAttacker = new Player("Attacker", mFoto);
+        mAttacker.setCurrXP(13);
 
         mRepository.insertPlayer(mPlayer);
         mRepository.insertAttacker(mAttacker);

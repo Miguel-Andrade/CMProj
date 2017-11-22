@@ -13,7 +13,6 @@ public class AppRepositoryImpl implements AppRepository{
     private static AppRepository appRepository;
     private Player player;
     private Player attacker;
-    private Disease disease;
 
     public AppRepositoryImpl () {
 
@@ -39,6 +38,9 @@ public class AppRepositoryImpl implements AppRepository{
     public void updatePlayer(Player player) { this.player = player; }
 
     @Override
+    public void updateAttacker(Player player) { this.attacker = attacker; }
+
+    @Override
     public void insertDisease(Player player, Disease disease) {
 
     }
@@ -59,6 +61,4 @@ public class AppRepositoryImpl implements AppRepository{
     @Override
     public Player getAttacker () { return attacker; }
 
-    @Override
-    public Disease getDisease(int playerId) { return disease; }
 }
