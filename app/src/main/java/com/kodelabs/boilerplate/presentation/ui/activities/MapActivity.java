@@ -128,6 +128,9 @@ public class MapActivity extends AppCompatActivity
             buildGoogleApiClient();
         else
             buildGoogleApiClient();
+
+        // Set a listener for marker click.
+        mGoogleMap.setOnMarkerClickListener(this);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -301,9 +304,8 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
-        Toast.makeText(this,"dasda",Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, PlayerInfoActivity.class);
         startActivity(intent);
-        return true;
+        return false;
     }
 }

@@ -1,5 +1,6 @@
 package com.kodelabs.boilerplate.presentation.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -22,7 +23,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.player_info);
 
         pb = (ProgressBar) findViewById(R.id.progressBar);
         pb.setProgress(78);
@@ -65,19 +66,18 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
         rl = (RelativeLayout)findViewById(R.id.relativeLayoutID);
         b1 = (Button)findViewById(R.id.button1);
-
-    }
-
-    private void addButtonClickListener() {
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                defense.setText("PILAAAASSSSSSSSSSSSSSSSSSSSss");
-                rl.setBackgroundResource(R.drawable.bubonic);
-
+                onbuttonpressed();
             }
         });
 
+    }
+
+    private void onbuttonpressed() {
+        Intent intent = new Intent(this,BattleActivity.class);
+        startActivity(intent);
     }
 
 }

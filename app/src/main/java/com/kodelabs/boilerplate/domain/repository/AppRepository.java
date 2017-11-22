@@ -11,11 +11,15 @@ public interface AppRepository {
 
     void insertPlayer (Player player);
 
+    void insertAttacker (Player attacker);
+
     void updatePlayer (Player player);
 
     void insertDisease (Player player, Disease disease);
 
     Player getPlayer (int playerId);
+
+    Player getAttacker ();
 
     Player getCurrentPlayer ();
 

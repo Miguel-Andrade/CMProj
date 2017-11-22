@@ -6,7 +6,6 @@ import com.kodelabs.boilerplate.domain.interactors.StartNewPlayerInteractor;
 import com.kodelabs.boilerplate.domain.interactors.base.AbstractInteractor;
 import com.kodelabs.boilerplate.domain.model.Player;
 import com.kodelabs.boilerplate.domain.repository.AppRepository;
-import com.kodelabs.boilerplate.domain.repository.Repository;
 
 /**
  * Created by Andrade on 19/11/2017.
@@ -17,6 +16,7 @@ public class StartNewPlayerInteractorImpl extends AbstractInteractor implements 
     private StartNewPlayerInteractor.Callback mCallback;
     private AppRepository mRepository;
     private Player mPlayer;
+    private Player mAttacker;
     private String mUserName;
     private String mEmail;
     private String mPw;
@@ -38,8 +38,10 @@ public class StartNewPlayerInteractorImpl extends AbstractInteractor implements 
     public void run() {
 
         mPlayer = new Player(mUserName, mFoto);
+        mAttacker = new Player("Attacker", mFoto);
 
         mRepository.insertPlayer(mPlayer);
+        mRepository.insertAttacker(mAttacker);
 
         // notify on the main thread that we have inserted this item
         mMainThread.post(new Runnable() {
