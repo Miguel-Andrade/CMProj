@@ -27,7 +27,6 @@
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_centerInParent="true"
-            android:background="@drawable/bubonic_plague_doc_icon_3"
             />
     </RelativeLayout>
 

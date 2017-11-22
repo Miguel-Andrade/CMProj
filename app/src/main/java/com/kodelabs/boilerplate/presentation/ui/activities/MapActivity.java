@@ -35,6 +35,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.kodelabs.boilerplate.R;
+import com.kodelabs.boilerplate.domain.repository.AppRepository;
+import com.kodelabs.boilerplate.storage.AppRepositoryImpl;
 
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -67,8 +69,12 @@ public class MapActivity extends AppCompatActivity
     Location mLastLocation;
     Circle circleLocation;
     Marker LocationMarker;
+
     private ProgressBar pg;
     private ImageButton player_image;
+
+    private AppRepository
+            mRepository = AppRepositoryImpl.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +92,7 @@ public class MapActivity extends AppCompatActivity
 
         pg = (ProgressBar)findViewById(R.id.player_level);
         player_image = (ImageButton) findViewById(R.id.player_image);
+        player_image.setBackgroundResource(getResources().getIdentifier( "bubonic_plague_doc_icon_3", "drawable", getPackageName()));
         player_image.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show();
