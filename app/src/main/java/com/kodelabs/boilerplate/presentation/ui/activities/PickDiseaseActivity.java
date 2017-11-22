@@ -34,7 +34,7 @@ public class PickDiseaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main1);
+        setContentView(R.layout.pick_disease);
 
         Log.d(TAG, "onCreate: Starting.");
 
