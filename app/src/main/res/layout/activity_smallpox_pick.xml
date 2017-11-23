@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/alcides"
     android:orientation="vertical"
-    tools:context="com.example.android.checkpoint2.BubonicPick">
-
+>
     <LinearLayout
         android:id="@+id/disease"
         android:layout_width="match_parent"

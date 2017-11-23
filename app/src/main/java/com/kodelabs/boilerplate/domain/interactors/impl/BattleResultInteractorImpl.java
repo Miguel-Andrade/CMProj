@@ -46,6 +46,7 @@ public class BattleResultInteractorImpl extends AbstractInteractor implements Ba
 
         final int[] result = new int[2];
         result[0] = 0;
+        result[1] = 0;
         if (mStatus.equals("winner")) {
             winner = mPlayer;
             looser = mEnimie;
@@ -70,7 +71,6 @@ public class BattleResultInteractorImpl extends AbstractInteractor implements Ba
 
             mPlayer.getDisease().setCurrXP(result[0]);
             Disease dis = mPlayer.getDisease();
-            result[1] = 0;
             while (dis.getCurrXP() >= (10*dis.getLevel())) {
                 int xpNextLevel = dis.getCurrXP() - (10*dis.getLevel());
                 dis.setCurrXPZero();

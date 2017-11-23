@@ -6,8 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.kodelabs.boilerplate.R;
 
@@ -18,7 +17,14 @@ import com.kodelabs.boilerplate.R;
 public class Tab1Fragment extends Fragment {
     private static final String TAG = "Tab1Fragment";
 
-    private Button btnTEST;
+    TextView tx;
+    TextView tx2;
+    TextView tx3;
+    TextView tx4;
+    TextView tx5;
+    TextView tx6;
+    TextView tx7;
+    TextView tx8;
 
     @Nullable
     @Override

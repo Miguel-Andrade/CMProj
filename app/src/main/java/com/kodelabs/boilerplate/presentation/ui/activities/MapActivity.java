@@ -73,8 +73,7 @@ public class MapActivity extends AppCompatActivity
     private ProgressBar pg;
     private ImageButton player_image;
 
-    private AppRepository
-            mRepository = AppRepositoryImpl.getInstance();
+    private AppRepository mRepository = AppRepositoryImpl.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +97,10 @@ public class MapActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show();
             }
         });
+
+        pg = (ProgressBar) findViewById(R.id.player_level);
+        //pg.setProgress(30);
+        pg.setProgress(mRepository.getCurrentPlayer().getCurrXP());
 
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);

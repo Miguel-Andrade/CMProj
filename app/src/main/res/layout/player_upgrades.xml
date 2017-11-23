@@ -172,6 +172,16 @@
         android:layout_alignLeft="@+id/Dlevel"
         android:layout_marginTop="10dp" />
 
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="17dp"
+        android:layout_alignParentRight="true"
+        android:background="#d1b280"
+        android:text="GO" />
+
     <TextView
         android:id="@+id/Plevel"
         android:layout_width="150dp"

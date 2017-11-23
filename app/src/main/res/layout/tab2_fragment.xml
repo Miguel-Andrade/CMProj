@@ -2,21 +2,108 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@drawable/lobeco">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textSize="25sp"
-        android:text="Tab2"
-        android:layout_marginTop="40dp"
-        android:id="@+id/textTab2"/>
+    <LinearLayout
+        android:id="@+id/disease"
+        android:layout_width="match_parent"
+        android:layout_height="386dp"
+        android:orientation="horizontal">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnTEST2"
-        android:text="TESTBTN 2"/>
+        <LinearLayout
+            android:id="@+id/disease_desc"
+            android:layout_width="match_parent"
+            android:layout_height="385dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingLeft="10dp">
+
+            <LinearLayout
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingRight="10dp">
+
+                <TextView
+                    android:id="@+id/disease_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="33dp"
+                    android:layout_weight="1"
+                    android:text="Influenza"
+                    android:textAppearance="@android:style/TextAppearance.Material.Medium"
+                    android:textColor="#080706"
+                    android:textSize="35dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/desclay"
+                android:layout_width="222dp"
+                android:layout_height="208dp"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingRight="10dp">
+
+                <TextView
+                    android:id="@+id/desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Kills: 100 millions deaths(1918-19)"
+                    android:textAlignment="textEnd"
+                    android:layout_gravity="end"
+                    android:textColor="#594d46"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/desc3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="36,000 yearly victimes"
+                    android:textAlignment="textEnd"
+                    android:layout_gravity="end"
+                    android:textColor="#594d46"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/desc4"
+                    android:layout_width="match_parent"
+                    android:layout_height="74dp"
+                    android:layout_weight="1"
+                    android:text="Killers: RNA viruses of the family Orthomyxoviridae"
+                    android:textAlignment="textEnd"
+                    android:layout_gravity="end"
+                    android:textColor="#594d46"
+                    android:textSize="20dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/characteristics"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_weight="1"
+                android:text="Characteristic"
+                android:textAppearance="@android:style/TextAppearance.Material.Medium"
+                android:textColor="#080706"
+                android:textSize="25dp" />
+
+            <TextView
+                android:id="@+id/characs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Range Bonus"
+                android:textColor="#594d46"
+                android:textSize="20dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>
