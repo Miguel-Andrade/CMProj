@@ -1,5 +1,6 @@
 package com.kodelabs.boilerplate.presentation.ui.activities;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -35,8 +36,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.kodelabs.boilerplate.R;
-import com.kodelabs.boilerplate.domain.repository.AppRepository;
-import com.kodelabs.boilerplate.storage.AppRepositoryImpl;
+import com.kodelabs.boilerplate.storage.DiseaseViewModel;
+import com.kodelabs.boilerplate.storage.MapPlayerViewModel;
 
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -73,7 +74,8 @@ public class MapActivity extends AppCompatActivity
     private ProgressBar pg;
     private ImageButton player_image;
 
-    private AppRepository mRepository = AppRepositoryImpl.getInstance();
+    private MapPlayerViewModel playerViewModel;
+    private DiseaseViewModel diseaseViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +86,9 @@ public class MapActivity extends AppCompatActivity
         }
         setContentView(R.layout.map);
 
+        playerViewModel = ViewModelProviders.of(this).get(MapPlayerViewModel.class);
+        playerViewModel.init();
+
         getLocationPermission();
 
         // Construct a FusedLocationProviderClient.
@@ -91,7 +96,7 @@ public class MapActivity extends AppCompatActivity
 
         pg = (ProgressBar)findViewById(R.id.player_level);
         player_image = (ImageButton) findViewById(R.id.player_image);
-        player_image.setBackgroundResource(getResources().getIdentifier( "bubonic_plague_doc_icon_3", "drawable", getPackageName()));
+        //player_image.setBackgroundResource(getResources().getIdentifier( "bubonic_plague_doc_icon_3", "drawable", getPackageName()));
         player_image.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show();
@@ -100,8 +105,16 @@ public class MapActivity extends AppCompatActivity
 
         pg = (ProgressBar) findViewById(R.id.player_level);
         //pg.setProgress(30);
-        pg.setProgress(mRepository.getCurrentPlayer().getCurrXP());
-
+        /*playerViewModel.getPlayer().observe(this, new Observer<Player>() {
+            @Override
+            public void onChanged(@Nullable Player player) {
+                pg.setProgress(player.getLevel());
+                player_image.setBackgroundResource(getResources().getIdentifier( player.getImage(),
+                        "drawable", getPackageName()));
+                TextView name = (TextView) findViewById(R.id.name);
+                name.setText(getApplicationContext().getDatabasePath("db").toString());
+            }
+        });*/
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
     }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "732339861606",
+    "project_id": "firebase-kingoftheill"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732339861606:android:bcb02ba6ba6060cf",
+        "android_client_info": {
+          "package_name": "com.king.of.the.ill"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732339861606-fqgpvp5srgtjru21n5d11ojt359cqt02.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "732339861606-qqn8b3qb88e71rst1llh8mmkri929h41.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.king.of.the.ill",
+            "certificate_hash": "c18e6f14f92771971cbb02db695b3e84b0cc09c1"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALYnomvWJo4YZYUOi-9coSLvtAmUWLgqc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

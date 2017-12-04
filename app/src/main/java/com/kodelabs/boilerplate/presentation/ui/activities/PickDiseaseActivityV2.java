@@ -1,5 +1,6 @@
 package com.kodelabs.boilerplate.presentation.ui.activities;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -11,23 +12,21 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.kodelabs.boilerplate.R;
-import com.kodelabs.boilerplate.storage.AppRepositoryImpl;
-import com.kodelabs.boilerplate.domain.executor.impl.ThreadExecutor;
-import com.kodelabs.boilerplate.presentation.presenters.PickDiseasePresenter;
-import com.kodelabs.boilerplate.presentation.presenters.impl.PickDiseasePresenterImpl;
 import com.kodelabs.boilerplate.presentation.ui.util.SectionsPageAdapter;
 import com.kodelabs.boilerplate.presentation.ui.util.Tab1Fragment;
 import com.kodelabs.boilerplate.presentation.ui.util.Tab2Fragment;
 import com.kodelabs.boilerplate.presentation.ui.util.Tab3Fragment;
-import com.kodelabs.boilerplate.threading.MainThreadImpl;
+import com.kodelabs.boilerplate.storage.PlayerViewModel;
 
-public class PickDiseaseActivity extends AppCompatActivity
-        implements PickDiseasePresenterImpl.View{
+/**
+ * Created by Andrade on 01/12/2017.
+ */
 
-    private static final String TAG = "PickDiseaseAct";
+public class PickDiseaseActivityV2 extends AppCompatActivity {
 
-    private PickDiseasePresenter mPresenter;
+    private static final String TAG = "PickDiseaseActivityV2";
 
+    private PlayerViewModel playerViewModel;
     private SectionsPageAdapter mSectionsPageAdapter;
     private ViewPager mViewPager;
 
@@ -38,6 +37,8 @@ public class PickDiseaseActivity extends AppCompatActivity
 
         Log.d(TAG, "onCreate: Starting.");
 
+        playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
+
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -47,10 +48,6 @@ public class PickDiseaseActivity extends AppCompatActivity
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        mPresenter = new PickDiseasePresenterImpl(ThreadExecutor.getInstance(),
-                MainThreadImpl.getInstance(), this, AppRepositoryImpl.getInstance());
-
-
         Button start = (Button) findViewById(R.id.start);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +55,8 @@ public class PickDiseaseActivity extends AppCompatActivity
                 onbuttonpressed();
             }
         });
+
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -68,29 +67,11 @@ public class PickDiseaseActivity extends AppCompatActivity
         viewPager.setAdapter(adapter);
     }
 
-    @Override
-    public void onPickedDisease() {
+    public void onbuttonpressed() {
+        playerViewModel.startDisease(mViewPager.getCurrentItem());
         Toast.makeText(this, "Picked!", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MapActivity.class);
         startActivity(intent);
     }
 
-    public void onbuttonpressed() {
-        mPresenter.pickDisease(mViewPager.getCurrentItem());
-    }
-
-    @Override
-    public void showProgress() {
-
-    }
-
-    @Override
-    public void hideProgress() {
-
-    }
-
-    @Override
-    public void showError(String message) {
-
-    }
 }

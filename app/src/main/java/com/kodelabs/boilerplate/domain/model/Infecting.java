@@ -1,8 +1,6 @@
 package com.kodelabs.boilerplate.domain.model;
 
 
-import com.kodelabs.boilerplate.domain.model.utilities.Infection;
-
 public class Infecting implements Runnable {
 
 	//Rate that life is update, in minutes

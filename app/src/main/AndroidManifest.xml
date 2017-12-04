@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.kodelabs.boilerplate"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -23,11 +24,12 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBQCzQN_tHtnl0oaDbk1ghN8kBgBhHLTdY"/>
 
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
 
-        <activity android:name=".presentation.ui.activities.StartNewPlayerActivity">
+        <activity android:name=".presentation.ui.activities.MapActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,11 +38,11 @@
         </activity>
 
         <activity
-            android:name=".presentation.ui.activities.PickDiseaseActivity"
+            android:name=".presentation.ui.activities.PickDiseaseActivityV2"
             android:theme="@style/AppTheme" />
-        <activity
+        <!--<activity
             android:name=".presentation.ui.activities.MapActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme" />-->
         <activity
             android:name=".presentation.ui.activities.PlayerInfoActivity"
             android:theme="@style/AppTheme" />

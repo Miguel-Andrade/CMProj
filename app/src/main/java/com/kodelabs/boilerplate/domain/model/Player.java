@@ -1,22 +1,25 @@
 package com.kodelabs.boilerplate.domain.model;
 
-import com.kodelabs.boilerplate.domain.model.utilities.DiseasesTypes;
-import com.kodelabs.boilerplate.domain.model.utilities.Infection;
-import com.kodelabs.boilerplate.domain.model.utilities.PlayerLevels;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+import com.kodelabs.boilerplate.domain.model.utilities.PlayerLevels;
 
 /**
  * Created by Andrade on 07/11/2017.
  */
 
+@Entity
 public class Player {
 
-    private final int XP_MULTIPLIER = 10;
+    //COMMONS
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
+    private String name;
+    private String image;
 
     //CORE_STATS
-    private Disease disease;
     private int life;
     private int range;
     private int damage;
@@ -29,17 +32,12 @@ public class Player {
     //COMMONS_STATS
     private int level;
     private int currXP;
-
-    //COMMONS
-	private int id;
-    private String name;
-    private String image;
     
     //INFECTED
-    private Infection[] infected;
+    //private Infection[] infected;
     
     
-    public Player(String name, String image) {
+    /*public Player(String name, String image) {
     	this.id = new Random().nextInt();
         this.name = name;
         this.image = image;
@@ -49,28 +47,18 @@ public class Player {
         this.life = PlayerLevels.LEVEL_1.life();
         this.range = PlayerLevels.LEVEL_1.range();
         this.resistance = PlayerLevels.LEVEL_1.resistance();
-        this.infected = new Infection[2];
-    }
-    
-    public Player (int level) {
-    	name = "Adverserie";
-    	for (int i = level; i > 0; i--) {
-    		String l = "LEVEL_"+level;
-        	PlayerLevels pl = PlayerLevels.valueOf(l);
-        	level++;
-        	life+= pl.life();
-        	range+= pl.range();
-        	resistance += pl.resistance();
-        	damage += pl.damage();
-    	}
-    	disease = new Disease(DiseasesTypes.INFLUENZA.getId());
-    	for (int i = level; i > 0; i--) {
+        //this.infected = new Infection[2];
+    }*/
 
-    			disease.levelUp();
-				disease.upgrade("damage");
-
-    	}
-    	this.infected = new Infection[2];
+    public Player(String name, String image) {
+        setName(name);
+        setImage(image);
+        setLevel(PlayerLevels.LEVEL_1.level());
+        setCurrXP(0);
+        setDamage(PlayerLevels.LEVEL_1.damage());
+        setLife(PlayerLevels.LEVEL_1.life());
+        setRange(PlayerLevels.LEVEL_1.life());
+        setResistance(PlayerLevels.LEVEL_1.resistance());
     }
     
     public void levelUp () {
@@ -83,77 +71,95 @@ public class Player {
     	damage += pl.damage();
     }
 
-    public void setDisease(Disease disease) {
-		this.disease = disease;
+	public int getId() {
+		return id;
 	}
 
-	public int getXP_MULTIPLIER() {
-		return XP_MULTIPLIER;
-	}
-
-	public int getRange() {
-		return range;
-	}
-
-	public int getDamage() {
-		return damage;
-	}
-
-	public int getResistence() {
-		return resistance;
-	}
-
-	public int getBtAttack() {
-		return btAttack;
-	}
-
-	public int getBtDefense() {
-		return btDefense;
-	}
-
-	public int getCurrXP() {
-		return currXP;
-	}
-	
-	public void setCurrXP (int xpGained) {
-		currXP += xpGained;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-    public int getId() { return id; }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getImage() {
+	public String getImage() {
 		return image;
 	}
 
-	public Disease getDisease() {
-        return disease;
-    }
+	public void setImage(String image) {
+		this.image = image;
+	}
 
-    public int getLife() {
-        return life;
-    }
+	public int getLife() {
+		return life;
+	}
 
-    public int getTotalRange() {
-        return range+disease.getRange();
-    }
+	public void setLife(int life) {
+		this.life = life;
+	}
 
-    public int getTotalDamage() {
-        return damage+disease.getDamage();
-    }
+	public int getRange() {
+		return range;
+	}
 
-    public int getTotalResistence() {
-        return resistance+disease.getResistence();
-    }
+	public void setRange(int range) {
+		this.range = range;
+	}
 
-    public int getLevel() {
-        return level;
-    }
+	public int getDamage() {
+		return damage;
+	}
 
-	public Infection[] getInfected() {
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public int getResistance() {
+		return resistance;
+	}
+
+	public void setResistance(int resistance) {
+		this.resistance = resistance;
+	}
+
+	public int getBtAttack() {
+		return btAttack;
+	}
+
+	public void setBtAttack(int btAttack) {
+		this.btAttack = btAttack;
+	}
+
+	public int getBtDefense() {
+		return btDefense;
+	}
+
+	public void setBtDefense(int btDefense) {
+		this.btDefense = btDefense;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public int getCurrXP() {
+		return currXP;
+	}
+
+	public void setCurrXP (int xpGained) {
+		currXP += xpGained;
+	}
+
+	/*public Infection[] getInfected() {
 		return infected;
 	}
 
@@ -162,7 +168,7 @@ public class Player {
 			this.infected[0] = infected;
 		else
 			this.infected[1] = infected; 
-	}
+	}*/
 	
 	public void reduceLife (int reduction) {
 		life-=reduction;

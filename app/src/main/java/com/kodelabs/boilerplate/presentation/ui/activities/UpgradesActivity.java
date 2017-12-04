@@ -10,9 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kodelabs.boilerplate.R;
-import com.kodelabs.boilerplate.domain.model.Player;
-import com.kodelabs.boilerplate.domain.repository.AppRepository;
-import com.kodelabs.boilerplate.storage.AppRepositoryImpl;
 
 public class UpgradesActivity extends AppCompatActivity{
 
@@ -23,9 +20,9 @@ public class UpgradesActivity extends AppCompatActivity{
     private String pName;
     private RelativeLayout rl;
     private ProgressBar pbPLVL, pbDLVL;
-    private AppRepository mRepository = AppRepositoryImpl.getInstance();
+    //private AppRepository mRepository = AppRepositoryImpl.getInstance();
 
-    private Player mPlayer = mRepository.getCurrentPlayer();
+    //private Player mPlayer = mRepository.getCurrentPlayer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,22 +30,22 @@ public class UpgradesActivity extends AppCompatActivity{
         setContentView(R.layout.player_upgrades);
 
         pbPLVL = (ProgressBar) findViewById(R.id.pbPLVL);
-        pbPLVL.setProgress(mPlayer.getCurrXP());
+        //pbPLVL.setProgress(mPlayer.getCurrXP());
 
         pbDLVL = (ProgressBar) findViewById(R.id.pbDLVL);
-        pbDLVL.setProgress(mPlayer.getDisease().getCurrXP());
+        //pbDLVL.setProgress(mPlayer.getDisease().getCurrXP());
 
         playerName = (TextView) findViewById(R.id.playerName);
-        pName = mPlayer.getName();
+        //pName = mPlayer.getName();
         //playerName.setTextColor(Color.parseColor("#EFEFEF"));
         playerName.setText(pName);
 
         playerLevel = (TextView) findViewById(R.id.Plevel);
-        nPLvl = mPlayer.getLevel();
+        //nPLvl = mPlayer.getLevel();
         playerLevel.setText("Player Lvl: "+nPLvl);
 
         diseaseLevel = (TextView) findViewById(R.id.Dlevel);
-        nDLvl = mPlayer.getDisease().getLevel();
+        //nDLvl = mPlayer.getDisease().getLevel();
         diseaseLevel.setText("Disease Lvl: "+nDLvl);
 
         killed = (TextView) findViewById(R.id.kills);
@@ -95,7 +92,7 @@ public class UpgradesActivity extends AppCompatActivity{
 
 
         addTextViewClickListener();
-        numUpgrades = mPlayer.getDisease().getNumUpgrades();
+        //numUpgrades = mPlayer.getDisease().getNumUpgrades();
 
         Button bt1 = (Button) findViewById(R.id.button1);
         bt1.setOnClickListener(new View.OnClickListener() {
