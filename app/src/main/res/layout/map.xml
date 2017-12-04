@@ -12,18 +12,21 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             tools:context=".presentation.ui.activities.MapActivity"
             tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp"
-            />
+            tools:layout_editor_absoluteY="8dp" />
         <RelativeLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout">
 
             <ProgressBar
                 android:id="@+id/player_level"
@@ -34,9 +37,27 @@
                 android:id="@+id/player_image"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:layout_centerInParent="true"
-                />
+                android:layout_centerInParent="true"/>
+
         </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/life"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="30dp"
+            android:layout_toEndOf="@+id/relativeLayout" />
+
+        <ProgressBar
+            android:id="@+id/disease_xp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/life"
+            android:layout_toEndOf="@+id/relativeLayout" />
+
     </RelativeLayout>
 
     <include layout="@layout/sliding_tab"></include>

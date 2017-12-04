@@ -15,7 +15,9 @@ import com.kodelabs.boilerplate.domain.model.Player;
 public class MapPlayerViewModel extends AndroidViewModel {
 
     private LiveData<Player> player;
+    private LiveData<Disease> disease;
     private AppRepositoryImpl appRep;
+    private int result;
 
     public MapPlayerViewModel(Application application) {
         super(application);
@@ -28,7 +30,10 @@ public class MapPlayerViewModel extends AndroidViewModel {
             // we know the userId won't change
             return;
         }
+        //start();
+
         player = appRep.getPlayerByName("Me");
+        //disease = appRep.diseaseDao.getDiseaseByPlayer();
     }
 
     public void start() {
@@ -48,6 +53,19 @@ public class MapPlayerViewModel extends AndroidViewModel {
 
     public LiveData<Player> getPlayer() {
         return this.player;
+    }
+
+    public LiveData<Disease> getDisease() { return  this.disease; }
+
+    public void getNumberofplayers() {
+
+
+        AbstractInteractor abs = new AbstractInteractor() {
+            @Override
+            public void run() {
+                result = appRep.playerDao.getPlayerIdByName("Me");
+            }
+        };
     }
 
 

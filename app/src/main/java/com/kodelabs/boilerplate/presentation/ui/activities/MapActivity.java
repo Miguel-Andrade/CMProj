@@ -1,5 +1,6 @@
 package com.kodelabs.boilerplate.presentation.ui.activities;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,6 +8,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -36,6 +39,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.kodelabs.boilerplate.R;
+import com.kodelabs.boilerplate.domain.model.Player;
 import com.kodelabs.boilerplate.storage.DiseaseViewModel;
 import com.kodelabs.boilerplate.storage.MapPlayerViewModel;
 
@@ -104,17 +108,24 @@ public class MapActivity extends AppCompatActivity
         });
 
         pg = (ProgressBar) findViewById(R.id.player_level);
+        ProgressBar lifepg = (ProgressBar) findViewById(R.id.life);
+        ProgressBar disxppg = (ProgressBar) findViewById(R.id.disease_xp);
         //pg.setProgress(30);
-        /*playerViewModel.getPlayer().observe(this, new Observer<Player>() {
+        playerViewModel.getPlayer().observe(this, new Observer<Player>() {
             @Override
             public void onChanged(@Nullable Player player) {
                 pg.setProgress(player.getLevel());
                 player_image.setBackgroundResource(getResources().getIdentifier( player.getImage(),
                         "drawable", getPackageName()));
-                TextView name = (TextView) findViewById(R.id.name);
-                name.setText(getApplicationContext().getDatabasePath("db").toString());
+                lifepg.setProgress(player.getLife());
             }
-        });*/
+        });
+
+        //playerViewModel.getDisease().observe(this, disease -> disxppg.setProgress(disease.getCurrXP()));
+
+        TextView name = (TextView) findViewById(R.id.name);
+        //name.setText(getApplicationContext().getDatabasePath("db").toString());
+        //name.setText(playerViewModel.getNumberofplayers());
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
     }
