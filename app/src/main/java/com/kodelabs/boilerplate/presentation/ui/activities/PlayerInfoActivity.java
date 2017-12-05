@@ -1,5 +1,6 @@
 package com.kodelabs.boilerplate.presentation.ui.activities;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kodelabs.boilerplate.R;
+import com.kodelabs.boilerplate.storage.MapPlayerViewModel;
 
 public class PlayerInfoActivity extends AppCompatActivity {
 
@@ -20,6 +22,8 @@ public class PlayerInfoActivity extends AppCompatActivity {
     private String pName;
     private Button b1;
     private ProgressBar pbPLVL, pbDLVL;
+
+    private MapPlayerViewModel playerViewModel;
     //private AppRepository mRepository = AppRepositoryImpl.getInstance();
     //private Player attacker = mRepository.getAttacker();
 
@@ -28,13 +32,27 @@ public class PlayerInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_info);
 
-        pbPLVL = (ProgressBar) findViewById(R.id.pbPLVL);
-        //pbPLVL.setProgress(attacker.getCurrXP());
+        playerViewModel = ViewModelProviders.of(this).get(MapPlayerViewModel.class);
 
+        pbPLVL = (ProgressBar) findViewById(R.id.pbPLVL);
         pbDLVL = (ProgressBar) findViewById(R.id.pbDLVL);
+        playerName = (TextView) findViewById(R.id.playerName);
+        diseaseLevel = (TextView) findViewById(R.id.Dlevel);
+
+        hp = (TextView) findViewById(R.id.hp);
+        range = (TextView) findViewById(R.id.range);
+
+        playerViewModel.getPlayer().observe(this, player ->
+            {pbPLVL.setProgress(player.getLevel());
+             //pbDLVL
+            });
+
+
+
+
         //pbDLVL.setProgress(attacker.getDisease().getCurrXP());
 
-        playerName = (TextView) findViewById(R.id.playerName);
+
         //pName = attacker.getName();
         //playerName.setTextColor(Color.parseColor("#EFEFEF"));
         playerName.setText(pName);
@@ -43,7 +61,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
         //nPLvl = attacker.getLevel();
         playerLevel.setText("Player Lvl: "+nPLvl);
 
-        diseaseLevel = (TextView) findViewById(R.id.Dlevel);
+
         //nDLvl = attacker.getDisease().getLevel();
         diseaseLevel.setText("Disease Lvl: "+nDLvl);
 
@@ -63,11 +81,11 @@ public class PlayerInfoActivity extends AppCompatActivity {
         nRecoveries = 1;
         recoveries.setText("Recoveries: "+ nRecoveries);
 
-        hp = (TextView) findViewById(R.id.hp);
+
         nHp = 100;
         hp.setText("HP: "+ nHp);
 
-        range = (TextView) findViewById(R.id.range);
+
         nRange = 10;
         range.setText("Range: "+ nRange);
 

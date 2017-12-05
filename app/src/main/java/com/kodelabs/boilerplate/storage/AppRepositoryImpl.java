@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.kodelabs.boilerplate.domain.model.Disease;
 import com.kodelabs.boilerplate.domain.model.Player;
-import com.kodelabs.boilerplate.domain.repository.AppRepository;
 import com.kodelabs.boilerplate.presentation.model.AppDatabase;
 import com.kodelabs.boilerplate.presentation.model.DiseaseDao;
 import com.kodelabs.boilerplate.presentation.model.PlayerDao;
@@ -14,7 +13,7 @@ import com.kodelabs.boilerplate.presentation.model.PlayerDao;
  * Created by Andrade on 19/11/2017.
  */
 
-public class AppRepositoryImpl implements AppRepository{
+public class AppRepositoryImpl {
 
     public static PlayerDao playerDao;
     public static DiseaseDao diseaseDao;

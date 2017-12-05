@@ -6,31 +6,31 @@ import android.support.annotation.NonNull;
 
 @Entity(primaryKeys = {"playerId", "disease"},
         foreignKeys = @ForeignKey(entity = Player.class,
-                                  parentColumns = "id",
+                                  parentColumns = "name",
                                   childColumns = "playerId",
                                   onDelete = ForeignKey.CASCADE))
 public class Infection {
 
-
-    private int playerId;
+	@NonNull
+    private String playerId;
     @NonNull
     private String disease;
 
 	private String playerName;
 	private int damageGiven;
 	
-	public Infection (int playerId, String playerName, String disease, int damageGiven) {
+	public Infection (String playerId, String playerName, String disease, int damageGiven) {
 		setPlayerId(playerId);
 	    setPlayerName(playerName);
 		setDisease(disease);
 		setDamageGiven(damageGiven);
 	}
 
-    public int getPlayerId() {
+    public String getPlayerId() {
         return playerId;
     }
 
-    public void setPlayerId(int playerId) { this.playerId = playerId; }
+    public void setPlayerId(String playerId) { this.playerId = playerId; }
 
 	public String getPlayerName() {
 		return playerName;

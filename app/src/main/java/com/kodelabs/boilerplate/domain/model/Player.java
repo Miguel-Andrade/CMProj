@@ -1,7 +1,9 @@
 package com.kodelabs.boilerplate.domain.model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import com.kodelabs.boilerplate.domain.model.utilities.PlayerLevels;
 
@@ -9,15 +11,21 @@ import com.kodelabs.boilerplate.domain.model.utilities.PlayerLevels;
  * Created by Andrade on 07/11/2017.
  */
 
-@Entity
+@Entity(foreignKeys = @ForeignKey(entity = Disease.class,
+                                            parentColumns = "disId",
+                                            childColumns = "disease"))
+//@Entity
 public class Player {
 
     //COMMONS
-    @PrimaryKey(autoGenerate = true)
-    private int id;
 
+
+    @PrimaryKey @NonNull
     private String name;
+
     private String image;
+
+    private int idN;
 
     //CORE_STATS
     private int life;
@@ -32,23 +40,12 @@ public class Player {
     //COMMONS_STATS
     private int level;
     private int currXP;
-    
+
+    //Disease
+    private int disease;
+
     //INFECTED
     //private Infection[] infected;
-    
-    
-    /*public Player(String name, String image) {
-    	this.id = new Random().nextInt();
-        this.name = name;
-        this.image = image;
-        this.level = PlayerLevels.LEVEL_1.level();
-        this.currXP = 0;
-        this.damage = PlayerLevels.LEVEL_1.damage();
-        this.life = PlayerLevels.LEVEL_1.life();
-        this.range = PlayerLevels.LEVEL_1.range();
-        this.resistance = PlayerLevels.LEVEL_1.resistance();
-        //this.infected = new Infection[2];
-    }*/
 
     public Player(String name, String image) {
         setName(name);
@@ -57,8 +54,21 @@ public class Player {
         setCurrXP(0);
         setDamage(PlayerLevels.LEVEL_1.damage());
         setLife(PlayerLevels.LEVEL_1.life());
-        setRange(PlayerLevels.LEVEL_1.life());
+        setRange(PlayerLevels.LEVEL_1.range());
         setResistance(PlayerLevels.LEVEL_1.resistance());
+        setDisease(0);
+    }
+
+    public Player(String name, String image, int diseaseId) {
+        setName(name);
+        setImage(image);
+        setLevel(PlayerLevels.LEVEL_1.level());
+        setCurrXP(0);
+        setDamage(PlayerLevels.LEVEL_1.damage());
+        setLife(PlayerLevels.LEVEL_1.life());
+        setRange(PlayerLevels.LEVEL_1.range());
+        setResistance(PlayerLevels.LEVEL_1.resistance());
+        setDisease(diseaseId);
     }
     
     public void levelUp () {
@@ -71,12 +81,12 @@ public class Player {
     	damage += pl.damage();
     }
 
-	public int getId() {
-		return id;
+	public int getIdN() {
+		return idN;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setIdN(int id) {
+		this.idN = id;
 	}
 
 	public String getName() {
@@ -158,6 +168,14 @@ public class Player {
 	public void setCurrXP (int xpGained) {
 		currXP += xpGained;
 	}
+
+    public int getDisease() {
+        return disease;
+    }
+
+    public void setDisease(int disease) {
+        this.disease = disease;
+    }
 
 	/*public Infection[] getInfected() {
 		return infected;

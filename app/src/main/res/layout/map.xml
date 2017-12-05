@@ -29,7 +29,7 @@
             android:id="@+id/relativeLayout">
 
             <ProgressBar
-                android:id="@+id/player_level"
+                android:id="@+id/player_xp"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_centerInParent="true"/>

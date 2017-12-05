@@ -27,6 +27,4 @@ public interface DiseaseDao {
     @Query("SELECT * FROM disease")
     LiveData<List<Disease>> loadAllDiseases();
 
-    @Query("SELECT * FROM disease WHERE player = :playerId")
-    LiveData<Disease> getDiseaseByPlayer(int playerId);
 }

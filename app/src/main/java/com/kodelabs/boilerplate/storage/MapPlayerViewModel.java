@@ -17,7 +17,6 @@ public class MapPlayerViewModel extends AndroidViewModel {
     private LiveData<Player> player;
     private LiveData<Disease> disease;
     private AppRepositoryImpl appRep;
-    private int result;
 
     public MapPlayerViewModel(Application application) {
         super(application);
@@ -33,41 +32,18 @@ public class MapPlayerViewModel extends AndroidViewModel {
         //start();
 
         player = appRep.getPlayerByName("Me");
-        //disease = appRep.diseaseDao.getDiseaseByPlayer();
     }
 
     public void start() {
-        AbstractInteractor abs = new AbstractInteractor() {
+        new AbstractInteractor() {
             @Override
             public void run() {
-                appRep.insertPlayer(new Player("Me", "bubonic_plague_doc_icon_3"));
-                appRep.insertPlayer(new Player("attacker", "logo_pic_smallpox_alce"));
-                int playerId = appRep.playerDao.getPlayerIdByName("Me");
-                int attackerId = appRep.playerDao.getPlayerIdByName("attacker");
-                appRep.insertDisease(new Disease(1, playerId));
-                appRep.insertDisease(new Disease(2, attackerId));
+
             }
-        };
-        abs.execute();
+        }.execute();
     }
 
     public LiveData<Player> getPlayer() {
         return this.player;
     }
-
-    public LiveData<Disease> getDisease() { return  this.disease; }
-
-    public void getNumberofplayers() {
-
-
-        AbstractInteractor abs = new AbstractInteractor() {
-            @Override
-            public void run() {
-                result = appRep.playerDao.getPlayerIdByName("Me");
-            }
-        };
-    }
-
-
-
 }

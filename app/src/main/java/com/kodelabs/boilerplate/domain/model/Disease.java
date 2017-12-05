@@ -1,27 +1,19 @@
 package com.kodelabs.boilerplate.domain.model;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
-
-import java.util.Random;
 
 /**
  * Created by Andrade on 07/11/2017.
  */
 
-@Entity(foreignKeys = @ForeignKey(entity = Player.class,
-                                  parentColumns = "id",
-                                  childColumns = "player",
-                                  onDelete = ForeignKey.CASCADE))
+@Entity
 public class Disease {
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     private int disId;
-    private int player;
 
     private int type;
-    private String name;
     private String image;
 
     //COMMONS_STATS
@@ -37,20 +29,8 @@ public class Disease {
 
     private int numUpgrades;
 
-    public Disease (int id) {
-    	this.disId = new Random().nextInt();
-    	this.type = id;
-    	this.level = 1;
-    	this.currXP = 0;
-    	this.range = 0;
-    	this.damage = 0;
-    	this.resistence = 0;
-    	this.btAttack = 1;
-    	this.btDefense = 1;
-    	this.numUpgrades = 0;
-    }
-
-    public Disease (int type, int player) {
+    public Disease (int type, int disId) {
+        setDisId(disId);
         setType(type);
         setLevel(1);
         setCurrXP(0);
@@ -60,7 +40,6 @@ public class Disease {
         setBtAttack(1);
         setBtDefense(1);
         setNumUpgrades(0);
-        setPlayer(player);
     }
 
     public int getDisId() {
@@ -77,14 +56,6 @@ public class Disease {
 
     public void setType(int type) {
         this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getImage() {
@@ -156,14 +127,6 @@ public class Disease {
     }
 
     public void setNumUpgrades(int numUpgrades) { this.numUpgrades += numUpgrades; }
-
-    public int getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(int player) {
-        this.player = player;
-    }
 
     public void levelUp () {
     	level++;

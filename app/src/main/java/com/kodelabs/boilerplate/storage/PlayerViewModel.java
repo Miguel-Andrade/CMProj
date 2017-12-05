@@ -5,10 +5,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
 import com.kodelabs.boilerplate.domain.interactors.base.AbstractInteractor;
-import com.kodelabs.boilerplate.domain.model.Disease;
 import com.kodelabs.boilerplate.domain.model.Player;
-
-import static java.lang.Math.round;
 
 /**
  * Created by Andrade on 30/11/2017.
@@ -50,8 +47,8 @@ public class PlayerViewModel extends AndroidViewModel {
         AbstractInteractor abs = new AbstractInteractor() {
             @Override
             public void run() {
-                appRep.insertDisease(new Disease(disease, playerId));
-                appRep.insertDisease(new Disease(round((disease+3)%3), attackerId));
+                //appRep.insertDisease(new Disease(disease, "Me"));
+                //appRep.insertDisease(new Disease(round((disease+3)%3), "attacker"));
             }
         };
         abs.execute();

@@ -19,18 +19,21 @@ public interface PlayerDao {
     @Insert(onConflict = REPLACE)
     void savePlayer(Player player);
 
-    @Query("SELECT * FROM player WHERE id = :playerId")
+    @Query("SELECT * FROM player WHERE idN = :playerId")
     LiveData<Player> loadPlayer(int playerId);
 
     @Query("SELECT * FROM player WHERE name = :playerName")
     LiveData<Player> loadPlayerByName(String playerName);
 
-    @Query("SELECT id FROM player WHERE name = :playerName")
+    @Query("SELECT idN FROM player WHERE name = :playerName")
     int getPlayerIdByName(String playerName);
 
     @Query("DELETE FROM player")
     void nukeAll();
 
-    //@Query("SELECT  FROM player WHERE id = :playerId")
-    //LiveData
+    @Query("UPDATE player SET disease = :diseaseId")
+    void updatePlayerDisease(int diseaseId);
+
+    //@Query("UP")
+
 }
