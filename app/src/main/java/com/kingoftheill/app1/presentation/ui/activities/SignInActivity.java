@@ -21,7 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -57,7 +57,7 @@ public class SignInActivity extends AppCompatActivity implements
     private FirebaseFirestore mFirebaseFirestore;
     private FirebaseUser mFirebaseUser;
 
-    private TextView tx;
+    private AutoCompleteTextView tx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +84,7 @@ public class SignInActivity extends AppCompatActivity implements
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseFirestore = FirebaseFirestore.getInstance();
 
-        tx = (TextView) findViewById(R.id.name);
+        tx = (AutoCompleteTextView) findViewById(R.id.name);
 
     }
 
