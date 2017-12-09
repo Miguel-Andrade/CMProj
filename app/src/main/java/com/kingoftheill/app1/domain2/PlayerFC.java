@@ -1,6 +1,6 @@
 package com.kingoftheill.app1.domain2;
 
-import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.GeoPoint;
 import com.kingoftheill.app1.domain.model.utilities.PlayerLevels;
 
 import java.util.HashMap;
@@ -16,7 +16,7 @@ public class PlayerFC {
     private String image;
 
     //POSITION
-    private LatLng pos;
+    private GeoPoint pos;
 
     //CORE_STATS
     private int life;
@@ -93,11 +93,11 @@ public class PlayerFC {
         this.image = image;
     }
 
-    public LatLng getPos() {
+    public GeoPoint getPos() {
         return pos;
     }
 
-    public void setPos(LatLng pos) {
+    public void setPos(GeoPoint pos) {
         this.pos = pos;
     }
 
@@ -276,5 +276,15 @@ public class PlayerFC {
                 break;
         }
     }
+
+    public int getTotalRange() { return range+disRange;}
+
+    public int getTotalResistance() { return resistance + disResistence;}
+
+    public int getTotalDamage() { return damage + disDamage; }
+
+    public int getTotalBtAttack() { return btAttack + disBtAttack; }
+
+    public int getTotalBtDefense() { return btDefense + disBtDefense;}
 
 }

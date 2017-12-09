@@ -38,7 +38,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.PlayerFC;
 
@@ -138,14 +140,17 @@ public class SignInActivity extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                            mFirebaseFirestore.document("Users/"+ mFirebaseUser.getEmail())
-                                    .set(new PlayerFC(tx.getText().toString(), "bubonic_plague_doc_icon_3"))
+                            WriteBatch batch = mFirebaseFirestore.batch();
+                            DocumentReference reference = mFirebaseFirestore.document("Users/"+ mFirebaseUser.getEmail());
+                            batch.set(reference, new PlayerFC(tx.getText().toString(), "bubonic_plague_doc_icon_3"));
+                            batch.commit()
                                     .addOnSuccessListener(accao -> {
-                                            startActivity(new Intent(SignInActivity.this, PickDiseaseActivityV2.class));
-                                            finish();})
-                                    .addOnFailureListener(accao ->
-                                            Toast.makeText(getApplicationContext(), "Erro", Toast.LENGTH_SHORT));
-
+                                        Log.d(TAG, "Player created.");
+                                        startActivity(new Intent(SignInActivity.this, PickDiseaseActivityV2.class));
+                                        finish();})
+                                    .addOnFailureListener(accao -> {
+                                            Log.d(TAG, "Player created fail.");
+                                            Toast.makeText(getApplicationContext(), "Erro", Toast.LENGTH_SHORT);});
                         }
                     }
                 });
