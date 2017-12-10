@@ -23,7 +23,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private Context context;
     private List<PlayerItem> mDataset;
     private RecyclerViewClickListener mListener;
-    //private ItemClickListener mClickListener;
 
     public MyAdapter(Context context, List<PlayerItem> dataset, RecyclerViewClickListener listener) {
         this.context = context;
@@ -43,10 +42,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         PlayerItem pl = mDataset.get(position);
-        holder.myTextView.setText(pl.getQuantity()+"");
+        if (pl.getQuantity() > 0) {
+            holder.myTextView.setText(pl.getQuantity() + "");
         /*holder.image.setBackgroundResource(context
                 .getResources()
                 .getIdentifier(pl.getImage(), "drawable", context.getPackageName()));*/
+        }
     }
 
     // total number of cells
@@ -71,25 +72,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         @Override
         public void onClick(View view) {
-            mListener.onClick(view, getAdapterPosition());
+            if (mDataset.get(getAdapterPosition()).getQuantity() > 0)
+                mListener.onClick(view, getAdapterPosition());
         }
 
     }
-
-    // allows clicks events to be caught
-    /*public  void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
-    }*/
 
     // Method that executes your code for the action received
     public void onItemClick(View view, int position) {
         Log.i("TAG", "You clicked number , which is at cell position " + position);
     }
-
-    /*// parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
-    }*/
 
     public interface RecyclerViewClickListener {
 

@@ -50,6 +50,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.kingoftheill.app1.R;
+import com.kingoftheill.app1.domain2.ItemPositions;
 import com.kingoftheill.app1.domain2.PlayerFC;
 import com.kingoftheill.app1.domain2.PlayerItem;
 import com.kingoftheill.app1.domain2.Positions;
@@ -93,8 +94,10 @@ public class MapActivity extends AppCompatActivity
     private CircularProgressBar pg;
     private ImageButton player_image;
 
-    //PLAYER POSITIONS MARKERS
+    //USERS POSITIONS MARKERS
     private Map<DocumentReference, MarkerCustom> UserPositions;
+    //ITEMS POSITIONS
+    private Map<DocumentReference, MarkerCustom> ItemsPositions;
     //PLAYER ITEMS
     private List<PlayerItem> PlayerItems;
 
@@ -112,12 +115,16 @@ public class MapActivity extends AppCompatActivity
     private static DocumentReference ATTACKER;
     
     private static CollectionReference POSITIONS;
+    private static CollectionReference ITEMS_POSITIONS;
     private PlayerFC playerFC;
 
     //RECYCLER VIEW
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    //FLAG
+    private boolean flag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +149,9 @@ public class MapActivity extends AppCompatActivity
             PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
             ATTACKER = mFirebaseFirestore.document("Positions/rafael.r.t.96@gmail.com");
             POSITIONS = mFirebaseFirestore.collection("Positions");
+            ITEMS_POSITIONS = mFirebaseFirestore.collection("ItemsMap");
             UserPositions = new HashMap<>();
+            ItemsPositions = new HashMap<>();
             PlayerItems = new ArrayList<>();
             for (int i =0; i<=29; i++) {
                 PlayerItems.add(new PlayerItem(null, 10, ""));
@@ -172,15 +181,33 @@ public class MapActivity extends AppCompatActivity
             if (!documentSnapshots.isEmpty()) {
                 for (DocumentChange doc : documentSnapshots.getDocumentChanges ()) {
                     DocumentSnapshot tempDoc = doc.getDocument();
-                    Positions temp = tempDoc.toObject(Positions.class);
-                    UserPositions.put(tempDoc.getReference(), new MarkerCustom( new MarkerOptions()
-                            .position(temp.getPos())
-                            .snippet(tempDoc.getId())
-                            .title(tempDoc.getId())
-                            .icon(BitmapDescriptorFactory.fromBitmap(myMarker(temp.getType())))
-                    ));
+                    if (!tempDoc.getId().equals(PLAYER_POSITION.getId())) {
+                        Positions temp = tempDoc.toObject(Positions.class);
+                        UserPositions.put(tempDoc.getReference(), new MarkerCustom(new MarkerOptions()
+                                .position(temp.getPos())
+                                .snippet(tempDoc.getId())
+                                .title(tempDoc.getId())
+                                .icon(BitmapDescriptorFactory.fromBitmap(myMarker("player", temp.getType())))
+                        ));
+                    }
                 }
             }
+        }));
+
+        //UPDATE THE HASHMAP WITH THE MOST RECENT ITEMS POSITIONS
+        ITEMS_POSITIONS.addSnapshotListener(this, ((documentSnapshots, e) -> {
+            if (!documentSnapshots.isEmpty()) {
+                for (DocumentChange doc : documentSnapshots.getDocumentChanges ()) {
+                    DocumentSnapshot tempDoc = doc.getDocument();
+                    ItemPositions temp = tempDoc.toObject(ItemPositions.class);
+                    ItemsPositions.put(tempDoc.getReference(), new MarkerCustom( new MarkerOptions()
+                            .position(temp.getPos())
+                            .icon(BitmapDescriptorFactory.fromBitmap(myMarker("item", temp.getItemId())))
+                    ));
+                    Log.w(TAG, "Map Item" + tempDoc.getId() +  "updated.");
+                }
+            } else
+                Log.w(TAG, "empty");
         }));
 
         //UPDATE PLAYER ITEMS
@@ -195,7 +222,6 @@ public class MapActivity extends AppCompatActivity
                     int pos = Integer.parseInt(doc.getDocument().getId())-1;
                     PlayerItems.set(pos, pI);
                     mAdapter.notifyItemChanged(pos);
-                    Log.w(TAG, "Item"+ pos +"was updated.");
                 }
             }
         }));
@@ -211,7 +237,6 @@ public class MapActivity extends AppCompatActivity
             Toast.makeText(this, "Position " + position, Toast.LENGTH_SHORT).show();
         };
         mAdapter = new MyAdapter(this, PlayerItems, listener);
-        //mAdapter.setClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -354,23 +379,44 @@ public class MapActivity extends AppCompatActivity
                .fillColor(0x26FF0000);
         circleLocation = mGoogleMap.addCircle(circleOptions);
 
-        //USERPOSITIONS ON MAP
+        //USER_POSITIONS ON MAP
         for (Map.Entry<DocumentReference, MarkerCustom> entry : UserPositions.entrySet()) {
             if (!PLAYER_POSITION.equals(entry.getKey())) {
                 MarkerCustom temp = entry.getValue();
                 if (temp.getM() == null) {
                     Marker m = mGoogleMap.addMarker(temp.getMk());
-                    m.setTag(entry.getKey());
+                    m.setTag(entry.getKey().getId());
                     temp.setM(m);
                 }
                 else {
                     temp.getM().remove();
                     Marker m = mGoogleMap.addMarker(temp.getMk());
-                    m.setTag(entry.getKey());
+                    m.setTag(entry.getKey().getId());
                     temp.setM(m);
                 }
             }
         }
+
+        //ITEMS_POSITIONS ON MAP
+        for (Map.Entry<DocumentReference, MarkerCustom> entry : ItemsPositions.entrySet()) {
+            MarkerCustom temp = entry.getValue();
+            if (temp.getM() == null) {
+                Marker m = mGoogleMap.addMarker(temp.getMk());
+                m.setTag(entry.getKey());
+                temp.setM(m);
+                Log.w(TAG, "IF");
+            }
+            else {
+                temp.getM().remove();
+                Marker m = mGoogleMap.addMarker(temp.getMk());
+                m.setTag(entry.getKey());
+                temp.setM(m);
+                Log.w(TAG, "ELSE");
+            }
+        }
+        /*mGoogleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude()+0.0001, location.getLongitude()))
+                .title("gaga"));*/
 
         //move map camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,19));
@@ -474,40 +520,44 @@ public class MapActivity extends AppCompatActivity
     @Override
     public boolean onMarkerClick(final Marker marker) {
         marker.showInfoWindow();
-        return false;
+        return true;
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
         Intent intent = new Intent(this, PlayerInfoActivity.class);
-        intent.putExtra("name", (String) marker.getTag());
+        intent.putExtra("ref", (String) marker.getTag());
         startActivity(intent);
     }
 
-    public Bitmap myMarker(int type) {
+    public Bitmap myMarker(String type, int id) {
         int height = 100;
         int width = 100;
-        int drawableR = 0;
-        switch(type) {
-
-            case 0:
-                drawableR = R.drawable.bubonic_plague_doc_icon_3;
-                break;
-
-            case 1:
-                drawableR = R.drawable.bubonic_plague_doc_icon_3;
-                break;
-
-            case 2:
-                drawableR = R.drawable.bubonic_plague_doc_icon_3;
-                break;
-            default:
-                drawableR = R.drawable.bubonic_plague_doc_icon_3;
+        int drawableR;
+        if (type.equals("item")) {
+            drawableR = R.drawable.calendula_flower_icon;
         }
+        else
+            switch(id) {
+
+                case 0:
+                    drawableR = R.drawable.bubonic_plague_doc_icon_3;
+                    break;
+
+                case 1:
+                    drawableR = R.drawable.bubonic_plague_doc_icon_3;
+                    break;
+
+                case 2:
+                    drawableR = R.drawable.bubonic_plague_doc_icon_3;
+                    break;
+                default:
+                    drawableR = R.drawable.bubonic_plague_doc_icon_3;
+            }
+
         Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
-                R.drawable.bubonic_plague_doc_icon_3);
-        Bitmap smallMarker = Bitmap.createScaledBitmap(icon, width, height, false);
-        return smallMarker;
+                drawableR);
+        return Bitmap.createScaledBitmap(icon, width, height, false);
     }
 
     @Override
@@ -526,8 +576,8 @@ public class MapActivity extends AppCompatActivity
     }
 
     public class MarkerCustom {
-        public MarkerOptions Mk;
-        public Marker M;
+        private MarkerOptions Mk;
+        private Marker M;
 
         public MarkerCustom(MarkerOptions Mk) {
             this.Mk = Mk;
@@ -539,10 +589,6 @@ public class MapActivity extends AppCompatActivity
 
         public MarkerOptions getMk() {
             return Mk;
-        }
-
-        public void setMk(MarkerOptions mk) {
-            Mk = mk;
         }
 
         public Marker getM() {

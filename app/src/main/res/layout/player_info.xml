@@ -160,26 +160,22 @@
         android:id="@+id/playerName"
         android:layout_width="250dp"
         android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/infected"
         android:background="@drawable/edittext"
         android:textAlignment="center"
         android:textColor="#080706"
         android:textSize="40sp"
-        android:textStyle="bold"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/Dlevel"
-        android:layout_alignLeft="@+id/Dlevel"
-        android:layout_marginTop="10dp" />
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/defense"
-        android:layout_alignBottom="@+id/defense"
-        android:layout_alignEnd="@+id/recoveries"
-        android:layout_alignRight="@+id/recoveries"
+        android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/recoveries"
-        android:layout_alignLeft="@+id/recoveries"
+        android:layout_marginBottom="26dp"
+        android:layout_marginStart="23dp"
         android:background="#d1b280"
         android:text="INFECT" />
 

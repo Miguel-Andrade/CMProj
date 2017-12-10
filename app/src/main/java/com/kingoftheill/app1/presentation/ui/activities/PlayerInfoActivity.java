@@ -1,61 +1,77 @@
 package com.kingoftheill.app1.presentation.ui.activities;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.kingoftheill.app1.R;
-import com.kingoftheill.app1.storage.PlayerViewModel;
+import com.kingoftheill.app1.domain2.PlayerFC;
 
 public class PlayerInfoActivity extends AppCompatActivity {
 
     private TextView deaths, infected, recoveries, hp, range, damage, resistence, defense, playerName, playerLevel, diseaseLevel;
     TextView killed;
     private int nKills, nDeaths, nInfected, nRecoveries, nHp, nRange, nDamage, nResistence, nDefense, nPLvl, nDLvl;
-    private RelativeLayout rl;
     private String pName;
     private Button b1;
     private ProgressBar pbPLVL, pbDLVL;
 
-    private PlayerViewModel playerViewModel;
+    // Firebase instance variables
+    private FirebaseFirestore mFirebaseFirestore;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
 
+    private String mUsername;
+
+    private static DocumentReference ATTACKER;
+
+    private PlayerFC playerFC;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_info);
 
-        playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseFirestore = FirebaseFirestore.getInstance();
+        mUsername = mFirebaseUser.getEmail();
 
+        ATTACKER = mFirebaseFirestore.document("Users/" + getIntent().getStringExtra("ref"));
 
-        pbPLVL = (ProgressBar) findViewById(R.id.pbPLVL);
-        pbDLVL = (ProgressBar) findViewById(R.id.pbDLVL);
-        playerName = (TextView) findViewById(R.id.playerName);
-        diseaseLevel = (TextView) findViewById(R.id.Dlevel);
-
-        hp = (TextView) findViewById(R.id.hp);
-        range = (TextView) findViewById(R.id.range);
-
-        /*playerViewModel.getPlayer().observe(this, player ->
-            {
-            });
-        diseaseViewModel.getDisease().observe(this, disease ->
-            {
-            });*/
-
-        playerName.setText(pName);
-
+        pbPLVL = findViewById(R.id.pbPLVL);
+        playerName =  findViewById(R.id.playerName);
         playerLevel = (TextView) findViewById(R.id.Plevel);
-        //nPLvl = attacker.getDisLevel();
-        playerLevel.setText("Player Lvl: "+nPLvl);
+        diseaseLevel = findViewById(R.id.Dlevel);
+        hp = findViewById(R.id.hp);
+        range = findViewById(R.id.range);
+        pbDLVL =  findViewById(R.id.pbDLVL);
+        damage = (TextView) findViewById(R.id.damage);
+        resistence = (TextView) findViewById(R.id.resistence);
+        defense = (TextView) findViewById(R.id.defense);
 
-
-        //nDLvl = attacker.getDisease().getDisLevel();
-        diseaseLevel.setText("Disease Lvl: "+nDLvl);
+        //UPDATE THE PLAYER
+        ATTACKER.addSnapshotListener(this, (documentSnapshot, e) -> {
+            if (documentSnapshot.exists()) {
+                playerFC = documentSnapshot.toObject(PlayerFC.class);
+                playerName.setText(playerFC.getName());
+                pbPLVL.setProgress(playerFC.getCurrXP());
+                pbDLVL.setProgress(playerFC.getDisCurrXP());
+                hp.setText(playerFC.getLife() +"");
+                diseaseLevel.setText(playerFC.getDisLevel()+"");
+                playerLevel.setText(playerFC.getLevel()+"");
+                range.setText(playerFC.getTotalRange()+"");
+                resistence.setText(playerFC.getTotalResistance()+"");
+                damage.setText(playerFC.getTotalDamage()+"");
+                defense.setText(playerFC.getTotalBtDefense()+"");
+            }
+        });
 
         killed = (TextView) findViewById(R.id.kills);
         nKills = 2;
@@ -74,26 +90,6 @@ public class PlayerInfoActivity extends AppCompatActivity {
         recoveries.setText("Recoveries: "+ nRecoveries);
 
 
-        nHp = 100;
-        hp.setText("HP: "+ nHp);
-
-
-        nRange = 10;
-        range.setText("Range: "+ nRange);
-
-        damage = (TextView) findViewById(R.id.damage);
-        nDamage = 15;
-        damage.setText("Damage: "+ nDamage);
-
-        resistence = (TextView) findViewById(R.id.resistence);
-        nResistence = 4;
-        resistence.setText("Resistence: "+ nResistence);
-
-        defense = (TextView) findViewById(R.id.defense);
-        nDefense = 2;
-        defense.setText("Defense: "+ nDefense);
-
-        rl = (RelativeLayout)findViewById(R.id.relativeLayoutID);
         b1 = (Button)findViewById(R.id.button1);
         b1.setOnClickListener(view -> onbuttonpressed());
 

@@ -16,7 +16,6 @@
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_gravity="bottom|right"
-        android:text="1"
         android:textAllCaps="true"
         android:textAlignment="center"
         android:textColor="@color/colorAccent" />

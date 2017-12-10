@@ -1,6 +1,5 @@
 package com.kingoftheill.app1.presentation.ui.activities;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -19,7 +18,6 @@ import com.kingoftheill.app1.presentation.ui.util.SectionsPageAdapter;
 import com.kingoftheill.app1.presentation.ui.util.Tab1Fragment;
 import com.kingoftheill.app1.presentation.ui.util.Tab2Fragment;
 import com.kingoftheill.app1.presentation.ui.util.Tab3Fragment;
-import com.kingoftheill.app1.storage.PlayerViewModel;
 
 /**
  * Created by Andrade on 01/12/2017.
@@ -29,7 +27,6 @@ public class PickDiseaseActivityV2 extends AppCompatActivity {
 
     private static final String TAG = "PickDiseaseActivityV2";
 
-    private PlayerViewModel playerViewModel;
     private SectionsPageAdapter mSectionsPageAdapter;
     private ViewPager mViewPager;
 
@@ -43,8 +40,6 @@ public class PickDiseaseActivityV2 extends AppCompatActivity {
         setContentView(R.layout.pick_disease);
 
         Log.d(TAG, "onCreate: Starting.");
-
-        playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
 
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
