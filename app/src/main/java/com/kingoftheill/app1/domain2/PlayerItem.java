@@ -37,4 +37,6 @@ public class PlayerItem {
     public String getImage() {
         return image;
     }
+
+
 }

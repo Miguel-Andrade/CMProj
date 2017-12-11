@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.PlayerItem;
 
@@ -73,7 +74,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         @Override
         public void onClick(View view) {
             if (mDataset.get(getAdapterPosition()).getQuantity() > 0)
-                mListener.onClick(view, getAdapterPosition());
+                mListener.onClick(view, mDataset.get(getAdapterPosition()).getItemId());
         }
 
     }
@@ -85,7 +86,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     public interface RecyclerViewClickListener {
 
-        void onClick(View view, int position);
+        void onClick(View view, DocumentReference doc);
     }
 
 }

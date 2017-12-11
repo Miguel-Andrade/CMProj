@@ -3,6 +3,7 @@ package com.kingoftheill.app1.presentation.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,7 +20,6 @@ public class PlayerInfoActivity extends AppCompatActivity {
     private TextView deaths, infected, recoveries, hp, range, damage, resistence, defense, playerName, playerLevel, diseaseLevel;
     TextView killed;
     private int nKills, nDeaths, nInfected, nRecoveries, nHp, nRange, nDamage, nResistence, nDefense, nPLvl, nDLvl;
-    private String pName;
     private Button b1;
     private ProgressBar pbPLVL, pbDLVL;
 
@@ -91,7 +91,14 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
 
         b1 = (Button)findViewById(R.id.button1);
-        b1.setOnClickListener(view -> onbuttonpressed());
+        if (!getIntent().getExtras().getBoolean("attack")) {
+            b1.setVisibility(View.INVISIBLE);
+
+        }
+        else {
+            b1.setVisibility(View.VISIBLE);
+            b1.setOnClickListener(view -> onbuttonpressed());
+        }
 
     }
 

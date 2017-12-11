@@ -8,10 +8,11 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
@@ -54,9 +55,12 @@ import com.kingoftheill.app1.domain2.ItemPositions;
 import com.kingoftheill.app1.domain2.PlayerFC;
 import com.kingoftheill.app1.domain2.PlayerItem;
 import com.kingoftheill.app1.domain2.Positions;
+import com.kingoftheill.app1.presentation.ui.util.BagFragment;
+import com.kingoftheill.app1.presentation.ui.util.CraftFragment;
+import com.kingoftheill.app1.presentation.ui.util.SectionsPageAdapter;
+import com.kingoftheill.app1.presentation.ui.util.SectionsPageAdapter2;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,11 +115,13 @@ public class MapActivity extends AppCompatActivity
     private static DocumentReference PLAYER;
     private static DocumentReference PLAYER_POSITION;
     private static CollectionReference PLAYER_ITEMS;
+    private static CollectionReference PLAYER_BATTLE;
     
     private static DocumentReference ATTACKER;
     
     private static CollectionReference POSITIONS;
     private static CollectionReference ITEMS_POSITIONS;
+
     private PlayerFC playerFC;
 
     //RECYCLER VIEW
@@ -123,6 +129,8 @@ public class MapActivity extends AppCompatActivity
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private SectionsPageAdapter mSectionsPageAdapter;
+    private ViewPager mViewPager;
     //FLAG
     private boolean flag = false;
 
@@ -146,16 +154,20 @@ public class MapActivity extends AppCompatActivity
             mUsername = mFirebaseUser.getEmail();
             PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
             PLAYER_POSITION = mFirebaseFirestore.document("Positions/" + mUsername);
-            PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
+            //PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
             ATTACKER = mFirebaseFirestore.document("Positions/rafael.r.t.96@gmail.com");
             POSITIONS = mFirebaseFirestore.collection("Positions");
             ITEMS_POSITIONS = mFirebaseFirestore.collection("ItemsMap");
             UserPositions = new HashMap<>();
             ItemsPositions = new HashMap<>();
-            PlayerItems = new ArrayList<>();
+            /*PlayerItems = new ArrayList<>();
             for (int i =0; i<=29; i++) {
                 PlayerItems.add(new PlayerItem(null, 10, ""));
-            }
+            }*/
+
+            String p1=  getIntent().getStringExtra("ref");
+            if (p1!=null)
+               Log.w(TAG, p1);
         }
 
         player_image = findViewById(R.id.player_image);
@@ -197,21 +209,30 @@ public class MapActivity extends AppCompatActivity
         //UPDATE THE HASHMAP WITH THE MOST RECENT ITEMS POSITIONS
         ITEMS_POSITIONS.addSnapshotListener(this, ((documentSnapshots, e) -> {
             if (!documentSnapshots.isEmpty()) {
-                for (DocumentChange doc : documentSnapshots.getDocumentChanges ()) {
+                for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
                     DocumentSnapshot tempDoc = doc.getDocument();
                     ItemPositions temp = tempDoc.toObject(ItemPositions.class);
-                    ItemsPositions.put(tempDoc.getReference(), new MarkerCustom( new MarkerOptions()
-                            .position(temp.getPos())
-                            .icon(BitmapDescriptorFactory.fromBitmap(myMarker("item", temp.getItemId())))
-                    ));
-                    Log.w(TAG, "Map Item" + tempDoc.getId() +  "updated.");
+                    switch (doc.getType()) {
+                        case ADDED:
+                            ItemsPositions.put(tempDoc.getReference(), new MarkerCustom(new MarkerOptions()
+                                    .position(temp.getPos())
+                                    .icon(BitmapDescriptorFactory.fromBitmap(myMarker("item", temp.getItemId())))
+                            ));
+                            Log.w(TAG, "Added item: " + tempDoc.getReference());
+                            break;
+                        case REMOVED:
+                            MarkerCustom m = ItemsPositions.get(tempDoc.getReference());
+                            m.setMk(null);
+                            ItemsPositions.put(tempDoc.getReference(), m);
+                            Log.w(TAG, "Removed item: " + tempDoc.getReference());
+                            break;
+                    }
                 }
-            } else
-                Log.w(TAG, "empty");
+            }
         }));
 
         //UPDATE PLAYER ITEMS
-        PLAYER_ITEMS.addSnapshotListener(this, ((documentSnapshots, e) -> {
+        /*PLAYER_ITEMS.addSnapshotListener(this, ((documentSnapshots, e) -> {
             if (e != null) {
                 Log.w(TAG, "Listen:error", e);
                 return;
@@ -224,21 +245,16 @@ public class MapActivity extends AppCompatActivity
                     mAdapter.notifyItemChanged(pos);
                 }
             }
-        }));
+        }));*/
 
-        //RECYCLER VIEW
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new GridLayoutManager(this, 5);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
-        MyAdapter.RecyclerViewClickListener listener = (view, position) -> {
-            Toast.makeText(this, "Position " + position, Toast.LENGTH_SHORT).show();
-        };
-        mAdapter = new MyAdapter(this, PlayerItems, listener);
-        mRecyclerView.setAdapter(mAdapter);
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        setupViewPager(mViewPager);
 
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
 
 
         if (savedInstanceState != null) {
@@ -373,7 +389,7 @@ public class MapActivity extends AppCompatActivity
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         CircleOptions circleOptions = new CircleOptions()
                .center(latLng)
-               .radius(playerFC.getTotalRange())
+               .radius(7)
                .strokeColor(0x80000000)
                .strokeWidth(5)
                .fillColor(0x26FF0000);
@@ -406,13 +422,8 @@ public class MapActivity extends AppCompatActivity
                 temp.setM(m);
                 Log.w(TAG, "IF");
             }
-            else {
+            if (temp.getMk() == null && temp.getM() != null)
                 temp.getM().remove();
-                Marker m = mGoogleMap.addMarker(temp.getMk());
-                m.setTag(entry.getKey());
-                temp.setM(m);
-                Log.w(TAG, "ELSE");
-            }
         }
         /*mGoogleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude()+0.0001, location.getLongitude()))
@@ -526,6 +537,11 @@ public class MapActivity extends AppCompatActivity
     @Override
     public void onInfoWindowClick(Marker marker) {
         Intent intent = new Intent(this, PlayerInfoActivity.class);
+        if (Math.hypot(marker.getPosition().latitude - mLastKnownLocation.getLatitude(),
+                marker.getPosition().longitude- mLastKnownLocation.getLongitude()) > 7)
+            intent.putExtra("attack", false);
+        else
+            intent.putExtra("attack", true);
         intent.putExtra("ref", (String) marker.getTag());
         startActivity(intent);
     }
@@ -587,6 +603,10 @@ public class MapActivity extends AppCompatActivity
             M = m;
         }
 
+        public void setMk(MarkerOptions mk) {
+            Mk = mk;
+        }
+
         public MarkerOptions getMk() {
             return Mk;
         }
@@ -594,5 +614,12 @@ public class MapActivity extends AppCompatActivity
         public Marker getM() {
             return M;
         }
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        SectionsPageAdapter2 adapter = new SectionsPageAdapter2(getSupportFragmentManager());
+        adapter.addFragment(new BagFragment(), "Bag");
+        adapter.addFragment(new CraftFragment(), "Craft");
+        viewPager.setAdapter(adapter);
     }
 }

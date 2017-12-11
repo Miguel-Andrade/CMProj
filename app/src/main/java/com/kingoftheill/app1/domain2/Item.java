@@ -11,16 +11,22 @@ public class Item {
     private String stat;
     private int value;
     private String image;
+    private String type;
+
+
+    public static final String CONSUME = "consume";
 
     public Item() {
     }
 
-    public Item(String name, String description, String stat, int value, String image) {
+    public Item(String name, String description, String stat, String type, int value, String image) {
         this.name = name;
         this.description = description;
         this.stat = stat;
         this.value = value;
         this.image = image;
+        this.type = type;
+        this.stat = stat;
     }
 
     public String getName() {
@@ -42,4 +48,10 @@ public class Item {
     public String getImage() {
         return image;
     }
+
+    public String getType() {
+        return type;
+    }
+
+
 }

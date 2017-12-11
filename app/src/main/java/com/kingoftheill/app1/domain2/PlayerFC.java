@@ -14,6 +14,7 @@ public class PlayerFC {
 
     private String name;
     private String image;
+    private String messId;
 
     //POSITION
     private GeoPoint pos;
@@ -52,8 +53,9 @@ public class PlayerFC {
     public PlayerFC() {
     }
 
-    public PlayerFC(String name, String image) {
+    public PlayerFC(String name, String image, String messId) {
         setName(name);
+        setMessId(messId);
         setImage(image);
         setLevel(PlayerLevels.LEVEL_1.level());
         setCurrXP(0);
@@ -83,6 +85,14 @@ public class PlayerFC {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getMessId() {
+        return messId;
+    }
+
+    public void setMessId(String messId) {
+        this.messId = messId;
     }
 
     public String getImage() {

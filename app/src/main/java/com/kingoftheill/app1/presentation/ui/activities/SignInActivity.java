@@ -41,6 +41,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.PlayerFC;
 
@@ -142,7 +143,8 @@ public class SignInActivity extends AppCompatActivity implements
                             mFirebaseUser = mFirebaseAuth.getCurrentUser();
                             WriteBatch batch = mFirebaseFirestore.batch();
                             DocumentReference reference = mFirebaseFirestore.document("Users/"+ mFirebaseUser.getEmail());
-                            batch.set(reference, new PlayerFC(tx.getText().toString(), "bubonic_plague_doc_icon_3"));
+                            String token = FirebaseInstanceId.getInstance().getToken();
+                            batch.set(reference, new PlayerFC(tx.getText().toString(), "bubonic_plague_doc_icon_3", token));
                             batch.commit()
                                     .addOnSuccessListener(accao -> {
                                         Log.d(TAG, "Player created.");

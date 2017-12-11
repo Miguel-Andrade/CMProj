@@ -50,6 +50,9 @@ dependencies {
     //firestore
     api 'com.google.firebase:firebase-firestore:11.6.2'
 
+    // FirebaseUI for Cloud Firestore
+    compile 'com.firebaseui:firebase-ui-firestore:3.1.0'
+
     //Google Maps
     api 'com.google.android.gms:play-services-maps:11.6.2'
 
@@ -64,6 +67,7 @@ dependencies {
 
     //Google Locations
     api 'com.google.android.gms:play-services-location:11.6.2'
+
 
     //sliding layout umano
     compile 'com.sothree.slidinguppanel:library:3.4.0'
