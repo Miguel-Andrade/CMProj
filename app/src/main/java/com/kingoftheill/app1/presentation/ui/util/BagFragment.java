@@ -34,8 +34,8 @@ public class BagFragment extends Fragment {
 
     //RECYCLER VIEW
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private FirestoreRecyclerAdapter adapter;
+    private GridLayoutManager manager;
 
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
@@ -45,11 +45,6 @@ public class BagFragment extends Fragment {
     private static CollectionReference PLAYER_ITEMS;
 
     private String mUsername;
-
-    private FirestoreRecyclerAdapter adapter;
-    private GridLayoutManager manager;
-
-    private Item item1, item2, item3;
 
     @Nullable
     @Override
