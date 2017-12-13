@@ -97,12 +97,12 @@ public class SignInActivity extends AppCompatActivity implements
             return;
         }
 
-        loading = findViewById(R.id.vprogressbar);
+        loading = findViewById(R.id.load);
         loading.setVisibility(View.GONE);
         s = findViewById(R.id.s);
 
         // Assign fields
-        mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        mSignInButton = findViewById(R.id.sign_in_button);
 
         // Set click listeners
         mSignInButton.setOnClickListener(this);
