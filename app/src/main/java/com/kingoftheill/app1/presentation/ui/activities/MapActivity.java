@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
@@ -46,10 +47,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.PlayerFC;
+import com.kingoftheill.app1.domain2.PlayerItem;
 import com.kingoftheill.app1.presentation.ui.util.BagFragment;
 import com.kingoftheill.app1.presentation.ui.util.CraftFragment;
 import com.kingoftheill.app1.presentation.ui.util.CustomInfoWindowAdapter;
@@ -106,8 +109,7 @@ public class MapActivity extends AppCompatActivity
     public static final String ANONYMOUS = "anonymous";
     private String mUsername;
     private static DocumentReference PLAYER;
-
-    private static DocumentReference ATTACKER;
+    private static CollectionReference PLAYER_ITEMS;
 
     private PlayerFC playerFC;
 
@@ -130,27 +132,19 @@ public class MapActivity extends AppCompatActivity
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mFirebaseFirestore = FirebaseFirestore.getInstance();
 
-        if (mFirebaseUser == null) {
-            // Not signed in, launch the Sign In activity
-            startActivity(new Intent(this, SignInActivity.class));
-            finish();
-            return;
-        } else {
-            mUsername = mFirebaseUser.getEmail();
-            //Log.w(TAG, mFirebaseUser.getUid());
-            PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
-            ATTACKER = mFirebaseFirestore.document("Positions/rafael.r.t.96@gmail.com");
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/UserPositions/");
-            DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("ItemsPositions/");
-            geoFire = new GeoFire(ref);
-            geoFire2 = new GeoFire(ref2);
+        mUsername = mFirebaseUser.getUid();
+        PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
+        PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/UserPositions/");
+        DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("ItemsPositions/");
+        geoFire = new GeoFire(ref);
+        geoFire2 = new GeoFire(ref2);
 
-            String p1=  getIntent().getStringExtra("ref");
-            if (p1!=null)
-               Log.w(TAG, p1);
-            else {
+        String p1=  getIntent().getStringExtra("ref");
+        if (p1!=null)
+           Log.w(TAG, p1);
+        else {
 
-            }
         }
 
         player_image = findViewById(R.id.player_image);
@@ -191,7 +185,7 @@ public class MapActivity extends AppCompatActivity
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-
+        // PLAYER DETAILS
         player_image.setOnClickListener(v ->
                 Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show());
 
@@ -212,18 +206,24 @@ public class MapActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+        if (mGoogleApiClient != null) {
+            if (ContextCompat.checkSelfPermission(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED)
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest,this);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        geoFire.removeLocation(mFirebaseUser.getUid());
+        geoFire.removeLocation(mUsername);
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-        geoFire.removeLocation(mFirebaseUser.getUid());
+        geoFire.removeLocation(mUsername);
     }
 
     @Override
@@ -231,6 +231,9 @@ public class MapActivity extends AppCompatActivity
     {
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+        // Map Style
+        mGoogleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_sytle));
 
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
@@ -289,9 +292,9 @@ public class MapActivity extends AppCompatActivity
         mLastLocation = location;
 
         geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
-        geoFire.setLocation(mFirebaseUser.getUid(), geoLocation);
-        geoFire2.setLocation("Item1", new GeoLocation(location.getLatitude()-0.0001, location.getLongitude()));
-        geoFire.setLocation( "rafael", new GeoLocation(location.getLatitude()+0.0001, location.getLongitude()));
+        geoFire.setLocation(mUsername, geoLocation);
+        //geoFire2.setLocation("Item1", new GeoLocation(location.getLatitude()-0.0001, location.getLongitude()));
+        //geoFire.setLocation( "rafael", new GeoLocation(location.getLatitude()+0.0001, location.getLongitude()));
 
         if(circleLocation != null){
             circleLocation.remove();
@@ -417,10 +420,32 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        marker.getTag();
+        HashMap<String, Object> temp = (HashMap<String, Object>) marker.getTag();
+        boolean user = (boolean) temp.get("user");
+        DocumentReference ref = (DocumentReference) temp.get("ref");
 
-        if (true) {
+        if (!user) {
+            PLAYER_ITEMS.whereEqualTo("itemId", ref).limit(1).get().addOnSuccessListener(documentSnapshot2 -> {
+                if (!documentSnapshot2.isEmpty()) {
+                    PlayerItem p = documentSnapshot2.getDocumentChanges().get(0).getDocument().toObject(PlayerItem.class);
+                    documentSnapshot2.getDocumentChanges().get(0)
+                            .getDocument().getReference().update(PlayerItem.QUANTITY, (p.getQuantity() + 1))
+                            .addOnSuccessListener(aVoid -> Toast.makeText(this, "Item Collected", Toast.LENGTH_SHORT).show());
+                }
+                else {
+                    PLAYER_ITEMS.whereEqualTo("itemId", "").limit(1).get().addOnSuccessListener(documentSnapshots -> {
+                        if (!documentSnapshots.isEmpty()) {
+                            PlayerItem pl = new PlayerItem(ref, 1, ((String) temp.get("image")));
+                            documentSnapshots.getDocumentChanges().get(0).getDocument().getReference().set(pl)
+                                    .addOnSuccessListener(aVoid -> Toast.makeText(this, "Item Collected", Toast.LENGTH_SHORT).show());
+                        }
+                        else
+                            Toast.makeText(this, "Your Inventory is Full", Toast.LENGTH_SHORT).show();
+                    });
+                }
 
+            }).addOnFailureListener(e ->
+            Log.e(TAG, "Error picking item" + e.getMessage()));
         }
 
         else {
@@ -431,10 +456,10 @@ public class MapActivity extends AppCompatActivity
             else
                 intent.putExtra("attack", true);
 
-            //String[] ya = (String[]) marker.getTag();
-            intent.putExtra("ref", (String) marker.getTag());
+            intent.putExtra("ref", ref.toString());
             startActivity(intent);
         }
+        marker.hideInfoWindow();
     }
 
     public Bitmap myMarker(String type, int id) {
@@ -481,17 +506,20 @@ public class MapActivity extends AppCompatActivity
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                if (!key.equals(mFirebaseUser.getUid())) {
+                if (!key.equals(mUsername)) {
                     Marker m = mGoogleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(location.latitude, location.longitude))
                             .icon(BitmapDescriptorFactory.fromBitmap(myMarker("player", 1))));
-                    mFirebaseFirestore.document("/Users/rafael.r.t.96@gmail.com").get()
+
+                    mFirebaseFirestore.document("/Users/" + key).get()
                             .addOnSuccessListener(documentSnapshot -> {
-                                        String[] ya = new String[2];
-                                        ya[0] = documentSnapshot.getId();
-                                        m.setTag(ya[0]);
-                                        m.setTitle((String) documentSnapshot.get("name"));
-                                        Log.d(TAG, "User tagName add");
+                                        if (documentSnapshot.exists()) {
+                                            HashMap<String, Object> o = new HashMap<>();
+                                            o.put("ref", documentSnapshot.getReference());
+                                            o.put("user", true);
+                                            m.setTag(o);
+                                            m.setTitle((String) documentSnapshot.get("name"));
+                                        }
                                     }
                                 )
                             .addOnFailureListener(e ->
@@ -502,13 +530,13 @@ public class MapActivity extends AppCompatActivity
 
             @Override
             public void onKeyExited(String key) {
-                if (!key.equals(mFirebaseUser.getUid()))
+                if (!key.equals(mUsername))
                     mMarkers.remove(key);
             }
 
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
-                if (!key.equals(mFirebaseUser.getUid()))
+                if (!key.equals(mUsername))
                     mMarkers.get(key).setPosition(new LatLng(location.latitude, location.longitude));
             }
 
@@ -532,10 +560,27 @@ public class MapActivity extends AppCompatActivity
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                    mItemsMarkers.put(key, mGoogleMap.addMarker(new MarkerOptions()
-                            .title(key)
-                            .position(new LatLng(location.latitude, location.longitude))
-                            .icon(BitmapDescriptorFactory.fromBitmap(myMarker("item", 1)))));
+                Marker m = mGoogleMap.addMarker(new MarkerOptions()
+                        .title(key)
+                        .position(new LatLng(location.latitude, location.longitude))
+                        .icon(BitmapDescriptorFactory.fromBitmap(myMarker("item", 1))));
+
+                mFirebaseFirestore.document("/Items/" + key).get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                        if (documentSnapshot.exists()) {
+                                            HashMap<String, Object> o = new HashMap<>();
+                                            o.put("ref", documentSnapshot.getReference());
+                                            o.put("image", documentSnapshot.get("image"));
+                                            o.put("user", false);
+                                            m.setTag(o);
+                                            m.setTitle((String) documentSnapshot.get("name"));
+                                            Log.d(TAG, "Item tagName add");
+                                        }
+                                    }
+                            )
+                            .addOnFailureListener(e ->
+                                    Log.e("Error on markerTag", e.getMessage()));
+                mItemsMarkers.put(key, m);
             }
 
             @Override

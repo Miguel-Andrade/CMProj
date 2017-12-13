@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:umanoPanelHeight="68dp"
+    sothree:umanoPanelHeight="45dp"
     sothree:umanoShadowHeight="4dp">
 
     <RelativeLayout
@@ -60,12 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/life"
             android:layout_toEndOf="@+id/relativeLayout" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/sign_out_menu"
-            android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
 

@@ -79,7 +79,6 @@ public class CraftFragment extends Fragment {
         PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
         RECEITAS = mFirebaseFirestore.collection("Receitas");
 
-
         manager = new LinearLayoutManager(getContext());
         mRecyclerView = view.findViewById(R.id.receitas_recycler_view);
         mRecyclerView.setLayoutManager(manager);

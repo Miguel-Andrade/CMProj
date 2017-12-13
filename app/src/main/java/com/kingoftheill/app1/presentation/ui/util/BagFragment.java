@@ -153,7 +153,7 @@ public class BagFragment extends Fragment {
                                 else
                                     Log.w(TAG, "Error on getting player for update");
                             });
-                            String itemDoc = String.valueOf(itemPositionFlag+1);
+                            String itemDoc = String.valueOf(itemPositionFlag);
                             if(itemPositionFlag< 10){
                                 itemDoc = "0"+itemPositionFlag;
                             }

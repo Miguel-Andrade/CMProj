@@ -22,8 +22,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -44,6 +46,7 @@ import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.PlayerFC;
+import com.kingoftheill.app1.domain2.PlayerItem;
 
 public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
@@ -62,10 +65,34 @@ public class SignInActivity extends AppCompatActivity implements
 
     private AutoCompleteTextView tx;
 
+    private ProgressBar loading;
+    private ShimmerFrameLayout s;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registerv2);
+
+        String p = (String) getIntent().getExtras().get("ref");
+        if (p != null)
+            Log.w(TAG, "Payload: " + p);
+
+        // Initialize FirebaseAuth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseFirestore = FirebaseFirestore.getInstance();
+
+
+        if (mFirebaseUser != null) {
+            // Not signed in, launch the Sign In activity
+            startActivity(new Intent(this, MapActivity.class));
+            finish();
+            return;
+        }
+
+        loading = findViewById(R.id.vprogressbar);
+        loading.setVisibility(View.GONE);
+        s = findViewById(R.id.s);
 
         // Assign fields
         mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -83,11 +110,8 @@ public class SignInActivity extends AppCompatActivity implements
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        // Initialize FirebaseAuth
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseFirestore = FirebaseFirestore.getInstance();
 
-        tx = (AutoCompleteTextView) findViewById(R.id.name);
+        tx = findViewById(R.id.name);
 
     }
 
@@ -95,6 +119,8 @@ public class SignInActivity extends AppCompatActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
+                //loading.setVisibility(View.VISIBLE);
+                s.startShimmerAnimation();
                 signIn();
                 break;
         }
@@ -142,9 +168,20 @@ public class SignInActivity extends AppCompatActivity implements
                         } else {
                             mFirebaseUser = mFirebaseAuth.getCurrentUser();
                             WriteBatch batch = mFirebaseFirestore.batch();
-                            DocumentReference reference = mFirebaseFirestore.document("Users/"+ mFirebaseUser.getEmail());
+                            DocumentReference reference = mFirebaseFirestore.document("Users/"+ mFirebaseUser.getUid());
+                            DocumentReference l = mFirebaseFirestore.document("Items/Item1");
                             String token = FirebaseInstanceId.getInstance().getToken();
                             batch.set(reference, new PlayerFC(tx.getText().toString(), "bubonic_plague_doc_icon_3", token));
+                            for (int i = 0; i <= 29; i++) {
+                                if (i <= 9) {
+                                    DocumentReference item = mFirebaseFirestore.document("Users/" + mFirebaseUser.getUid() + "/Items/0" + i);
+                                    batch.set(item, new PlayerItem(l,0, ""));
+                                }
+                                else {
+                                    DocumentReference item = mFirebaseFirestore.document("Users/" + mFirebaseUser.getUid() + "/Items/" + i);
+                                    batch.set(item, new PlayerItem(l,0, ""));
+                                }
+                            }
                             batch.commit()
                                     .addOnSuccessListener(accao -> {
                                         Log.d(TAG, "Player created.");
@@ -156,6 +193,7 @@ public class SignInActivity extends AppCompatActivity implements
                         }
                     }
                 });
+        //loading.setVisibility(View.GONE);
     }
 
     @Override
