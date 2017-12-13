@@ -73,9 +73,16 @@ public class SignInActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registerv2);
 
-        String p = (String) getIntent().getExtras().get("ref");
-        if (p != null)
-            Log.w(TAG, "Payload: " + p);
+        // Battle Notification
+        if (getIntent().getExtras() != null) {
+            String p = (String) getIntent().getExtras().get("ref");
+            if (p != null) {
+                Log.w(TAG, "Payload: " + p);
+                Intent intent = new Intent(this, BattleActivity.class);
+                intent.putExtra("ref", p);
+                startActivity(intent);
+            }
+        }
 
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
