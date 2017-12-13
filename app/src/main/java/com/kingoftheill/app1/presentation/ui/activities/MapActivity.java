@@ -136,7 +136,9 @@ public class MapActivity extends AppCompatActivity
         PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
         PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("/UserPositions/");
+        DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("/ItemsPositions/");
         geoFire = new GeoFire(ref);
+        geoFire2 = new GeoFire(ref2);
 
         player_image = findViewById(R.id.player_image);
         pg = findViewById(R.id.player_xp);
