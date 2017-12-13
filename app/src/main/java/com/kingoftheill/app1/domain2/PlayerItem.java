@@ -8,6 +8,8 @@ import com.google.firebase.firestore.DocumentReference;
 
 public class PlayerItem {
 
+    public static final String QUANTITY = "quantity";
+
     private DocumentReference itemId;
     private int quantity;
     private String image;

@@ -11,27 +11,35 @@ import java.util.List;
 public class Receita {
 
     private String name;
-    private List<DocumentReference> ingsReceita;
+    private List<DocumentReference> ids;
     private DocumentReference result;
     private String image;
+    private String description;
 //    private int progresso;
 //    private List<Boolean> ingsUsed;
 
     public Receita(){}
 
-    public Receita (String name, List<DocumentReference>ingsReceita, DocumentReference result, String image){
+    public Receita (String name, List<DocumentReference> ids, DocumentReference result, String image, String description){
         this.name = name;
-        this.ingsReceita = ingsReceita;
+        this.ids = ids;
         this.result = result;
         this.image = image;
+        this.description = description;
 //        this.progresso = progresso;
 //        this.ingsUsed = ingsUsed;
     }
 
-    public String getName(){return name;}
-    public List<DocumentReference> getIngsReceita(){return ingsReceita;}
-    public DocumentReference getResult(){return result;}
-    public String getImage (){ return image;}
-//    public int getProgresso(){return progresso;}
+    public String getName(){ return name; }
+
+    public List<DocumentReference> getIds(){ return ids; }
+
+    public DocumentReference getResult(){ return result; }
+
+    public String getImage (){ return image; }
+
+    public String getDescription() { return description; }
+
+    //    public int getProgresso(){return progresso;}
 //    public List<Boolean> getIngsUsed(){return ingsUsed;}
 }

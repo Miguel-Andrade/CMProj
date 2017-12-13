@@ -50,9 +50,7 @@
         <activity
             android:name="com.kingoftheill.app1.presentation.ui.activities.PickDiseaseActivityV2"
             android:theme="@style/AppTheme" />
-        <!--<activity
-            android:name=".presentation.ui.activities.MapActivity"
-            android:theme="@style/AppTheme" />-->
+
         <activity
             android:name="com.kingoftheill.app1.presentation.ui.activities.SignInActivity"
             android:theme="@style/AppTheme" />
@@ -67,12 +65,12 @@
             android:name="com.kingoftheill.app1.presentation.ui.activities.UpgradesActivity"
             android:theme="@style/AppTheme" />
 
-        <!--<service
-            android:name=".MyFirebaseMessagingService">
+        <service
+            android:name=".presentation.ui.util.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
-        </service>-->
+        </service>
 
         <service
             android:name=".presentation.ui.util.MyFirebaseInstanceIDService">

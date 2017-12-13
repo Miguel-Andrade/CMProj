@@ -11,7 +11,12 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.kingoftheill.app1.R;
+import com.kingoftheill.app1.domain2.Battle;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,40 +26,139 @@ public class BattleActivity extends AppCompatActivity {
     private static final String TAG = "BattleActivity";
 
     private ProgressBar pb;
-    private int value;
+    private int battleValue;
+    private int progressValue;
     private TextView tField;
     private ImageButton but1;
     private Button but2;
 
+    // Firebase instance variables
+    private FirebaseFirestore mFirebaseFirestore;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private String mUsername;
+
+    private static DocumentReference PLAYER;
+    private static DocumentReference ENIMIE;
+    private static DocumentReference BATTLE;
+
+    private Battle battle;
+
+    private boolean flag = true;
+    private boolean flag2 = true;
+
+    private boolean attacker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.battle);
 
         Log.d(TAG, "onCreate: Starting.");
 
-        setContentView(R.layout.battle);
-        pb = (ProgressBar)findViewById(R.id.barra);
-        value = 70;
-        pb.setProgress(value);
+        but1 = findViewById(R.id.butt);
+        pb = findViewById(R.id.barra);
+        tField = findViewById(R.id.mTextField);
 
-        but1 = (ImageButton)findViewById(R.id.butt);
-        //but2 = (Button)findViewById(R.id.butt2);
+        ProgressBar loading = findViewById(R.id.loading);
+        loading.setVisibility(View.VISIBLE);
+        but1.setEnabled(false);
+
+        //ShimmerFrameLayout container = findViewById(R.id.shimmer_view_container1);
+        //cont.startShimmerAnimation();
+        //container.startShimmerAnimation();
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseFirestore = FirebaseFirestore.getInstance();
+        mUsername = mFirebaseUser.getEmail();
+
+        PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
+        ENIMIE = mFirebaseFirestore.document("Users/" + getIntent().getStringExtra("ref"));
+
+        if (getIntent().getExtras().getBoolean("defender")) {
+            battle = new Battle(ENIMIE, PLAYER);
+            attacker = false;
+            PLAYER.get().addOnSuccessListener(documentSnapshot ->
+                    battleValue = (int) documentSnapshot.get("btAttack"));
+        }
+        else {
+            battle = new Battle(PLAYER, ENIMIE);
+            attacker = true;
+            PLAYER.get().addOnSuccessListener(documentSnapshot ->
+                    battleValue = (int) documentSnapshot.get("btDefense"));
+        }
+
+        if (attacker) {
+            // SET BATTLE IN FIRESTORE
+            mFirebaseFirestore.collection("Battles").add(battle).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    loading.setVisibility(View.GONE);
+                    but1.setEnabled(true);
+                    BATTLE = task.getResult();
+
+                    // GET BATTLE PROGRESS
+                    BATTLE.addSnapshotListener(this, (documentSnapshot, e) -> {
+                        if (documentSnapshot.exists()) {
+                            pb.setProgress(battle.getValue());
+                            progressValue = (int) documentSnapshot.get("value");
+
+                            if (((boolean) documentSnapshot.get("defenderOnline")) && flag) {
+                                loading.setVisibility(View.INVISIBLE);
+                                but1.setEnabled(true);
+                                flag = false;
+                                new CounterTask().execute();
+                            }
+                        } else
+                            Log.e(TAG, "Error on battle details" + e.getMessage());
+                    });
+                } else
+                    Log.e(TAG, "Error on battle");
+            });
+
+        }
+
+        else {
+            // GET BATTLE PROGRESS
+            BATTLE.addSnapshotListener(this, (documentSnapshot, e) -> {
+                if (documentSnapshot.exists()) {
+                    pb.setProgress(battle.getValue());
+                    progressValue = (int) documentSnapshot.get("value");
+
+                    if (((boolean) documentSnapshot.get("defenderOnline")) && flag) {
+                        loading.setVisibility(View.INVISIBLE);
+                        but1.setEnabled(true);
+                        flag = false;
+                        new CounterTask().execute();
+                    }
+                } else
+                    Log.e(TAG, "Error on battle details" + e.getMessage());
+            });
+
+            if (flag2) {
+                BATTLE.update("defenderOnline", true);
+                flag2 = false;
+            }
+        }
         addButtonClickListener();
-        //addButtonClickListener2();
-
-        tField = (TextView)findViewById(R.id.mTextField);
-        new CounterTask().execute();
 
     }
 
+    // UPDATE BATTLE
     private void addButtonClickListener() {
-        but1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(value < 100) {
-                    value += 1;
-                    pb.setProgress(value);
-                }
+        but1.setOnClickListener(view -> {
+            if (attacker) {
+                if (progressValue + battleValue > 100)
+                    BATTLE.update("value", 100);
+
+                else
+                    BATTLE.update("value", (progressValue + battleValue));
+            }
+            else  {
+                if (progressValue - battleValue < 0)
+                    BATTLE.update("value", 0);
+                else
+                    BATTLE.update("value", (progressValue - battleValue));
             }
         });
     }
@@ -83,23 +187,21 @@ public class BattleActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             but1.setEnabled(false);
 
-            if (value > 50) {
+            if (battleValue > 50) {
                 tField.setText("Victory!");
             }
-            if (value < 50) {
+            if (battleValue < 50) {
                 tField.setText("Defeat!");
             }
-            if (value == 50) {
+            if (battleValue == 50) {
                 tField.setText("Tie!");
             }
 
             new Timer().schedule(new TimerTask() {
                 public void run() {
-                    BattleActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            Intent intent = new Intent(BattleActivity.this, UpgradesActivity.class);
-                            startActivity(intent);
-                        }
+                    BattleActivity.this.runOnUiThread(() -> {
+                        Intent intent = new Intent(BattleActivity.this, UpgradesActivity.class);
+                        startActivity(intent);
                     });
                 }
             }, 4000);

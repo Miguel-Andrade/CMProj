@@ -3,14 +3,12 @@ package com.kingoftheill.app1.presentation.ui.util;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,13 +21,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.Item;
+import com.kingoftheill.app1.domain2.PlayerFC;
 import com.kingoftheill.app1.domain2.PlayerItem;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class BagFragment extends Fragment {
@@ -74,10 +71,8 @@ public class BagFragment extends Fragment {
             PlayerItems.add(new PlayerItem(null, 10, ""));
         }
 
-        Query q = PLAYER_ITEMS;
-
         manager = new GridLayoutManager(getContext(), 5);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        mRecyclerView = view.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(manager);
 
         //Item Info
@@ -89,9 +84,10 @@ public class BagFragment extends Fragment {
         Button use = view.findViewById(R.id.button);
 
 
+
         //UPDATE PLAYER ITEMS
         FirestoreRecyclerOptions<PlayerItem> options = new FirestoreRecyclerOptions.Builder<PlayerItem>()
-                .setQuery(q, PlayerItem.class)
+                .setQuery(PLAYER_ITEMS, PlayerItem.class)
                 .build();
 
         adapter = new FirestoreRecyclerAdapter<PlayerItem, ViewHolder>(options) {
@@ -99,7 +95,7 @@ public class BagFragment extends Fragment {
             public void onBindViewHolder(ViewHolder holder, int position, PlayerItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
-                itemPositionFlag = position;
+
                 playerItemQuantityFlag = model.getQuantity();
 
                 if (model.getQuantity() > 0) {
@@ -113,8 +109,10 @@ public class BagFragment extends Fragment {
                                     .getResources().getIdentifier(model.getImage(),
                                 "drawable", getContext().getPackageName()));
 
+
+
                     holder.itemView.setOnClickListener(v -> {
-                        if (model.getQuantity() >0) {
+                        if (model.getQuantity() > 0) {
                             model.getItemId().get()
                                     .addOnSuccessListener(documentSnapshot -> {
                                           Item temp = documentSnapshot.toObject(Item.class);
@@ -129,30 +127,45 @@ public class BagFragment extends Fragment {
                                           itemStatFlag = temp.getStat();
                                           itemTypeFlag = temp.getType();
                                           itemValueFlag = temp.getValue();
+                                          itemPositionFlag = position;
                                     })
-                                    .addOnFailureListener(e -> {
-                                        Log.e("error", e.getMessage());
-                                    });
-
+                                    .addOnFailureListener(e -> Log.e("error", e.getMessage()));
                         }
                     });
 
-                    use.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if(itemTypeFlag.equals("consume")){
-                                PLAYER.update(itemStatFlag, itemValueFlag);//.addOnSuccessListener().addOnFailureListener();
-                                PLAYER_ITEMS.document(String.valueOf(itemPositionFlag)).update("quatity",playerItemQuantityFlag-1);
-                            }else if (itemTypeFlag.equals("craft")){
-                                //TODO SWITCH TO CRAFT
+                    use.setOnClickListener(v -> {
+                        if(itemTypeFlag.equals("consume")){
+                            PLAYER.get().addOnCompleteListener(task -> {
+                                int val = 0;
+                                if (task.isSuccessful()){
+                                    if (itemStatFlag.equals("life")) {
+                                        int temp = task.getResult().toObject(PlayerFC.class).getLife();
+                                        if (temp + itemValueFlag > 100)
+                                            val = 100;
+                                        else
+                                            val = itemValueFlag + temp;
+
+                                        PLAYER.update("life", val);
+                                    }
+                                    else
+                                        PLAYER.update(itemStatFlag, itemValueFlag);//.addOnSuccessListener().addOnFailureListener();
+                                }
+                                else
+                                    Log.w(TAG, "Error on getting player for update");
+                            });
+                            String itemDoc = String.valueOf(itemPositionFlag+1);
+                            if(itemPositionFlag< 10){
+                                itemDoc = "0"+itemPositionFlag;
                             }
+                            Log.w(TAG, "Position: " + playerItemQuantityFlag + " , " + itemDoc);
+                            PLAYER_ITEMS.document(itemDoc).update(PlayerItem.QUANTITY,(playerItemQuantityFlag-1));
+                        }else if (itemTypeFlag.equals("craft")){
+                            //TODO SWITCH TO CRAFT
                         }
                     });
 
                 }
             }
-
-
 
             @Override
             public ViewHolder onCreateViewHolder(ViewGroup group, int i) {
@@ -184,6 +197,7 @@ public class BagFragment extends Fragment {
             myTextView = itemView.findViewById(R.id.quantity_item);
             image = itemView.findViewById(R.id.image_item);
         }
+
     }
 
     @Override

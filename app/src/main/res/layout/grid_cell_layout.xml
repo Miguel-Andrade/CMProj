@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:background="@drawable/grid_cell_border"
+    android:layout_margin="1dp">
 
     <ImageView
+        android:id="@+id/image_item"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:padding="5dp"
-        android:id="@+id/image_item"
-        android:background="@drawable/bubonic_plague_doc_icon_3"/>-->
+        android:padding="5dp" />
 
     <TextView
         android:id="@+id/quantity_item"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
+        android:autoSizeTextType="uniform"
         android:textAllCaps="true"
         android:textAlignment="center"
         android:textColor="@color/colorAccent" />

@@ -3,7 +3,6 @@ package com.kingoftheill.app1.presentation.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -73,30 +72,31 @@ public class PlayerInfoActivity extends AppCompatActivity {
             }
         });
 
-        killed = (TextView) findViewById(R.id.kills);
+        killed = findViewById(R.id.kills);
         nKills = 2;
         killed.setText("Kills: "+ nKills);
 
-        deaths = (TextView) findViewById(R.id.deaths);
+        deaths = findViewById(R.id.deaths);
         nDeaths = 0;
         deaths.setText("Deaths: "+ nDeaths);
 
-        infected = (TextView) findViewById(R.id.infected);
+        infected = findViewById(R.id.infected);
         nInfected = 8;
         infected.setText("Infected: "+ nInfected);
 
-        recoveries = (TextView) findViewById(R.id.recoveries);
+        recoveries = findViewById(R.id.recoveries);
         nRecoveries = 1;
         recoveries.setText("Recoveries: "+ nRecoveries);
 
 
         b1 = (Button)findViewById(R.id.button1);
         if (!getIntent().getExtras().getBoolean("attack")) {
-            b1.setVisibility(View.INVISIBLE);
-
+            b1.setEnabled(false);
+            b1.setText("Out of range!!!");
         }
         else {
-            b1.setVisibility(View.VISIBLE);
+            b1.setEnabled(true);
+            b1.setText("INFECT!!!");
             b1.setOnClickListener(view -> onbuttonpressed());
         }
 
@@ -104,6 +104,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
     private void onbuttonpressed() {
         Intent intent = new Intent(this,BattleActivity.class);
+        intent.putExtra("ref", getIntent().getStringExtra("ref"));
         startActivity(intent);
     }
 

@@ -68,45 +68,46 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:padding="5px"
-                    app:srcCompat="@mipmap/ic_launcher" />
+                    android:padding="5dp"
+                    android:background="@drawable/grid_cell_border"
+                    app:srcCompat="@mipmap/ic_launcher_new" />
 
                 <ImageButton
                     android:id="@+id/imageButton4"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:padding="5px"
-                    app:srcCompat="@mipmap/ic_launcher" />
+                    android:background="@drawable/grid_cell_border"
+                    android:padding="5dp"
+                    app:srcCompat="@mipmap/ic_launcher_new"
+                    />
 
                 <ImageButton
                     android:id="@+id/imageButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:padding="5px"
-                    app:srcCompat="@mipmap/ic_launcher" />
+                    android:background="@drawable/grid_cell_border"
+                    android:padding="5dp"
+                    app:srcCompat="@mipmap/ic_launcher_new" />
 
                 <ImageButton
                     android:id="@+id/imageButton2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:padding="5px"
-                    app:srcCompat="@mipmap/ic_launcher" />
+                    android:background="@drawable/grid_cell_border"
+                    android:padding="5dp"
+                    app:srcCompat="@mipmap/ic_launcher_new" />
 
                 <ImageButton
                     android:id="@+id/imageButton3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:padding="5px"
-                    app:srcCompat="@mipmap/ic_launcher" />
+                    android:background="@drawable/grid_cell_border"
+                    android:padding="5dp"
+                    app:srcCompat="@mipmap/ic_launcher_new" />
 
             </LinearLayout>
         </LinearLayout>
