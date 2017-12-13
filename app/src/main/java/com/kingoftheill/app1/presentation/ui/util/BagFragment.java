@@ -3,12 +3,15 @@ package com.kingoftheill.app1.presentation.ui.util;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +20,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -25,6 +29,7 @@ import com.kingoftheill.app1.domain2.Item;
 import com.kingoftheill.app1.domain2.PlayerItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class BagFragment extends Fragment {
@@ -42,9 +47,14 @@ public class BagFragment extends Fragment {
     private FirebaseUser mFirebaseUser;
     private FirebaseFirestore mFirebaseFirestore;
 
+    private String itemStatFlag, itemTypeFlag;
+    private int itemValueFlag, itemPositionFlag, playerItemQuantityFlag;
+
+
     private static CollectionReference PLAYER_ITEMS;
 
     private String mUsername;
+    private static DocumentReference PLAYER;
 
     @Nullable
     @Override
@@ -56,6 +66,8 @@ public class BagFragment extends Fragment {
         mFirebaseFirestore = FirebaseFirestore.getInstance();
 
         mUsername = mFirebaseUser.getEmail();
+        PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
+
         PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
         PlayerItems = new ArrayList<>();
         for (int i =0; i<=29; i++) {
@@ -74,6 +86,8 @@ public class BagFragment extends Fragment {
         TextView itemValue =  view.findViewById(R.id.textView5);
         TextView itemDescription = view.findViewById(R.id.textView2);
         ImageView itemImage = view.findViewById(R.id.imageView2);
+        Button use = view.findViewById(R.id.button);
+
 
         //UPDATE PLAYER ITEMS
         FirestoreRecyclerOptions<PlayerItem> options = new FirestoreRecyclerOptions.Builder<PlayerItem>()
@@ -85,6 +99,9 @@ public class BagFragment extends Fragment {
             public void onBindViewHolder(ViewHolder holder, int position, PlayerItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
+                itemPositionFlag = position;
+                playerItemQuantityFlag = model.getQuantity();
+
                 if (model.getQuantity() > 0) {
                     holder.myTextView.setText(model.getQuantity()+"");
                     if (model.getImage().equals(""))
@@ -108,6 +125,10 @@ public class BagFragment extends Fragment {
                                                           "drawable", getContext().getPackageName()));
                                           itemStat.setText(temp.getStat());
                                           itemValue.setText(temp.getValue()+"");
+
+                                          itemStatFlag = temp.getStat();
+                                          itemTypeFlag = temp.getType();
+                                          itemValueFlag = temp.getValue();
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.e("error", e.getMessage());
@@ -115,6 +136,19 @@ public class BagFragment extends Fragment {
 
                         }
                     });
+
+                    use.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(itemTypeFlag.equals("consume")){
+                                PLAYER.update(itemStatFlag, itemValueFlag);//.addOnSuccessListener().addOnFailureListener();
+                                PLAYER_ITEMS.document(String.valueOf(itemPositionFlag)).update("quatity",playerItemQuantityFlag-1);
+                            }else if (itemTypeFlag.equals("craft")){
+                                //TODO SWITCH TO CRAFT
+                            }
+                        }
+                    });
+
                 }
             }
 

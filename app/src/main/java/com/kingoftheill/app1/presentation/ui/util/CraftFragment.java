@@ -3,38 +3,70 @@ package com.kingoftheill.app1.presentation.ui.util;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.Transaction;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.PlayerItem;
 import com.kingoftheill.app1.domain2.Receita;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
 public class CraftFragment extends Fragment {
 
-    private List<Receita> Receitas;
-
     //RECYCLER VIEW
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private FirestoreRecyclerAdapter adapter;
+    private LinearLayoutManager manager;
 
+    // Firebase instance variables
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private FirebaseFirestore mFirebaseFirestore;
 
+    private static DocumentReference PLAYER;
+    private static CollectionReference PLAYER_ITEMS;
+    private static CollectionReference RECEITAS;
+    private String mUsername;
 
     private Boolean ing1, ing2, ing3, ing4, ing5;
     //private ArrayList<Integer> antidote;
     private ImageButton b1, b2, b3, b4, b5;
+    private Button craft_button;
     private TextView rName;
     private ProgressBar pb;
     private int currentProgress;
+
+    private List<Receita> Receitas;
+    private List<Integer> ings = new ArrayList<>(5);
+    private List<Boolean> ingsUsed = new ArrayList<>(5);
 
 
     @Nullable
@@ -43,156 +75,308 @@ public class CraftFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_craft,container,false);
 
 
-        /*b1 = (ImageButton)view.findViewById(R.id.imageButton);
+        b1 = (ImageButton)view.findViewById(R.id.imageButton);
         b2 = (ImageButton)view.findViewById(R.id.imageButton2);
         b3 = (ImageButton)view.findViewById(R.id.imageButton3);
         b4 = (ImageButton)view.findViewById(R.id.imageButton4);
         b5 = (ImageButton)view.findViewById(R.id.imageButton5);
         rName = (TextView) view.findViewById(R.id.receitaName);
+        craft_button = view.findViewById(R.id.craft_button);
 
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseFirestore = FirebaseFirestore.getInstance();
 
-        List<Integer> ings = new ArrayList<>(5);
-        ings.add(1);
-        ings.add(2);
-        ings.add(3);
-        ings.add(4);
-        ings.add(5);
-        List<Boolean> ingsUsed = new ArrayList<>(5);
-        ingsUsed.add(true);
-        ingsUsed.add(true);
-        ingsUsed.add(true);
-        ingsUsed.add(true);
-        ingsUsed.add(true);
-        Receita receita1 = new Receita (1, "BubonicCure", ings, 6, 0, ingsUsed);
+        mUsername = mFirebaseUser.getEmail();
+        PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
+        PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
+        RECEITAS = mFirebaseFirestore.collection("Receitas/");
 
-        // Ingredientes
-        ing1 = ingsUsed.get(0);
-        ing2 = ingsUsed.get(1);
-        ing3 = ingsUsed.get(2);
-        ing4 = ingsUsed.get(3);
-        ing5 = ingsUsed.get(4);
+//        Receitas = new ArrayList<>();
+//        for (int i =0; i<=4; i++) {
+//            Receitas.add(new Receita(i, "BubonicCure",ings,6));
+//        }
+//        Receitas.add(new Receita(3, "InfluenzaCure",ings,6));
+//        Receitas.add(new Receita(4, "", null, 0));
 
-        //Progresso atual para completar o antidoto
-        currentProgress = receita1.getProgresso();
-        pb = (ProgressBar)view.findViewById(R.id.vprogressbar);
-        pb.setProgress(currentProgress);
+        Query q = RECEITAS;
 
-
-        Receitas = new ArrayList<>();
-        for (int i =0; i<=3; i++) {
-            Receitas.add(new Receita(i, "BubonicCure",ings,6, 0, ingsUsed));
-        }
-        Receitas.add(new Receita(3, "InfluenzaCure",ings,6, 0, ingsUsed));
-        Receitas.add(new Receita(4, "", null, 0, 0, null));
-
-        //RECYCLER VIEW
+        manager = new LinearLayoutManager(getContext());
         mRecyclerView = (RecyclerView) view.findViewById(R.id.receitas_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(manager);
 
-        ReceitasAdapter.RecyclerViewClickListener listener = (view1, rec) -> {
-            String receitaName = rec.getName();
-            rName.setText(receitaName);
-//            for(Item i : items){
-//                if(i.getId()== pItemId){
-//                    itemName.setText("ITEM: " + i.getName());
-//                    itemStat.setText("STAT: "+ i.getStat());
-//                    itemValue.setText("VALUE: " + String.valueOf(i.getValue()));
-//                    itemDescription.setText("DESCRIPTON: " + i.getDescription());
-//                    itemImage.setBackgroundResource(getContext().getResources().getIdentifier("bubonic_plague_doc_icon_3", "drawable", getContext().getPackageName()));
-//                }
-//            }
+        //UPDATE RECEITAS
+        FirestoreRecyclerOptions<Receita> options = new FirestoreRecyclerOptions.Builder<Receita>()
+                .setQuery(q, Receita.class)
+                .build();
+
+        adapter = new FirestoreRecyclerAdapter<Receita, CraftFragment.ViewHolder>(options) {
+            @Override
+            public void onBindViewHolder(CraftFragment.ViewHolder holder, int position, Receita model) {
+                // Bind the Chat object to the ChatHolder
+                // ...
+                    holder.myTextView.setText(model.getName());
+//                    if (model.getImage().equals(""))
+//                        holder.image.setBackgroundResource(getContext()
+//                                .getResources().getIdentifier("bubonic_plague_doc_icon_3",
+//                                        "drawable", getContext().getPackageName()));
+//                    else
+//                        holder.image.setBackgroundResource(getContext()
+//                                .getResources().getIdentifier(model.getImage(),
+//                                        "drawable", getContext().getPackageName()));
+
+                    holder.itemView.setOnClickListener(v -> {
+                           String receitaName = model.getName();
+                           rName.setText(receitaName);
+//                                    .addOnSuccessListener(documentSnapshot -> {
+//                                        Receita temp = documentSnapshot.toObject(Receita.class);
+//                                    })
+//                                    .addOnFailureListener(e -> {
+//                                        Log.e("error", e.getMessage());
+//                                    });
+
+                    });
+
+                    craft_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            PLAYER_ITEMS.whereEqualTo("itemId", model.getResult()).get().addOnSuccessListener(documentSnapshot -> {
+                                List<PlayerItem> pItem = documentSnapshot.toObjects(PlayerItem.class);
+                                if(isPotCrafted()) {
+                                    if (!pItem.isEmpty()) {
+                                        //ADD CRAFTED ITEM TO INVENTORY
+                                        documentSnapshot.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItem.get(0).getQuantity() + 1);
+
+                                        //REMOVE ITEMS USED IN CRAFT FROM INVENTORY
+                                        PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(0)).get().addOnSuccessListener(documentSnapshot2 -> {
+                                            List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
+                                            if (!pItems.isEmpty()) {
+                                                documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                            } else {
+                                                Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                            }
+                                        });
+                                        PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(1)).get().addOnSuccessListener(documentSnapshot2 -> {
+                                            List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
+                                            if (!pItems.isEmpty()) {
+                                                documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                            } else {
+                                                Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                            }
+                                        });
+                                        PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(2)).get().addOnSuccessListener(documentSnapshot2 -> {
+                                            List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
+                                            if (!pItems.isEmpty()) {
+                                                documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                            } else {
+                                                Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                            }
+                                        });
+                                        PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(3)).get().addOnSuccessListener(documentSnapshot2 -> {
+                                            List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
+                                            if (!pItems.isEmpty()) {
+                                                documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                            } else {
+                                                Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                            }
+                                        });
+                                        PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(4)).get().addOnSuccessListener(documentSnapshot2 -> {
+                                            List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
+                                            if (!pItems.isEmpty()) {
+                                                documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                            } else {
+                                                Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                            }
+                                        });
+
+                                    } else {
+                                        PLAYER_ITEMS.whereEqualTo("itemId", "").limit(1).get().addOnSuccessListener(documentSnapshot2 -> {
+                                            List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
+                                            if (!pItems.isEmpty()) {
+                                                PlayerItem pi = new PlayerItem(model.getResult(), 1, model.getImage());
+                                                documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().set(pi);
+
+                                                //REMOVE ITEMS USED IN CRAFT FROM INVENTORY
+                                                PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(0)).get().addOnSuccessListener(documentSnapshot3 -> {
+                                                    List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
+                                                    if (!pItems.isEmpty()) {
+                                                        documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                                    } else {
+                                                        Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                                    }
+                                                });
+                                                PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(1)).get().addOnSuccessListener(documentSnapshot3 -> {
+                                                    List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
+                                                    if (!pItems.isEmpty()) {
+                                                        documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                                    } else {
+                                                        Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                                    }
+                                                });
+                                                PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(2)).get().addOnSuccessListener(documentSnapshot3 -> {
+                                                    List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
+                                                    if (!pItems.isEmpty()) {
+                                                        documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                                    } else {
+                                                        Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                                    }
+                                                });
+                                                PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(3)).get().addOnSuccessListener(documentSnapshot3 -> {
+                                                    List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
+                                                    if (!pItems.isEmpty()) {
+                                                        documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                                    } else {
+                                                        Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                                    }
+                                                });
+                                                PLAYER_ITEMS.whereEqualTo("itemId", model.getIngsReceita().get(4)).get().addOnSuccessListener(documentSnapshot3 -> {
+                                                    List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
+                                                    if (!pItems.isEmpty()) {
+                                                        documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                                    } else {
+                                                        Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT);
+                                                    }
+                                                });
+                                            } else {
+                                                Toast.makeText(getContext(), "Your Inventory is Full!", Toast.LENGTH_SHORT);
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                             Log.e("error", e.getMessage());
+                                        });
+
+                                    }
+                                }else{
+                                    Toast.makeText(getContext(),"Add Your Items First!", Toast.LENGTH_SHORT);
+                                }
+                            })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("error", e.getMessage());
+                                    });
 
 
-            Toast.makeText(getContext(), "Position " + receitaName, Toast.LENGTH_SHORT).show();
+                                currentProgress = 0;
+                                pb.setProgress(currentProgress);
+                                ing1 = true;
+                                ing2 = true;
+                                ing3 = true;
+                                ing4 = true;
+                                ing5 = true;
+                        }
+                    });
+
+            }
+
+
+
+            @Override
+            public CraftFragment.ViewHolder onCreateViewHolder(ViewGroup group, int i) {
+                // Create a new instance of the ViewHolder, in this case we are using a custom
+                // layout called R.layout.message for each item
+                View view = LayoutInflater.from(group.getContext())
+                        .inflate(R.layout.receita_grid, group, false);
+
+                return new CraftFragment.ViewHolder(view);
+            }
+
+            @Override
+            public void onError(FirebaseFirestoreException e) {
+                Log.e("error", e.getMessage());
+            }
+
+
+
         };
-        mAdapter = new ReceitasAdapter(getContext(), Receitas, listener);
-        //mAdapter.setClickListener(this);
-        mRecyclerView.setAdapter(mAdapter);
 
-        addButtonClickListener();
-        potCrafted();
+        mRecyclerView.setAdapter(adapter);
 
-        */
         return view;
 
     }
 
-    private void potCrafted (){
+    private boolean isPotCrafted (){
         if(currentProgress == 100){
-
-            PlayerItem pi = new PlayerItem();
-
-            currentProgress = 0;
-            //thread.sleep(2000);
-            pb.setProgress(currentProgress);
-            ing1 = true;
-            ing2 = true;
-            ing3 = true;
-            ing4 = true;
-            ing5 = true;
+            return true;
         }
+        return false;
     }
 
     private void addButtonClickListener() {
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(currentProgress < 100 && ing1) {
+                if(currentProgress < 100 && ing1 && !isPotCrafted()) {
                     currentProgress += 20;
                     pb.setProgress(currentProgress);
                     ing1 = false;
                 }
-                potCrafted();
-
             }
         });
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(currentProgress < 100 && ing2) {
+                if(currentProgress < 100 && ing2 && !isPotCrafted()) {
                     currentProgress += 20;
                     pb.setProgress(currentProgress);
                     ing2 = false;
                 }
-                potCrafted();
             }
         });
         b3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(currentProgress < 100 && ing3) {
+                if(currentProgress < 100 && ing3 && !isPotCrafted()) {
                     currentProgress += 20;
                     pb.setProgress(currentProgress);
                     ing3 = false;
                 }
-                potCrafted();
             }
         });
         b4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(currentProgress < 100 && ing4) {
+                if(currentProgress < 100 && ing4 && !isPotCrafted()) {
                     currentProgress += 20;
                     pb.setProgress(currentProgress);
                     ing4 = false;
                 }
-                potCrafted();
             }
         });
         b5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(currentProgress < 100 && ing5) {
+                if(currentProgress < 100 && ing5 && !isPotCrafted()) {
                     currentProgress += 20;
                     pb.setProgress(currentProgress);
                     ing5 = false;
                 }
-                potCrafted();
             }
         });
     }
 
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView myTextView;
+        ImageView image;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+            myTextView = itemView.findViewById(R.id.quantity_item);
+            image = itemView.findViewById(R.id.image_item);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
 
 }

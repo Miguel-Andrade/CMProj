@@ -1,5 +1,7 @@
 package com.kingoftheill.app1.domain2;
 
+import com.google.firebase.firestore.DocumentReference;
+
 import java.util.List;
 
 /**
@@ -8,28 +10,28 @@ import java.util.List;
 
 public class Receita {
 
-    private int id;
     private String name;
-    private List<Integer> ingsReceita;
-    private int resultId;
-    private int progresso;
-    private List<Boolean> ingsUsed;
+    private List<DocumentReference> ingsReceita;
+    private DocumentReference result;
+    private String image;
+//    private int progresso;
+//    private List<Boolean> ingsUsed;
 
     public Receita(){}
 
-    public Receita (int id, String name, List<Integer>ingsReceita, int resultId, int progresso, List<Boolean>ingsUsed){
-        this.id = id;
+    public Receita (String name, List<DocumentReference>ingsReceita, DocumentReference result, String image){
         this.name = name;
         this.ingsReceita = ingsReceita;
-        this.resultId = resultId;
-        this.progresso = progresso;
-        this.ingsUsed = ingsUsed;
+        this.result = result;
+        this.image = image;
+//        this.progresso = progresso;
+//        this.ingsUsed = ingsUsed;
     }
 
-    public int getId(){return id;}
     public String getName(){return name;}
-    public List<Integer> getIngsReceita(){return ingsReceita;}
-    public int getResultId(){return resultId;}
-    public int getProgresso(){return progresso;}
-    public List<Boolean> getIngsUsed(){return ingsUsed;}
+    public List<DocumentReference> getIngsReceita(){return ingsReceita;}
+    public DocumentReference getResult(){return result;}
+    public String getImage (){ return image;}
+//    public int getProgresso(){return progresso;}
+//    public List<Boolean> getIngsUsed(){return ingsUsed;}
 }

@@ -15,6 +15,7 @@ public class Item {
 
 
     public static final String CONSUME = "consume";
+    public static final String CRAFT = "craft";
 
     public Item() {
     }
