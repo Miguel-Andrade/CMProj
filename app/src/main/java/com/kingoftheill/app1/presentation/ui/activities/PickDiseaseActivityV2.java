@@ -67,7 +67,7 @@ public class PickDiseaseActivityV2 extends AppCompatActivity {
     }
 
     public void onbuttonpressed() {
-        mFirebaseFirestore.document("Users/" + mFirebaseUser.getEmail())
+        mFirebaseFirestore.document("Users/" + mFirebaseUser.getUid())
                 .update(PlayerFC.setDis(mViewPager.getCurrentItem()));
         Toast.makeText(this, "Picked!", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MapActivity.class);

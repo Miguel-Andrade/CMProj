@@ -45,7 +45,7 @@ public class BattleActivity extends AppCompatActivity {
 
     private Battle battle;
 
-    private boolean flag = true;
+    private boolean flag = false;
     private boolean flag2 = true;
 
     private boolean attacker;
@@ -102,65 +102,65 @@ public class BattleActivity extends AppCompatActivity {
             // SET BATTLE IN FIRESTORE
             mFirebaseFirestore.collection("Battles").add(battle).addOnSuccessListener(documentReference -> {
 
-                    loading.setVisibility(View.GONE);
-                    but1.setEnabled(true);
+                loading.setVisibility(View.GONE);
+                but1.setEnabled(true);
 
-                    Log.w(TAG, "Battle Ref: " + BATTLE);
+                BATTLE = documentReference;
 
-                    // GET BATTLE PROGRESS
-                    documentReference.addSnapshotListener(this, (documentSnapshot, e) -> {
-                        if (documentSnapshot.exists()) {
-                            battle = documentSnapshot.toObject(Battle.class);
-                            pb.setProgress(battle.getValue());
-                            progressValue = (int) documentSnapshot.get("value");
+                Log.w(TAG, "Battle ID: " + BATTLE.getId());
 
-                            if (((boolean) documentSnapshot.get("defenderOnline")) && flag) {
-                                loading.setVisibility(View.INVISIBLE);
-                                but1.setEnabled(true);
-                                flag = false;
-                                //new CounterTask().execute();
-                            }
-                        } else
-                            Log.e(TAG, "Error on battle details" + e.getMessage());
-                    });
+                // GET BATTLE PROGRESS
+                documentReference.addSnapshotListener(this, (documentSnapshot, e) -> {
+                    if (documentSnapshot.exists()) {
+                        //battle = documentSnapshot.toObject(Battle.class);
+                        //Map<String, Object> ad = documentSnapshot.getData();
+                        //pb.setProgress(battle.getValue());
+                        progressValue =  documentSnapshot.getLong("value").intValue();
+                        pb.setProgress(progressValue);
+
+                        if (documentSnapshot.getBoolean("defenderOnline") && !flag) {
+                            loading.setVisibility(View.INVISIBLE);
+                            but1.setEnabled(true);
+                            flag = true;
+                            new CounterTask().execute();
+                        }
+                    } else
+                        Log.e(TAG, "Error on battle details" + e.getMessage());
+                });
         });}
 
         else {
             // GET BATTLE PROGRESS
+            Log.w(TAG, "Battle ID: " + BATTLE.getId());
             BATTLE.addSnapshotListener(this, (documentSnapshot, e) -> {
                 if (documentSnapshot.exists()) {
-                    battle = documentSnapshot.toObject(Battle.class);
-                    pb.setProgress(battle.getValue());
-                    progressValue = (int) documentSnapshot.get("value");
 
-                    if (((boolean) documentSnapshot.get("defenderOnline")) && flag) {
+                    progressValue = documentSnapshot.getLong("value").intValue();
+                    pb.setProgress(progressValue);
+
+                    if (!flag) {
                         loading.setVisibility(View.INVISIBLE);
                         but1.setEnabled(true);
-                        flag = false;
-                        //new CounterTask().execute();
+                        flag = true;
+                        BATTLE.update("defenderOnline", true);
+                        new CounterTask().execute();
                     }
                 } else
                     Log.e(TAG, "Error on battle details" + e.getMessage());
             });
-
-            if (flag2) {
-                BATTLE.update("defenderOnline", true);
-                flag2 = false;
-            }
         }
-        addButtonClickListener();
 
-    }
-
-    // UPDATE BATTLE
-    private void addButtonClickListener() {
+        // UPDATE BATTLE
         but1.setOnClickListener(view -> {
             if (attacker) {
                 if (progressValue + battleValue > 100)
                     BATTLE.update("value", 100);
 
                 else
-                    BATTLE.update("value", (progressValue + battleValue));
+                    BATTLE.update("value", (progressValue + battleValue))
+                            .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
+
+                Log.w(TAG, "Battle value attack: " + (battleValue));
             }
             else  {
                 if (progressValue - battleValue < 0)
@@ -169,6 +169,7 @@ public class BattleActivity extends AppCompatActivity {
                     BATTLE.update("value", (progressValue - battleValue));
             }
         });
+
     }
 
     private class CounterTask extends AsyncTask<Void, Integer, Void> {
@@ -189,7 +190,7 @@ public class BattleActivity extends AppCompatActivity {
         }
 
         protected void onProgressUpdate(Integer... vals) {
-            tField.setText(vals[0].intValue());
+            tField.setText(vals[0]+"");
         }
 
         protected void onPostExecute(Void result) {
