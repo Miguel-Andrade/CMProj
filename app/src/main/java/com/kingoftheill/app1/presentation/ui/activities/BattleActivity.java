@@ -196,10 +196,10 @@ public class BattleActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             but1.setEnabled(false);
 
-            if (battleValue > 50) {
+            if (attacker && battleValue > 50) {
                 tField.setText("Victory!");
             }
-            if (battleValue < 50) {
+            if (!attacker && battleValue < 50) {
                 tField.setText("Defeat!");
             }
             if (battleValue == 50) {

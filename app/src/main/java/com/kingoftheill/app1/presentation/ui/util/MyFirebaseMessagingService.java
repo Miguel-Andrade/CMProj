@@ -18,7 +18,6 @@ package com.kingoftheill.app1.presentation.ui.util;
 
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -93,7 +92,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void handleNow(String doc) {
         Log.d(TAG, "Short lived task is done.");
-        Toast.makeText(this, "Going to Battle ", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Going to Battle ", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, BattleActivity.class);
         intent.putExtra("ref", doc);
         intent.putExtra("defender", true);
