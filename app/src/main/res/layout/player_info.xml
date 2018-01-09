@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/edittext"
+            android:layout_gravity="center_vertical"
             android:textAlignment="center"
             android:textColor="#080706"
             android:textSize="40sp"
@@ -35,6 +36,7 @@
         android:layout_height="0dp"
         android:layout_weight="2"
         android:orientation="vertical"
+        android:layout_gravity="center_vertical"
         android:weightSum="2"
         android:layout_marginTop="100dp"
         android:layout_marginLeft="10dp"
@@ -43,6 +45,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:orientation="horizontal"
             android:weightSum="3">
@@ -50,6 +53,7 @@
             <TextView
                 android:id="@+id/Plevel"
                 android:layout_weight="1"
+                android:layout_gravity="center_vertical"
                 android:layout_width="0dp"
                 android:layout_height="25dp"
                 android:background="@drawable/edittext"
@@ -60,6 +64,7 @@
 
             <ProgressBar
                 android:id="@+id/pbPLVL"
+                android:layout_gravity="center_vertical"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
                 android:layout_height="25dp"
@@ -70,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="3">
 
@@ -77,6 +83,7 @@
                 android:id="@+id/Dlevel"
                 android:layout_width="0dp"
                 android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="@drawable/edittext"
                 android:textAlignment="center"
@@ -86,6 +93,7 @@
 
             <ProgressBar
                 android:id="@+id/pbDLVL"
+                android:layout_gravity="center_vertical"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
                 android:layout_height="25dp"
@@ -96,6 +104,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_gravity="center_vertical"
         android:layout_height="0dp"
         android:layout_weight="5"
         android:orientation="horizontal"
@@ -103,6 +112,7 @@
         android:weightSum="2">
 
         <LinearLayout
+            android:layout_gravity="center_vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -112,6 +122,7 @@
 
             <TextView
                 android:id="@+id/recoveries"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -124,6 +135,7 @@
 
             <TextView
                 android:id="@+id/kills"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -136,6 +148,7 @@
 
             <TextView
                 android:id="@+id/deaths"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -148,6 +161,7 @@
 
             <TextView
                 android:id="@+id/infected"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -162,6 +176,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:orientation="vertical"
             android:layout_margin="10dp"
@@ -169,6 +184,7 @@
 
             <TextView
                 android:id="@+id/hp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -183,6 +199,7 @@
 
             <TextView
                 android:id="@+id/range"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -195,6 +212,7 @@
 
             <TextView
                 android:id="@+id/damage"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -207,6 +225,7 @@
 
             <TextView
                 android:id="@+id/resistence"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -219,6 +238,7 @@
 
             <TextView
                 android:id="@+id/defense"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -234,13 +254,13 @@
 
     <Button
         android:id="@+id/infect"
+        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:layout_gravity="center_horizontal"
         android:background="@color/colorAccent"/>
 
 </LinearLayout>

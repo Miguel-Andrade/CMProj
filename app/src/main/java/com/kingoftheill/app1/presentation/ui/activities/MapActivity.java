@@ -461,7 +461,7 @@ public class MapActivity extends AppCompatActivity
     }
 
     public Bitmap myMarker(String type, int id) {
-        int height = 100;
+        int height = 75;
         int width = 100;
         int drawableR;
         if (type.equals("item")) {
@@ -471,15 +471,15 @@ public class MapActivity extends AppCompatActivity
             switch(id) {
 
                 case 0:
-                    drawableR = R.drawable.bubonic_plague_doc_icon_3;
+                    drawableR = R.drawable.logo_pic_influenza_wolf;
                     break;
 
                 case 1:
-                    drawableR = R.drawable.bubonic_plague_doc_icon_3;
+                    drawableR = R.drawable.logo_pic_bubonic_bird;
                     break;
 
                 case 2:
-                    drawableR = R.drawable.bubonic_plague_doc_icon_3;
+                    drawableR = R.drawable.logo_pic_smallpox_alce;
                     break;
                 default:
                     drawableR = R.drawable.bubonic_plague_doc_icon_3;
@@ -506,9 +506,7 @@ public class MapActivity extends AppCompatActivity
             public void onKeyEntered(String key, GeoLocation location) {
                 if (!key.equals(mUsername)) {
                     Marker m = mGoogleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(location.latitude, location.longitude))
-                            .icon(BitmapDescriptorFactory.fromBitmap(myMarker("player", 1))));
-
+                            .position(new LatLng(location.latitude, location.longitude)));
                     mFirebaseFirestore.document("/Users/" + key).get()
                             .addOnSuccessListener(documentSnapshot -> {
                                         if (documentSnapshot.exists()) {
@@ -517,6 +515,7 @@ public class MapActivity extends AppCompatActivity
                                             o.put("user", true);
                                             m.setTag(o);
                                             m.setTitle((String) documentSnapshot.get("name"));
+                                            m.setIcon(BitmapDescriptorFactory.fromBitmap(myMarker("player", documentSnapshot.getLong("type").intValue())));
                                         }
                                     }
                                 )

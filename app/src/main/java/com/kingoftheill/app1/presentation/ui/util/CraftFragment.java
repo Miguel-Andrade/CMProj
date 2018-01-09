@@ -107,7 +107,7 @@ public class CraftFragment extends Fragment {
 
                         PLAYER_ITEMS.whereEqualTo("itemId", model.getResult()).get().addOnSuccessListener(documentSnapshot -> {
                             List<PlayerItem> pItem = documentSnapshot.toObjects(PlayerItem.class);
-                            if(isPotCrafted()) {
+                            //if(isPotCrafted()) {
                                 if (!pItem.isEmpty()) {
                                     //ADD CRAFTED ITEM TO INVENTORY
                                     documentSnapshot.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItem.get(0).getQuantity() + 1);
@@ -155,7 +155,7 @@ public class CraftFragment extends Fragment {
                                     });
 
                                 } else {
-                                    PLAYER_ITEMS.whereEqualTo("itemId", "").limit(1).get().addOnSuccessListener(documentSnapshot2 -> {
+                                    PLAYER_ITEMS.whereEqualTo("quantity", 0).limit(1).get().addOnSuccessListener(documentSnapshot2 -> {
                                         List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
                                         if (!pItems.isEmpty()) {
                                             PlayerItem pi = new PlayerItem(model.getResult(), 1, model.getImage());
@@ -209,22 +209,22 @@ public class CraftFragment extends Fragment {
                                     .addOnFailureListener(e -> Log.e("error", e.getMessage()));
 
                                 }
-                            }else{
-                                Toast.makeText(getContext(),"Add Your Items First!", Toast.LENGTH_SHORT).show();
-                            }
+//                            }else{
+//                                Toast.makeText(getContext(),"Add Your Items First!", Toast.LENGTH_SHORT).show();
+//                            }
                         })
                                 .addOnFailureListener(e -> {
                                     Log.e("error", e.getMessage());
                                 });
 
 
-                            currentProgress = 0;
-                            pb.setProgress(currentProgress);
-                            ing1 = true;
-                            ing2 = true;
-                            ing3 = true;
-                            ing4 = true;
-                            ing5 = true;
+//                            currentProgress = 0;
+//                            pb.setProgress(currentProgress);
+//                            ing1 = true;
+//                            ing2 = true;
+//                            ing3 = true;
+//                            ing4 = true;
+//                            ing5 = true;
                     });
 
             }

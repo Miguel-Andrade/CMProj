@@ -98,6 +98,7 @@ public class BagFragment extends Fragment {
 
                 playerItemQuantityFlag = model.getQuantity();
 
+
                 if (model.getQuantity() > 0) {
                     holder.myTextView.setText(model.getQuantity()+"");
                     if (model.getImage().equals(""))
@@ -136,6 +137,7 @@ public class BagFragment extends Fragment {
                         if(itemTypeFlag.equals("consume")){
                             PLAYER.get().addOnCompleteListener(task -> {
                                 int val = 0;
+                                playerItemQuantityFlag = model.getQuantity();
                                 if (task.isSuccessful()){
                                     if (itemStatFlag.equals("life")) {
                                         int temp = task.getResult().toObject(PlayerFC.class).getLife();

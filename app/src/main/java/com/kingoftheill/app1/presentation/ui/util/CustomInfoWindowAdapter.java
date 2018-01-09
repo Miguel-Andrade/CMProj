@@ -3,6 +3,7 @@ package com.kingoftheill.app1.presentation.ui.util;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -32,6 +33,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
             if (!title.equals("")) {
                 tvTitle.setText(title);
             }
+
         }
         else {
             TextView tvTitle = view.findViewById(R.id.item_name);

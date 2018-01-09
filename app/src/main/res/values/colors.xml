@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#594D46</color>
     <color name="colorAccent">#D1B280</color>
     <color name="paper">#EFEFEF</color>
+    <color name="infoWBackG">#66EEEEEE</color>
 </resources>
