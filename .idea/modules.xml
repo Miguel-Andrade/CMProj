@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Android-Clean-Boilerplate-master.iml" filepath="$PROJECT_DIR$/Android-Clean-Boilerplate-master.iml" />
-      <module fileurl="file://C:\Users\Andrade\Downloads\Android-Clean-Boilerplate-master\Android-Clean-Boilerplate-master\.idea\CMProj.iml" filepath="C:\Users\Andrade\Downloads\Android-Clean-Boilerplate-master\Android-Clean-Boilerplate-master\.idea\CMProj.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

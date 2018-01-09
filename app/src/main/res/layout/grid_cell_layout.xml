@@ -18,8 +18,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:autoSizeTextType="uniform"
+        android:layout_marginRight="7dp"
         android:textAllCaps="true"
+        android:textSize="20sp"
         android:textAlignment="center"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@color/colorPrimary" />
 
 </FrameLayout >

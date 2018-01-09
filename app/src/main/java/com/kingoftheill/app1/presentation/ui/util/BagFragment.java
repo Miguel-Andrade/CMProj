@@ -62,7 +62,7 @@ public class BagFragment extends Fragment {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mFirebaseFirestore = FirebaseFirestore.getInstance();
 
-        mUsername = mFirebaseUser.getEmail();
+        mUsername = mFirebaseUser.getUid();
         PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
 
         PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
@@ -108,7 +108,6 @@ public class BagFragment extends Fragment {
                         holder.image.setBackgroundResource(getContext()
                                     .getResources().getIdentifier(model.getImage(),
                                 "drawable", getContext().getPackageName()));
-
 
 
                     holder.itemView.setOnClickListener(v -> {

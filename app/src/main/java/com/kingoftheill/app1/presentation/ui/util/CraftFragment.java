@@ -74,7 +74,7 @@ public class CraftFragment extends Fragment {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mFirebaseFirestore = FirebaseFirestore.getInstance();
 
-        mUsername = mFirebaseUser.getEmail();
+        mUsername = mFirebaseUser.getUid();
         PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
         PLAYER_ITEMS = mFirebaseFirestore.collection("Users/" + mUsername + "/Items");
         RECEITAS = mFirebaseFirestore.collection("Receitas");

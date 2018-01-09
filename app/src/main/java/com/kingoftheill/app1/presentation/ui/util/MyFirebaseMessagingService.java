@@ -94,6 +94,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "Short lived task is done.");
         Intent intent = new Intent(this, BattleActivity.class);
         intent.putExtra("ref", doc);
+        intent.putExtra("defender", true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 

@@ -33,10 +33,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -97,8 +94,6 @@ public class SignInActivity extends AppCompatActivity implements
             return;
         }
 
-        loading = findViewById(R.id.load);
-        loading.setVisibility(View.GONE);
         s = findViewById(R.id.s);
 
         // Assign fields
@@ -151,7 +146,8 @@ public class SignInActivity extends AppCompatActivity implements
                 firebaseAuthWithGoogle(account);
             } else {
                 // Google Sign-In failed
-                Log.e(TAG, "Google Sign-In failed.");
+                Log.e(TAG, "Google Sign-In failed."+ result.getStatus());
+                s.stopShimmerAnimation();
             }
         }
     }
@@ -160,46 +156,54 @@ public class SignInActivity extends AppCompatActivity implements
         Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mFirebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+                .addOnCompleteListener(this, task -> {
+                    Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(SignInActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                            WriteBatch batch = mFirebaseFirestore.batch();
-                            DocumentReference reference = mFirebaseFirestore.document("Users/"+ mFirebaseUser.getUid());
-                            DocumentReference l = mFirebaseFirestore.document("Items/Item1");
-                            String token = FirebaseInstanceId.getInstance().getToken();
-                            batch.set(reference, new PlayerFC(tx.getText().toString(), "bubonic_plague_doc_icon_3", token));
-                            for (int i = 0; i <= 29; i++) {
-                                if (i <= 9) {
-                                    DocumentReference item = mFirebaseFirestore.document("Users/" + mFirebaseUser.getUid() + "/Items/0" + i);
-                                    batch.set(item, new PlayerItem(l,0, ""));
+                    // If sign in fails, display a message to the user. If sign in succeeds
+                    // the auth state listener will be notified and logic to handle the
+                    // signed in user can be handled in the listener.
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "signInWithCredential", task.getException());
+                        Toast.makeText(SignInActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+                        WriteBatch batch = mFirebaseFirestore.batch();
+                        DocumentReference reference = mFirebaseFirestore.document("Users/"+ mFirebaseUser.getUid());
+                        reference.get().addOnSuccessListener(documentSnapshot -> {
+                            if (!documentSnapshot.exists()) {
+
+                                DocumentReference l = mFirebaseFirestore.document("Items/Item1");
+                                String token = FirebaseInstanceId.getInstance().getToken();
+                                batch.set(reference, new PlayerFC(tx.getText().toString(), "bubonic_plague_doc_icon_3", token));
+                                for (int i = 0; i <= 29; i++) {
+                                    if (i <= 9) {
+                                        DocumentReference item = mFirebaseFirestore.document("Users/" + mFirebaseUser.getUid() + "/Items/0" + i);
+                                        batch.set(item, new PlayerItem(l,0, ""));
+                                    }
+                                    else {
+                                        DocumentReference item = mFirebaseFirestore.document("Users/" + mFirebaseUser.getUid() + "/Items/" + i);
+                                        batch.set(item, new PlayerItem(l,0, ""));
+                                    }
                                 }
-                                else {
-                                    DocumentReference item = mFirebaseFirestore.document("Users/" + mFirebaseUser.getUid() + "/Items/" + i);
-                                    batch.set(item, new PlayerItem(l,0, ""));
-                                }
-                            }
-                            batch.commit()
-                                    .addOnSuccessListener(accao -> {
-                                        Log.d(TAG, "Player created.");
-                                        startActivity(new Intent(SignInActivity.this, PickDiseaseActivityV2.class));
-                                        finish();})
-                                    .addOnFailureListener(accao -> {
+                                batch.commit()
+                                        .addOnSuccessListener(accao -> {
+                                            Log.d(TAG, "Player created.");
+                                            startActivity(new Intent(SignInActivity.this, PickDiseaseActivityV2.class));
+                                            finish();})
+                                        .addOnFailureListener(accao -> {
                                             Log.d(TAG, "Player created fail.");
                                             Toast.makeText(getApplicationContext(), "Erro", Toast.LENGTH_SHORT);});
-                        }
-                    }
-                });
+                            }
+
+                            else {
+                                Toast.makeText(this, "Wellcome Back", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(this, MapActivity.class));
+                            }
+                        });
+                            }
+                        });
+
         //loading.setVisibility(View.GONE);
     }
 

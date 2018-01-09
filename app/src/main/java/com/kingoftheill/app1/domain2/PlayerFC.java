@@ -1,6 +1,5 @@
 package com.kingoftheill.app1.domain2;
 
-import com.google.firebase.firestore.GeoPoint;
 import com.kingoftheill.app1.domain.model.utilities.PlayerLevels;
 
 import java.util.HashMap;
@@ -15,9 +14,6 @@ public class PlayerFC {
     private String name;
     private String image;
     private String messId;
-
-    //POSITION
-    private GeoPoint pos;
 
     //CORE_STATS
     private int life;
@@ -101,14 +97,6 @@ public class PlayerFC {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public GeoPoint getPos() {
-        return pos;
-    }
-
-    public void setPos(GeoPoint pos) {
-        this.pos = pos;
     }
 
     public int getLife() {

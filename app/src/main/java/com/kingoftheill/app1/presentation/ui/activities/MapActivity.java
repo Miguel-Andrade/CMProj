@@ -415,20 +415,24 @@ public class MapActivity extends AppCompatActivity
     public void onInfoWindowClick(Marker marker) {
         HashMap<String, Object> temp = (HashMap<String, Object>) marker.getTag();
         boolean user = (boolean) temp.get("user");
-        DocumentReference ref = (DocumentReference) temp.get("ref");
+        String image = (String) temp.get("image");
 
         if (!user) {
+            DocumentReference ref = (DocumentReference) temp.get("ref");
             PLAYER_ITEMS.whereEqualTo("itemId", ref).limit(1).get().addOnSuccessListener(documentSnapshot2 -> {
                 if (!documentSnapshot2.isEmpty()) {
                     PlayerItem p = documentSnapshot2.getDocumentChanges().get(0).getDocument().toObject(PlayerItem.class);
+                    HashMap<String,Object> oo = new HashMap<>();
+                    oo.put(PlayerItem.QUANTITY, (p.getQuantity() + 1));
+                    oo.put("image", image);
                     documentSnapshot2.getDocumentChanges().get(0)
-                            .getDocument().getReference().update(PlayerItem.QUANTITY, (p.getQuantity() + 1))
+                            .getDocument().getReference().update(oo)
                             .addOnSuccessListener(aVoid -> Toast.makeText(this, "Item Collected", Toast.LENGTH_SHORT).show());
                 }
                 else {
                     PLAYER_ITEMS.whereEqualTo("itemId", "").limit(1).get().addOnSuccessListener(documentSnapshots -> {
                         if (!documentSnapshots.isEmpty()) {
-                            PlayerItem pl = new PlayerItem(ref, 1, ((String) temp.get("image")));
+                            PlayerItem pl = new PlayerItem(ref, 1, image);
                             documentSnapshots.getDocumentChanges().get(0).getDocument().getReference().set(pl)
                                     .addOnSuccessListener(aVoid -> Toast.makeText(this, "Item Collected", Toast.LENGTH_SHORT).show());
                         }
@@ -442,6 +446,7 @@ public class MapActivity extends AppCompatActivity
         }
 
         else {
+            String ref2 = (String) temp.get("ref");
             Intent intent = new Intent(this, PlayerInfoActivity.class);
             if (Math.hypot(marker.getPosition().latitude - mLastKnownLocation.getLatitude(),
                     marker.getPosition().longitude - mLastKnownLocation.getLongitude()) > 7)
@@ -449,7 +454,7 @@ public class MapActivity extends AppCompatActivity
             else
                 intent.putExtra("attack", true);
 
-            intent.putExtra("ref", ref.toString());
+            intent.putExtra("ref", ref2);
             startActivity(intent);
         }
         marker.hideInfoWindow();
@@ -508,7 +513,7 @@ public class MapActivity extends AppCompatActivity
                             .addOnSuccessListener(documentSnapshot -> {
                                         if (documentSnapshot.exists()) {
                                             HashMap<String, Object> o = new HashMap<>();
-                                            o.put("ref", documentSnapshot.getReference());
+                                            o.put("ref", documentSnapshot.getReference().getId());
                                             o.put("user", true);
                                             m.setTag(o);
                                             m.setTitle((String) documentSnapshot.get("name"));
@@ -518,13 +523,17 @@ public class MapActivity extends AppCompatActivity
                             .addOnFailureListener(e ->
                                 Log.e("Error on markerTag", e.getMessage()));
                     mMarkers.put(key, m);
+                    Log.w(TAG, "Map added player: " + key);
                 }
             }
 
             @Override
             public void onKeyExited(String key) {
-                if (!key.equals(mUsername))
+                if (!key.equals(mUsername)) {
+                    mMarkers.get(key).remove();
                     mMarkers.remove(key);
+                    Log.w(TAG, "Map removed player: " + key);
+                }
             }
 
             @Override
@@ -567,7 +576,6 @@ public class MapActivity extends AppCompatActivity
                                             o.put("user", false);
                                             m.setTag(o);
                                             m.setTitle((String) documentSnapshot.get("name"));
-                                            Log.d(TAG, "Item tagName add");
                                         }
                                     }
                             )
@@ -578,7 +586,8 @@ public class MapActivity extends AppCompatActivity
 
             @Override
             public void onKeyExited(String key) {
-                    mItemsMarkers.remove(key);
+                mItemsMarkers.get(key).remove();
+                mItemsMarkers.remove(key);
             }
 
             @Override

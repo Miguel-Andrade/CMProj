@@ -3,6 +3,7 @@ package com.kingoftheill.app1.presentation.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -89,7 +90,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
         recoveries.setText("Recoveries: "+ nRecoveries);
 
 
-        b1 = (Button)findViewById(R.id.button1);
+        b1 = findViewById(R.id.infect);
         if (!getIntent().getExtras().getBoolean("attack")) {
             b1.setEnabled(false);
             b1.setText("Out of range!!!");
@@ -103,8 +104,10 @@ public class PlayerInfoActivity extends AppCompatActivity {
     }
 
     private void onbuttonpressed() {
-        Intent intent = new Intent(this,BattleActivity.class);
+        Log.w("InfoPlayer", "Ref: " + getIntent().getStringExtra("ref"));
+        Intent intent = new Intent(this, BattleActivity.class);
         intent.putExtra("ref", getIntent().getStringExtra("ref"));
+        intent.putExtra("defender", false);
         startActivity(intent);
     }
 

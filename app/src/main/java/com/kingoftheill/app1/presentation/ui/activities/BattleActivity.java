@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.Battle;
+import com.kingoftheill.app1.domain2.PlayerFC;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -71,35 +72,45 @@ public class BattleActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mFirebaseFirestore = FirebaseFirestore.getInstance();
-        mUsername = mFirebaseUser.getEmail();
+        mUsername = mFirebaseUser.getUid();
 
         PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
         ENIMIE = mFirebaseFirestore.document("Users/" + getIntent().getStringExtra("ref"));
 
         if (getIntent().getExtras().getBoolean("defender")) {
-            battle = new Battle(ENIMIE, PLAYER);
             attacker = false;
-            PLAYER.get().addOnSuccessListener(documentSnapshot ->
-                    battleValue = (int) documentSnapshot.get("btAttack"));
+            BATTLE = mFirebaseFirestore.document("Battles/" + getIntent().getExtras().get("ref"));
+            PLAYER.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
+                    battleValue = p.getBtDefense();
+                }
+            });
         }
         else {
             battle = new Battle(PLAYER, ENIMIE);
             attacker = true;
-            PLAYER.get().addOnSuccessListener(documentSnapshot ->
-                    battleValue = (int) documentSnapshot.get("btDefense"));
+            PLAYER.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
+                    battleValue = p.getBtAttack();
+                }
+            });
         }
 
         if (attacker) {
             // SET BATTLE IN FIRESTORE
-            mFirebaseFirestore.collection("Battles").add(battle).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
+            mFirebaseFirestore.collection("Battles").add(battle).addOnSuccessListener(documentReference -> {
+
                     loading.setVisibility(View.GONE);
                     but1.setEnabled(true);
-                    BATTLE = task.getResult();
+
+                    Log.w(TAG, "Battle Ref: " + BATTLE);
 
                     // GET BATTLE PROGRESS
-                    BATTLE.addSnapshotListener(this, (documentSnapshot, e) -> {
+                    documentReference.addSnapshotListener(this, (documentSnapshot, e) -> {
                         if (documentSnapshot.exists()) {
+                            battle = documentSnapshot.toObject(Battle.class);
                             pb.setProgress(battle.getValue());
                             progressValue = (int) documentSnapshot.get("value");
 
@@ -107,21 +118,18 @@ public class BattleActivity extends AppCompatActivity {
                                 loading.setVisibility(View.INVISIBLE);
                                 but1.setEnabled(true);
                                 flag = false;
-                                new CounterTask().execute();
+                                //new CounterTask().execute();
                             }
                         } else
                             Log.e(TAG, "Error on battle details" + e.getMessage());
                     });
-                } else
-                    Log.e(TAG, "Error on battle");
-            });
-
-        }
+        });}
 
         else {
             // GET BATTLE PROGRESS
             BATTLE.addSnapshotListener(this, (documentSnapshot, e) -> {
                 if (documentSnapshot.exists()) {
+                    battle = documentSnapshot.toObject(Battle.class);
                     pb.setProgress(battle.getValue());
                     progressValue = (int) documentSnapshot.get("value");
 
@@ -129,7 +137,7 @@ public class BattleActivity extends AppCompatActivity {
                         loading.setVisibility(View.INVISIBLE);
                         but1.setEnabled(true);
                         flag = false;
-                        new CounterTask().execute();
+                        //new CounterTask().execute();
                     }
                 } else
                     Log.e(TAG, "Error on battle details" + e.getMessage());

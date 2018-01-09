@@ -9,37 +9,53 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.kingoftheill.app1.R;
 
+import java.util.HashMap;
+
 
 public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
-    private final View mWindow;
+    private View mWindow;
     private Context mContext;
+    private boolean mUser;
+    private String image;
 
     public CustomInfoWindowAdapter(Context context) {
         mContext = context;
-        mWindow = LayoutInflater.from(context).inflate(R.layout.custom_infowindow, null);
     }
 
     private void rendowWindowText(Marker marker, View view){
 
-        String title = marker.getTitle();
-        TextView tvTitle = (TextView) view.findViewById(R.id.item);
+        if (mUser) {
+            String title = marker.getTitle();
+            TextView tvTitle = view.findViewById(R.id.infoPName);
 
-        if(!title.equals("")) {
-            tvTitle.setText(title);
+            if (!title.equals("")) {
+                tvTitle.setText(title);
+            }
         }
+        else {
+            TextView tvTitle = view.findViewById(R.id.item_name);
+            tvTitle.setText(marker.getTitle());
 
-        //String snippet = marker.getSnippet();
-        //TextView tvSnippet = (TextView) view.findViewById(R.id.snippet);
-
-        if(!title.equals("")) {
-            tvTitle.setText(title);
+            view.findViewById(R.id.item_image).setBackgroundResource(mContext.getResources()
+                    .getIdentifier(image, "drawable", mContext.getPackageName()));
         }
 
     }
 
     @Override
     public View getInfoWindow(Marker marker) {
+        HashMap<String, Object> temp = (HashMap<String, Object>) marker.getTag();
+        image = (String) temp.get("image");
+        boolean user = (boolean) temp.get("user");
+        if (user) {
+            mWindow = LayoutInflater.from(mContext).inflate(R.layout.custom_infowindow_player, null);
+            mUser = user;
+        }
+        else {
+            mWindow = LayoutInflater.from(mContext).inflate(R.layout.custom_infowindow_item, null);
+            mUser = false;
+        }
         rendowWindowText(marker, mWindow);
         return mWindow;
     }
