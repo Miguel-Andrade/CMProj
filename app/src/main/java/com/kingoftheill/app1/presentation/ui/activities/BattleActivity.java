@@ -196,15 +196,24 @@ public class BattleActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             but1.setEnabled(false);
 
-            if (attacker && battleValue > 50) {
-                tField.setText("Victory!");
+            if (attacker) {
+                if (battleValue > 50)
+                    tField.setText("Victory!");
+                else
+                    if (battleValue < 50)
+                        tField.setText("Defeat!");
+                    else
+                        tField.setText("Tie!");
             }
-            if (!attacker && battleValue < 50) {
-                tField.setText("Defeat!");
-            }
-            if (battleValue == 50) {
-                tField.setText("Tie!");
-            }
+
+            else
+                if (battleValue < 50)
+                    tField.setText("Victory!");
+                else
+                    if (battleValue > 50)
+                        tField.setText("Defeat!");
+                    else
+                        tField.setText("Tie!");
 
             new Timer().schedule(new TimerTask() {
                 public void run() {
