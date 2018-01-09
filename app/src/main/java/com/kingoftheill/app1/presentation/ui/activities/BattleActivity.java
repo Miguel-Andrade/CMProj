@@ -101,10 +101,8 @@ public class BattleActivity extends AppCompatActivity {
         if (attacker) {
             // SET BATTLE IN FIRESTORE
             mFirebaseFirestore.collection("Battles").add(battle).addOnSuccessListener(documentReference -> {
-
                 loading.setVisibility(View.GONE);
-                but1.setEnabled(true);
-
+                //but1.setEnabled(true);
                 BATTLE = documentReference;
 
                 Log.w(TAG, "Battle ID: " + BATTLE.getId());
@@ -206,14 +204,14 @@ public class BattleActivity extends AppCompatActivity {
                         tField.setText("Tie!");
             }
 
-            else
+            else {
                 if (battleValue < 50)
                     tField.setText("Victory!");
+                else if (battleValue > 50)
+                    tField.setText("Defeat!");
                 else
-                    if (battleValue > 50)
-                        tField.setText("Defeat!");
-                    else
-                        tField.setText("Tie!");
+                    tField.setText("Tie!");
+            }
 
             new Timer().schedule(new TimerTask() {
                 public void run() {
