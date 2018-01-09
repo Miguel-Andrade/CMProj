@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -139,6 +140,7 @@ public class BagFragment extends Fragment {
                                 int val = 0;
                                 playerItemQuantityFlag = model.getQuantity();
                                 if (task.isSuccessful()){
+                                    //Toast.makeText(getContext(), "Item Consumed!", Toast.LENGTH_SHORT).show();
                                     if (itemStatFlag.equals("life")) {
                                         int temp = task.getResult().toObject(PlayerFC.class).getLife();
                                         if (temp + itemValueFlag > 100)

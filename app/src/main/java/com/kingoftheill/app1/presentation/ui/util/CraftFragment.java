@@ -202,6 +202,7 @@ public class CraftFragment extends Fragment {
                                                     Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
+                                            Toast.makeText(getContext(), "Craft Complete!", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(getContext(), "Your Inventory is Full!", Toast.LENGTH_SHORT).show();
                                         }
