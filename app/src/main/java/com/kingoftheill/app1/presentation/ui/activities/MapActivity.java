@@ -67,7 +67,13 @@ import com.kingoftheill.app1.presentation.ui.util.SectionsPageAdapter;
 import com.kingoftheill.app1.presentation.ui.util.SectionsPageAdapter2;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -92,6 +98,8 @@ public class MapActivity extends AppCompatActivity
     private Location mCurrentLocation;
     private CameraPosition mCameraPosition;
     private LatLng mDefaultLocation = new LatLng(38.756618, -9.156069);
+
+    private ScheduledExecutorService scheduleTaskExecutor;
 
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
@@ -154,13 +162,62 @@ public class MapActivity extends AppCompatActivity
         ProgressBar disxppg = findViewById(R.id.disease_xp);
         TextView name = findViewById(R.id.name);
 
+        //UPDATE PLAYER LIFE EVERY 10MIN
+        scheduleTaskExecutor= Executors.newScheduledThreadPool(1);
+        // This schedule a task to run every 10 minutes:
+        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                Date curr = new Date(System.currentTimeMillis());
+                PLAYER.get().addOnSuccessListener(documentSnapshot -> {
+                    if(documentSnapshot.exists()){
+                        Date dbTime = (Date) documentSnapshot.get("lifeCKTimestamp");
+                        Calendar c1 = Calendar.getInstance();
+                        c1.setTime(curr);
+                        Calendar c2 = Calendar.getInstance();
+                        c2.setTime(dbTime);
+                        long millis1 = c1.getTimeInMillis();
+                        long millis2 = c2.getTimeInMillis();
+
+                        // Calculate difference in milliseconds
+                        long diff = millis2 - millis1;
+
+                        int diffMinutes = (int) (diff / (60 * 1000));
+                        int numDeVezesParaTirarVida = (int) (diffMinutes/10);
+
+//                        if(numDeVezesParaTirarVida > 0){
+//                           int currVida = documentSnapshot.get("life") - (numDeVezesParaTirarVida * documentSnapshot.get("XXX"))
+//                        } //TODO
+                    }
+                });
+
+
+
+                //PLAYER.update("life", currVida);
+                PLAYER.update("lifeCKTimestamp", curr);
+            }
+        } , 0, 10, TimeUnit.MINUTES);
+
+
         //UPDATE THE PLAYER
         PLAYER.addSnapshotListener(this, (documentSnapshot, e) -> {
             if (documentSnapshot.exists()) {
                 playerFC = documentSnapshot.toObject(PlayerFC.class);
+                int diseaseType = playerFC.getType();
+                switch (diseaseType){
+                    case (0):
+                        PLAYER.update("image", "logo_pic_influenza_wolf");
+                        break;
+                    case (1):
+                        PLAYER.update("image", "logo_pic_bubonic_bird");
+                        break;
+                    case(2):
+                        PLAYER.update("image", "alcides_logo");
+                        break;
+                }
                     player_image.setBackgroundResource(getApplicationContext().getResources()
                             .getIdentifier(playerFC.getImage(), "drawable", getApplicationContext().getPackageName()));
                     pg.setProgressWithAnimation(playerFC.getCurrXP());
+                    lifepg.setMax(100 + ((playerFC.getLevel() - 1)* 5));
                     lifepg.setProgress(playerFC.getLife());
                     disxppg.setProgress(playerFC.getDisCurrXP());
 
@@ -191,6 +248,7 @@ public class MapActivity extends AppCompatActivity
         // PLAYER DETAILS
         player_image.setOnClickListener(v ->
                 Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show());
+
 
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);

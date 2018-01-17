@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -60,7 +61,7 @@ public class SignInActivity extends AppCompatActivity implements
     private FirebaseFirestore mFirebaseFirestore;
     private FirebaseUser mFirebaseUser;
 
-    private AutoCompleteTextView tx;
+    private EditText tx;
 
     private ProgressBar loading;
     private ShimmerFrameLayout s;

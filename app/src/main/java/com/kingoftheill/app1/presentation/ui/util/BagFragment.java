@@ -141,6 +141,38 @@ public class BagFragment extends Fragment {
                                 playerItemQuantityFlag = model.getQuantity();
                                 if (task.isSuccessful()){
                                     //Toast.makeText(getContext(), "Item Consumed!", Toast.LENGTH_SHORT).show();
+                                    PlayerFC p = task.getResult().toObject(PlayerFC.class);
+                                    switch(itemStatFlag){
+                                        case ("life"):
+                                            int maxHealth = 100 + ((p.getLevel() - 1)* 5);
+                                            if (p.getLife() + itemValueFlag > maxHealth)
+                                                val = maxHealth;
+                                            else
+                                                val = itemValueFlag + p.getLife();
+
+                                            PLAYER.update("life", val);
+                                            break;
+                                        case ("resistance"):
+                                            val = p.getResistance() + itemValueFlag;
+                                            PLAYER.update("resistance", val);
+                                            break;
+                                        case ("cure0"):
+                                            if(p.getType() != 0) {
+                                                //PLAYER.update(/*CAMPO DA DOENÇA INFECTADO*/, null);
+                                            }
+                                            break;
+                                        case ("cure1"):
+                                            if(p.getType() != 1){
+                                                //PLAYER.update(/*CAMPO DA DOENÇA INFECTADO*/, null);
+                                            }
+                                            break;
+                                        case ("cure2"):
+                                            if(p.getType() != 2){
+                                                //PLAYER.update(/*CAMPO DA DOENÇA INFECTADO*/, null);
+                                            }
+                                            break;
+                                        default: PLAYER.update(itemStatFlag, itemValueFlag);
+                                    }
                                     if (itemStatFlag.equals("life")) {
                                         int temp = task.getResult().toObject(PlayerFC.class).getLife();
                                         if (temp + itemValueFlag > 100)

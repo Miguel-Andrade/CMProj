@@ -29,10 +29,12 @@ public class PlayerInfoActivity extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
 
     private String mUsername;
+    private static DocumentReference PLAYER;
 
     private static DocumentReference ATTACKER;
 
     private PlayerFC playerFC;
+    private PlayerFC playerME;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,17 +43,24 @@ public class PlayerInfoActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mFirebaseFirestore = FirebaseFirestore.getInstance();
-        mUsername = mFirebaseUser.getEmail();
+        mUsername = mFirebaseUser.getUid();
+
+        PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
+        PLAYER.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                playerME = documentSnapshot.toObject(PlayerFC.class);
+            }
+        });
 
         ATTACKER = mFirebaseFirestore.document("Users/" + getIntent().getStringExtra("ref"));
 
         pbPLVL = findViewById(R.id.pbPLVL);
-        playerName =  findViewById(R.id.playerName);
+        playerName = findViewById(R.id.playerName);
         playerLevel = findViewById(R.id.Plevel);
         diseaseLevel = findViewById(R.id.Dlevel);
         hp = findViewById(R.id.hp);
         range = findViewById(R.id.range);
-        pbDLVL =  findViewById(R.id.pbDLVL);
+        pbDLVL = findViewById(R.id.pbDLVL);
         damage = findViewById(R.id.damage);
         resistence = findViewById(R.id.resistence);
         defense = findViewById(R.id.defense);
@@ -63,44 +72,44 @@ public class PlayerInfoActivity extends AppCompatActivity {
                 playerName.setText(playerFC.getName());
                 pbPLVL.setProgress(playerFC.getCurrXP());
                 pbDLVL.setProgress(playerFC.getDisCurrXP());
-                hp.setText(playerFC.getLife() +"");
-                diseaseLevel.setText(playerFC.getDisLevel()+"");
-                playerLevel.setText(playerFC.getLevel()+"");
-                range.setText(playerFC.getTotalRange()+"");
-                resistence.setText(playerFC.getTotalResistance()+"");
-                damage.setText(playerFC.getTotalDamage()+"");
-                defense.setText(playerFC.getTotalBtDefense()+"");
+                hp.setText(playerFC.getLife() + "");
+                diseaseLevel.setText(playerFC.getDisLevel() + "");
+                playerLevel.setText(playerFC.getLevel() + "");
+                range.setText(playerFC.getTotalRange() + "");
+                resistence.setText(playerFC.getTotalResistance() + "");
+                damage.setText(playerFC.getTotalDamage() + "");
+                defense.setText(playerFC.getTotalBtDefense() + "");
             }
         });
 
         killed = findViewById(R.id.kills);
         nKills = 2;
-        killed.setText("Kills: "+ nKills);
+        killed.setText("Kills: " + nKills);
 
         deaths = findViewById(R.id.deaths);
         nDeaths = 0;
-        deaths.setText("Deaths: "+ nDeaths);
+        deaths.setText("Deaths: " + nDeaths);
 
         infected = findViewById(R.id.infected);
         nInfected = 8;
-        infected.setText("Infected: "+ nInfected);
+        infected.setText("Infected: " + nInfected);
 
         recoveries = findViewById(R.id.recoveries);
         nRecoveries = 1;
-        recoveries.setText("Recoveries: "+ nRecoveries);
+        recoveries.setText("Recoveries: " + nRecoveries);
 
 
         b1 = findViewById(R.id.infect);
-        if (!getIntent().getExtras().getBoolean("attack")) {
-            b1.setEnabled(false);
-            b1.setText("Out of range!!!");
+        if (playerFC.getType() != playerME.getType()) {
+            if (!getIntent().getExtras().getBoolean("attack")) {
+                b1.setEnabled(false);
+                b1.setText("Out of range!!!");
+            } else {
+                b1.setEnabled(true);
+                b1.setText("INFECT!!!");
+                b1.setOnClickListener(view -> onbuttonpressed());
+            }
         }
-        else {
-            b1.setEnabled(true);
-            b1.setText("INFECT!!!");
-            b1.setOnClickListener(view -> onbuttonpressed());
-        }
-
     }
 
     private void onbuttonpressed() {
