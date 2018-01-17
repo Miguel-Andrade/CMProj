@@ -169,14 +169,11 @@ public class MapActivity extends AppCompatActivity
         // This schedule a task to run every 10 minutes:
         scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
             public void run() {
-                Date curr = new Date(System.currentTimeMillis());
+                Date curr = new Date();
                 PLAYER.get().addOnSuccessListener(documentSnapshot -> {
-                    if(documentSnapshot.exists()){
+                    if(documentSnapshot.exists() && (documentSnapshot.get("infection1")!= null || documentSnapshot.get("infection2")!=null)){
                         Date dbTime = (Date) documentSnapshot.get("lifeCKTimestamp");
-                        Calendar c1 = Calendar.getInstance();
-                        c1.setTime(curr);
-                        Calendar c2 = Calendar.getInstance();
-                        c2.setTime(dbTime);
+
                         long millis1 = System.currentTimeMillis();
                         long millis2 = dbTime.getTime();
 
@@ -194,8 +191,8 @@ public class MapActivity extends AppCompatActivity
                             if(documentSnapshot.get("infection2") != null){
                                 currVida -= (numDeVezesParaTirarVida * ((Long)documentSnapshot.get("infection2.damage")).intValue());
                             }
+                            PLAYER.update("life", currVida);
                         }
-                        PLAYER.update("life", currVida);
                         PLAYER.update("lifeCKTimestamp", curr);
                     }
                 });
