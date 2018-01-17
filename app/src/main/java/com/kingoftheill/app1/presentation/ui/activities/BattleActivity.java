@@ -155,8 +155,6 @@ public class BattleActivity extends AppCompatActivity {
                 else
                     BATTLE.update("value", (progressValue + battleValue))
                             .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
-
-                Log.w(TAG, "Battle value attack: " + (battleValue));
             }
             else  {
                 if (progressValue - battleValue < 0)
@@ -193,11 +191,11 @@ public class BattleActivity extends AppCompatActivity {
             but1.setEnabled(false);
             String battleResult;
             if (attacker) {
-                if (battleValue > 50) {
+                if (progressValue > 50) {
                     tField.setText("Victory!");
                     battleResult = "winner";
                 }
-                else if (battleValue < 50) {
+                else if (progressValue < 50) {
                     tField.setText("Defeat!");
                     battleResult = "looser";
                 }
@@ -208,11 +206,11 @@ public class BattleActivity extends AppCompatActivity {
             }
 
             else {
-                if (battleValue < 50) {
+                if (progressValue < 50) {
                     tField.setText("Victory!");
                     battleResult = "winner";
                 }
-                else if (battleValue > 50) {
+                else if (progressValue > 50) {
                     tField.setText("Defeat!");
                     battleResult = "looser";
                 }
