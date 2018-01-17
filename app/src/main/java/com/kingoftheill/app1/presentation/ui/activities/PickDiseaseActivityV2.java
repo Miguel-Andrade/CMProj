@@ -44,13 +44,13 @@ public class PickDiseaseActivityV2 extends AppCompatActivity {
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         setupViewPager(mViewPager);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        Button start = (Button) findViewById(R.id.start);
+        Button start = findViewById(R.id.start);
         start.setOnClickListener(view -> onbuttonpressed());
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -60,8 +60,8 @@ public class PickDiseaseActivityV2 extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Tab1Fragment(), "Influenza");
-        adapter.addFragment(new Tab2Fragment(), "Bubonic Plague");
+        adapter.addFragment(new Tab2Fragment(), "Influenza");
+        adapter.addFragment(new Tab1Fragment(), "Bubonic Plague");
         adapter.addFragment(new Tab3Fragment(), "SmallPox");
         viewPager.setAdapter(adapter);
     }

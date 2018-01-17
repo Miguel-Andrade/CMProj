@@ -56,7 +56,9 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseFirestore.getInstance().document("Users/" + user).update("messId", token);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            FirebaseFirestore.getInstance().document("Users/" + user).update("messId", token);
+        }
     }
 }

@@ -89,7 +89,7 @@ public class SignInActivity extends AppCompatActivity implements
 
 
         if (mFirebaseUser != null) {
-            // Not signed in, launch the Sign In activity
+            // Signed in, launch the Map activity
             startActivity(new Intent(this, MapActivity.class));
             finish();
             return;
