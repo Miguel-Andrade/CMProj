@@ -207,10 +207,10 @@ public class MapActivity extends AppCompatActivity
                 int diseaseType = playerFC.getType();
                 switch (diseaseType){
                     case (0):
-                        PLAYER.update("image", "logo_pic_influenza_wolf");
+                        PLAYER.update("image", "lobeco_logo");
                         break;
                     case (1):
-                        PLAYER.update("image", "logo_pic_bubonic_bird");
+                        PLAYER.update("image", "passaroca_logo");
                         break;
                     case(2):
                         PLAYER.update("image", "alcides_logo");
