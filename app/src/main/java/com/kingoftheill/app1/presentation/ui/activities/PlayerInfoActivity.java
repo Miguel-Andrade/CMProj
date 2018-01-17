@@ -47,14 +47,14 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
         pbPLVL = findViewById(R.id.pbPLVL);
         playerName =  findViewById(R.id.playerName);
-        playerLevel = (TextView) findViewById(R.id.Plevel);
+        playerLevel = findViewById(R.id.Plevel);
         diseaseLevel = findViewById(R.id.Dlevel);
         hp = findViewById(R.id.hp);
         range = findViewById(R.id.range);
         pbDLVL =  findViewById(R.id.pbDLVL);
-        damage = (TextView) findViewById(R.id.damage);
-        resistence = (TextView) findViewById(R.id.resistence);
-        defense = (TextView) findViewById(R.id.defense);
+        damage = findViewById(R.id.damage);
+        resistence = findViewById(R.id.resistence);
+        defense = findViewById(R.id.defense);
 
         //UPDATE THE PLAYER
         ATTACKER.addSnapshotListener(this, (documentSnapshot, e) -> {

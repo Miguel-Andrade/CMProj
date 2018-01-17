@@ -1,6 +1,7 @@
 package com.kingoftheill.app1.presentation.ui.activities;
 
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,10 +26,16 @@ import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -71,6 +78,7 @@ public class MapActivity extends AppCompatActivity
         GoogleMap.OnMarkerClickListener {
 
     public final static int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION =1;
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     private static final String TAG = "MapActivity";
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -231,14 +239,13 @@ public class MapActivity extends AppCompatActivity
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
-        // Get the current location of the device and set the position of the map.
-        getDeviceLocation();
-
         //Initialize Google Play Services
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             buildGoogleApiClient();
         else
             buildGoogleApiClient();
+
+
 
         // Set a listener for marker click.
         mGoogleMap.setOnMarkerClickListener(this);
@@ -266,6 +273,40 @@ public class MapActivity extends AppCompatActivity
         mLocationRequest.setInterval(INTERVAL);
         mLocationRequest.setFastestInterval(INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+
+        //**************************
+        builder.setAlwaysShow(true);
+        //**************************
+
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(result1 -> {
+            final Status status = result1.getStatus();
+            switch (status.getStatusCode()) {
+                case LocationSettingsStatusCodes.SUCCESS:
+                    Log.i(TAG, "All location settings are satisfied.");
+                    // Get the current location of the device and set the position of the map.
+                    getDeviceLocation();
+                    break;
+                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                    Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
+
+                    try {
+                        // Show the dialog by calling startResolutionForResult(), and check the result
+                        // in onActivityResult().
+                        status.startResolutionForResult(this, REQUEST_CHECK_SETTINGS);
+                    } catch (IntentSender.SendIntentException e) {
+                        Log.i(TAG, "PendingIntent unable to execute request.");
+                    }
+                    break;
+                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                    Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                    break;
+            }
+        });
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {

@@ -46,8 +46,6 @@ public class BattleActivity extends AppCompatActivity {
     private Battle battle;
 
     private boolean flag = false;
-    private boolean flag2 = true;
-
     private boolean attacker;
 
     @Override
@@ -83,7 +81,7 @@ public class BattleActivity extends AppCompatActivity {
             PLAYER.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
-                    battleValue = p.getBtDefense();
+                    battleValue = p.getTotalBtDefense();
                 }
             });
         }
@@ -93,7 +91,7 @@ public class BattleActivity extends AppCompatActivity {
             PLAYER.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
-                    battleValue = p.getBtAttack();
+                    battleValue = p.getTotalBtAttack();
                 }
             });
         }
@@ -193,33 +191,51 @@ public class BattleActivity extends AppCompatActivity {
 
         protected void onPostExecute(Void result) {
             but1.setEnabled(false);
-
+            String battleResult;
             if (attacker) {
-                if (battleValue > 50)
+                if (battleValue > 50) {
                     tField.setText("Victory!");
-                else if (battleValue < 50)
+                    battleResult = "winner";
+                }
+                else if (battleValue < 50) {
                     tField.setText("Defeat!");
-                else
+                    battleResult = "looser";
+                }
+                else {
                     tField.setText("Tie!");
+                    battleResult = "tie";
+                }
             }
 
             else {
-                if (battleValue < 50)
+                if (battleValue < 50) {
                     tField.setText("Victory!");
-                else if (battleValue > 50)
+                    battleResult = "winner";
+                }
+                else if (battleValue > 50) {
                     tField.setText("Defeat!");
-                else
+                    battleResult = "looser";
+                }
+                else {
                     tField.setText("Tie!");
+                    battleResult = "tie";
+                }
             }
 
+            Intent intent = new Intent(BattleActivity.this, UpgradesActivity.class);
+            intent.putExtra("battleResult", battleResult);
             new Timer().schedule(new TimerTask() {
                 public void run() {
                     BattleActivity.this.runOnUiThread(() -> {
-                        Intent intent = new Intent(BattleActivity.this, UpgradesActivity.class);
                         startActivity(intent);
                     });
                 }
             }, 4000);
+
+            ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
+                if(documentSnapshot.exists())
+                    intent.putExtra("level", documentSnapshot.getString("level"));
+                    });
         }
     }
 

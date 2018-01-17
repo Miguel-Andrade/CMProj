@@ -3,168 +3,237 @@ package com.kingoftheill.app1.presentation.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.kingoftheill.app1.R;
+import com.kingoftheill.app1.domain.model.utilities.PlayersXPLevels;
+import com.kingoftheill.app1.domain2.PlayerFC;
 
-public class UpgradesActivity extends AppCompatActivity{
+public class UpgradesActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private TextView deaths, infected, recoveries, hp, range, damage, resistence, attack, defense, playerName, playerLevel, diseaseLevel;
+    private static final String TAG = "UpgradesActivity";
+
+    // Firebase instance variables
+    private FirebaseFirestore mFirebaseFirestore;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private String mUsername;
+
+    private static DocumentReference PLAYER;
+
+    private PlayerFC playerFC;
+
+    private TextView deaths, infected, recoveries, hp, range, damage, resistence, defense, playerName,
+            playerLevel, diseaseLevel, attack, numUpgrades;
     TextView killed;
-    private int nKills, nDeaths, nInfected, nRecoveries, nHp, nRange, nDamage, nResistence, nAttack, nDefense, nPLvl, nDLvl;
-    private int numUpgrades;
-    private String pName;
-    private RelativeLayout rl;
+    private int nKills, nDeaths, nInfected, nRecoveries, nHp, nRange, nDamage, nResistence, nDefense, nPLvl, nDLvl;
+    private Button b1;
     private ProgressBar pbPLVL, pbDLVL;
-    //private AppRepository mRepository = AppRepositoryImpl.getInstance();
-
-    //private Player mPlayer = mRepository.getCurrentPlayer();
+    private int upgrades;
+    private ProgressBar pb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_upgrades);
 
-        pbPLVL = (ProgressBar) findViewById(R.id.pbPLVL);
-        //pbPLVL.setProgress(mPlayer.getCurrXP());
+        pb = findViewById(R.id.loading);
+        pb.setVisibility(View.VISIBLE);
 
-        pbDLVL = (ProgressBar) findViewById(R.id.pbDLVL);
-        //pbDLVL.setProgress(mPlayer.getDisease().getCurrXP());
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseFirestore = FirebaseFirestore.getInstance();
+        mUsername = mFirebaseUser.getUid();
 
-        playerName = (TextView) findViewById(R.id.playerName);
-        //pName = mPlayer.getName();
-        //playerName.setTextColor(Color.parseColor("#EFEFEF"));
-        playerName.setText(pName);
+        PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
 
-        playerLevel = (TextView) findViewById(R.id.Plevel);
-        //nPLvl = mPlayer.getLevel();
-        playerLevel.setText("Player Lvl: "+nPLvl);
+        pbPLVL = findViewById(R.id.pbPLVL);
+        playerName = findViewById(R.id.playerName);
+        playerLevel = findViewById(R.id.Plevel);
+        diseaseLevel = findViewById(R.id.Dlevel);
+        hp = findViewById(R.id.hp);
+        range = findViewById(R.id.range);
+        pbDLVL = findViewById(R.id.pbDLVL);
+        damage = findViewById(R.id.damage);
+        resistence = findViewById(R.id.resistence);
+        defense = findViewById(R.id.defense);
+        attack = findViewById(R.id.attack);
+        defense = findViewById(R.id.defense);
+        numUpgrades = findViewById(R.id.numUpgrades);
 
-        diseaseLevel = (TextView) findViewById(R.id.Dlevel);
-        //nDLvl = mPlayer.getDisease().getLevel();
-        diseaseLevel.setText("Disease Lvl: "+nDLvl);
+        //UPDATE THE PLAYER
+        PLAYER.addSnapshotListener(this, (documentSnapshot, e) -> {
+            if (documentSnapshot.exists()) {
+                playerFC = documentSnapshot.toObject(PlayerFC.class);
+                playerName.setText(playerFC.getName());
+                pbPLVL.setProgress(playerFC.getCurrXP());
+                pbDLVL.setProgress(playerFC.getDisCurrXP());
+                hp.setText("HP: " + playerFC.getLife());
+                diseaseLevel.setText("Disease Level: " + playerFC.getDisLevel());
+                playerLevel.setText("Player Level: " + playerFC.getLevel()+"");
+                range.setText("Range: " + playerFC.getDisRange());
+                resistence.setText("Resistance: " + playerFC.getDisResistence());
+                damage.setText("Damage: " + playerFC.getDisDamage());
+                defense.setText("Defense: " + playerFC.getDisBtDefense());
+                attack.setText("Attack: " + playerFC.getDisBtAttack());
+                numUpgrades.setText(playerFC.getNumUpgrades() +"");
+            }
+        });
 
-        killed = (TextView) findViewById(R.id.kills);
+        winner(getIntent().getStringExtra("battleResult"));
+
+        killed = findViewById(R.id.kills);
         nKills = 2;
         killed.setText("Kills: "+ nKills);
 
-        deaths = (TextView) findViewById(R.id.deaths);
+        deaths = findViewById(R.id.deaths);
         nDeaths = 0;
         deaths.setText("Deaths: "+ nDeaths);
 
-        infected = (TextView) findViewById(R.id.infected);
+        infected = findViewById(R.id.infected);
         nInfected = 8;
         infected.setText("Infected: "+ nInfected);
 
-        recoveries = (TextView) findViewById(R.id.recoveries);
+        recoveries = findViewById(R.id.recoveries);
         nRecoveries = 1;
         recoveries.setText("Recoveries: "+ nRecoveries);
 
-        hp = (TextView) findViewById(R.id.hp);
-        nHp = 100;
-        hp.setText("HP: "+ nHp);
-
-        range = (TextView) findViewById(R.id.range);
-        nRange = 10;
-        range.setText("Range: "+ nRange);
-
-        damage = (TextView) findViewById(R.id.damage);
-        nDamage = 15;
-        damage.setText("Damage: "+ nDamage);
-
-        resistence = (TextView) findViewById(R.id.resistence);
-        nResistence = 4;
-        resistence.setText("Resistence: "+ nResistence);
-
-        attack = (TextView) findViewById(R.id.attack);
-        nAttack = 8;
-        attack.setText("Attack: "+nAttack);
-
-        defense = (TextView) findViewById(R.id.defense);
-        nDefense = 2;
-        defense.setText("Defense: "+ nDefense);
-
-        rl = (RelativeLayout)findViewById(R.id.relativeLayoutID);
-
-
         addTextViewClickListener();
-        //numUpgrades = mPlayer.getDisease().getNumUpgrades();
 
-        Button bt1 = (Button) findViewById(R.id.button1);
-        bt1.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(UpgradesActivity.this, MapActivity.class);
-                startActivity(intent);
+        Button bt1 = findViewById(R.id.button1);
+        bt1.setOnClickListener(this);
+
+        /*v -> {
+            Intent intent = new Intent(UpgradesActivity.this, MapActivity.class);
+            startActivity(intent);
+        });*/
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        /*if (v.)
+
+        switch (v.getId()) {
+
+            case R.id.oneButton:
+                // do your code
+                break;
+
+            case R.id.twoButton:
+                // do your code
+                break;
+
+            case R.id.threeButton:
+                // do your code
+                break;
+
+            default:
+                break;
+        }
+*/
+    }
+
+    private void addTextViewClickListener() {
+        hp.setOnClickListener(view -> {
+            if(upgrades > 0) {
+                nHp += 10;
+                hp.setText("HP: " + nHp);
+                upgrades-=1;
+                PLAYER.update("life", playerFC.getLife()+1)
+                        .addOnSuccessListener(aVoid ->
+                                Toast.makeText(this, "Stat Upgraded", Toast.LENGTH_SHORT))
+                        .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Stat Upgraded", Toast.LENGTH_SHORT);
+                                Log.e(TAG, e.getMessage());
+                                });
+            }
+        });
+        range.setOnClickListener(view -> {
+            if(upgrades > 0) {
+                nRange += 2;
+                range.setText("Range: " + nRange);
+                upgrades-=1;
+            }
+        });
+        damage.setOnClickListener(view -> {
+            if(upgrades > 0) {
+                nDamage += 2;
+                damage.setText("Damage: " + nDamage);
+                upgrades-=1;
+            }
+        });
+        resistence.setOnClickListener(view -> {
+            if(upgrades > 0) {
+                nResistence += 2;
+                resistence.setText("Resistence: " + nResistence);
+                upgrades-=1;
+            }
+        });
+        attack.setOnClickListener(view -> {
+            if(upgrades > 0) {
+                //nAttack += 2;
+                //attack.setText("Attack: " + nAttack);
+                upgrades-=1;
+            }
+        });
+        defense.setOnClickListener(view -> {
+            if(upgrades > 0) {
+                nDefense += 2;
+                defense.setText("Defense: " + nDefense);
+                upgrades-=1;
             }
         });
 
     }
 
-    private void addTextViewClickListener() {
-        hp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(numUpgrades > 0) {
-                    nHp += 10;
-                    hp.setText("HP: " + nHp);
-                    numUpgrades-=1;
-                }
-            }
-        });
-        range.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(numUpgrades > 0) {
-                    nRange += 2;
-                    range.setText("Range: " + nRange);
-                    numUpgrades-=1;
-                }
-            }
-        });
-        damage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(numUpgrades > 0) {
-                    nDamage += 2;
-                    damage.setText("Damage: " + nDamage);
-                    numUpgrades-=1;
-                }
-            }
-        });
-        resistence.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(numUpgrades > 0) {
-                    nResistence += 2;
-                    resistence.setText("Resistence: " + nResistence);
-                    numUpgrades-=1;
-                }
-            }
-        });
-        attack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(numUpgrades > 0) {
-                    nAttack += 2;
-                    attack.setText("Attack: " + nAttack);
-                    numUpgrades-=1;
-                }
-            }
-        });
-        defense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(numUpgrades > 0) {
-                    nDefense += 2;
-                    defense.setText("Defense: " + nDefense);
-                    numUpgrades-=1;
-                }
-            }
-        });
+    public void winner(String status) {
+        int[] result = new int[2];
+        result[0] = 0;
+        if (name.equals(attacker.getName()) && status.equals("winner")) {
+            winner = attacker;
+            looser = defender;
+            result[0] = 10 + looser.getLevel();
 
+        } else if (name.equals(defender.getName()) && status.equals("winner")){
+            winner = defender;
+            looser = attacker;
+            result[0] = 10 + looser.getLevel();
+
+        } else {
+            result[0] = 10;
+            result[1] = 0;
+            return result;
+        }
+
+        winner.setCurrXP(result[0]);
+        PlayersXPLevels plxp = PlayersXPLevels.valueOf("LEVEL_" + playerFC.getLevel());
+        while (playerFC.getCurrXP() >= plxp.highBound()) {
+            winner.levelUp();
+
+            winner.getDisease().setCurrXP(result[0]);
+            Disease dis = winner.getDisease();
+            result[1] = 0;
+            while (dis.getCurrXP() >= (10*dis.getLevel())) {
+                int xpNextLevel = dis.getCurrXP() - (10*dis.getLevel());
+                dis.setCurrXPZero();
+                dis.levelUp();
+                dis.setCurrXP(xpNextLevel);
+                result[1]++;
+            }
+        }
+        looser.setInfected(new Infection(winner.getName(), winner.getDisease().getName(), winner.getTotalDamage()));
+        return result;
     }
 }
