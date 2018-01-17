@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -56,6 +57,9 @@ public class DeathActivity extends AppCompatActivity {
                 batch.update(PLAYER, "life", 100);
                 batch.update(PLAYER, "level", 1);
                 batch.update(PLAYER, "currXP", 0);
+                batch.update(PLAYER, "infection1", FieldValue.delete());
+                batch.update(PLAYER, "infection2", FieldValue.delete());
+                batch.update(PLAYER, "disCurrXP", 0);
                 for (int i = 0; i <= 29; i++) {
                     if (i <= 9) {
                         DocumentReference item = mFirebaseFirestore.document("Users/" + mFirebaseUser.getUid() + "/Items/0" + i);
