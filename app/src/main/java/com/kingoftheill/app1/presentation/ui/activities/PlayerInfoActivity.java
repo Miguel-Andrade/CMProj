@@ -46,11 +46,11 @@ public class PlayerInfoActivity extends AppCompatActivity {
         mUsername = mFirebaseUser.getUid();
 
         PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
-        PLAYER.get().addOnSuccessListener(documentSnapshot -> {
+        /*PLAYER.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 playerME = documentSnapshot.toObject(PlayerFC.class);
             }
-        });
+        });*/
 
         ATTACKER = mFirebaseFirestore.document("Users/" + getIntent().getStringExtra("ref"));
 
@@ -79,6 +79,16 @@ public class PlayerInfoActivity extends AppCompatActivity {
                 resistence.setText(playerFC.getTotalResistance() + "");
                 damage.setText(playerFC.getTotalDamage() + "");
                 defense.setText(playerFC.getTotalBtDefense() + "");
+                if (playerFC.getType() != getIntent().getIntExtra("type", 0)) {
+                if (!getIntent().getExtras().getBoolean("attack")) {
+                    b1.setEnabled(false);
+                    b1.setText("Out of range!!!");
+                } else {
+                    b1.setEnabled(true);
+                    b1.setText("INFECT!!!");
+                    b1.setOnClickListener(view -> onbuttonpressed());
+                }
+                }
             }
         });
 
@@ -100,16 +110,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
 
         b1 = findViewById(R.id.infect);
-        if (playerFC.getType() != playerME.getType()) {
-            if (!getIntent().getExtras().getBoolean("attack")) {
-                b1.setEnabled(false);
-                b1.setText("Out of range!!!");
-            } else {
-                b1.setEnabled(true);
-                b1.setText("INFECT!!!");
-                b1.setOnClickListener(view -> onbuttonpressed());
-            }
-        }
+
     }
 
     private void onbuttonpressed() {

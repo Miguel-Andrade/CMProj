@@ -235,7 +235,7 @@ public class BattleActivity extends AppCompatActivity {
 
             ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
                 if(documentSnapshot.exists())
-                    intent.putExtra("level", documentSnapshot.getString("level"));
+                    intent.putExtra("level", documentSnapshot.getLong("level").intValue());
                     });
         }
     }

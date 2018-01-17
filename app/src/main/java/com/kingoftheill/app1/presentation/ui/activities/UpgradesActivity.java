@@ -47,6 +47,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
     private ProgressBar pbPLVL, pbDLVL;
     private ProgressBar pb;
     private ObjectAnimator progressAnimator;
+    private boolean flag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,10 +94,14 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                 defense.setText("Defense: " + playerFC.getDisBtDefense());
                 attack.setText("Attack: " + playerFC.getDisBtAttack());
                 numUpgrades.setText(playerFC.getNumUpgrades() +"");
+
+                if (!flag) {
+                    winner(getIntent().getStringExtra("battleResult"));
+                    flag = true;
+                }
             }
         });
 
-        winner(getIntent().getStringExtra("battleResult"));
 
         killed = findViewById(R.id.kills);
         nKills = 2;

@@ -563,6 +563,7 @@ public class MapActivity extends AppCompatActivity
         else {
             String ref2 = (String) temp.get("ref");
             Intent intent = new Intent(this, PlayerInfoActivity.class);
+            intent.putExtra("type", playerFC.getType());
             if (Math.hypot(marker.getPosition().latitude - mLastKnownLocation.getLatitude(),
                     marker.getPosition().longitude - mLastKnownLocation.getLongitude()) > 7)
                 intent.putExtra("attack", false);
@@ -620,24 +621,25 @@ public class MapActivity extends AppCompatActivity
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 if (!key.equals(mUsername)) {
-                    Marker m = mGoogleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(location.latitude, location.longitude)));
                     mFirebaseFirestore.document("/Users/" + key).get()
                             .addOnSuccessListener(documentSnapshot -> {
                                         if (documentSnapshot.exists()) {
                                             HashMap<String, Object> o = new HashMap<>();
                                             o.put("ref", documentSnapshot.getReference().getId());
                                             o.put("user", true);
+                                            MarkerOptions w = new MarkerOptions()
+                                                    .icon(BitmapDescriptorFactory.fromBitmap(myMarker("player", documentSnapshot.getLong("type").intValue())))
+                                                    .position(new LatLng(location.latitude, location.longitude))
+                                                    .title((String) documentSnapshot.get("name"));
+                                            Marker m = mGoogleMap.addMarker(w);
                                             m.setTag(o);
-                                            m.setTitle((String) documentSnapshot.get("name"));
-                                            m.setIcon(BitmapDescriptorFactory.fromBitmap(myMarker("player", documentSnapshot.getLong("type").intValue())));
+                                            mMarkers.put(key, m);
+                                            Log.w(TAG, "Map added player: " + key);
                                         }
                                     }
                                 )
                             .addOnFailureListener(e ->
                                 Log.e("Error on markerTag", e.getMessage()));
-                    mMarkers.put(key, m);
-                    Log.w(TAG, "Map added player: " + key);
                 }
             }
 
