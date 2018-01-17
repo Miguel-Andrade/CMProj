@@ -223,6 +223,12 @@ public class BattleActivity extends AppCompatActivity {
             Intent intent = new Intent(BattleActivity.this, UpgradesActivity.class);
             intent.putExtra("battleResult", battleResult);
             intent.putExtra("enimie", ENIMIE.getId());
+
+            ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
+                if(documentSnapshot.exists())
+                    intent.putExtra("level", documentSnapshot.getLong("level").intValue());
+            });
+
             new Timer().schedule(new TimerTask() {
                 public void run() {
                     BattleActivity.this.runOnUiThread(() -> {
@@ -230,11 +236,6 @@ public class BattleActivity extends AppCompatActivity {
                     });
                 }
             }, 4000);
-
-            ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
-                if(documentSnapshot.exists())
-                    intent.putExtra("level", documentSnapshot.getLong("level").intValue());
-                    });
         }
     }
 

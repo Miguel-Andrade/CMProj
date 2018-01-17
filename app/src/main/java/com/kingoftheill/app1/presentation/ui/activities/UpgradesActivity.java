@@ -24,6 +24,8 @@ import com.kingoftheill.app1.domain.model.utilities.PlayerLevels;
 import com.kingoftheill.app1.domain.model.utilities.PlayersXPLevels;
 import com.kingoftheill.app1.domain2.PlayerFC;
 
+import java.util.Date;
+
 public class UpgradesActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG = "UpgradesActivity";
@@ -45,7 +47,6 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
     private int nKills, nDeaths, nInfected, nRecoveries;
     private Button b1, damage, resistence, defense, attack, range;
     private ProgressBar pbPLVL, pbDLVL;
-    private ProgressBar pb;
     private ObjectAnimator progressAnimator;
     private boolean flag = false;
 
@@ -53,9 +54,6 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_upgrades);
-
-        pb = findViewById(R.id.loading);
-        pb.setVisibility(View.VISIBLE);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
@@ -198,8 +196,10 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
 
         int ya = PlayersXPLevels.valueOf("LEVEL_" + level).highBound();
         while (true){
-            if (currxp >= ya)
+            if (currxp >= ya) {
                 level++;
+                ya = PlayersXPLevels.valueOf("LEVEL_" + level).highBound();
+            }
             else
                 break;
         }
@@ -224,7 +224,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                    if (playerFC.getInfection1() == null && playerFC.getInfection2() == null) {
 
                        batch.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
-                   } else if (playerFC.getInfection1() != null && ((int)playerFC.getInfection2().get("type") != ene.getType())) {
+                   } else if (playerFC.getInfection1() != null && (((Long)playerFC.getInfection2().get("type")).intValue() != ene.getType())) {
 
                        batch.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
                    } else {
@@ -234,6 +234,9 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                }
             });
         }
+
+        //Update timestamp
+        batch.update(PLAYER, "lifeCKTimestamp", new Date());
         batch.commit().addOnSuccessListener(aVoid -> {
                 if (status.equals("winner"))
                     Toast.makeText(this, "You Infected Your Opponent", Toast.LENGTH_SHORT);
