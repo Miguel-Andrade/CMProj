@@ -46,6 +46,10 @@ public class PlayerFC {
 
     private int numUpgrades;
 
+    //Infection
+    private HashMap<String, Object> infection1;
+    private HashMap<String, Object> infection2;
+
     public PlayerFC() {
     }
 
@@ -249,6 +253,46 @@ public class PlayerFC {
 
     public void reduceLife (int reduction) {
         life-=reduction;
+    }
+
+    public HashMap<String, Object> getInfection1() {
+        return infection1;
+    }
+
+    public void setInfection1(int damage, String ref, int type) {
+        HashMap<String, Object> infection1 = new HashMap<>();
+        infection1.put("ref", ref);
+        infection1.put("damage", damage);
+        infection1.put("type", type);
+        this.infection1 = infection1;
+    }
+
+    public HashMap<String, Object> getInfection2() {
+        return infection2;
+    }
+
+    public void setInfection2(int damage, String ref, int type) {
+        HashMap<String, Object> infection2 = new HashMap<>();
+        infection2.put("ref", ref);
+        infection2.put("damage", damage);
+        infection2.put("type", type);
+        this.infection2 = infection2;
+    }
+
+    public static HashMap<String, Object> newInfection1(int damage, String ref, int type) {
+        HashMap<String, Object> infec = new HashMap<>();
+        infec.put("infection1.ref", ref);
+        infec.put("infection1.damage", damage);
+        infec.put("infection1.type", type);
+        return infec;
+    }
+
+    public static HashMap<String, Object> newInfection2(int damage, String ref, int type) {
+        HashMap<String, Object> infec = new HashMap<>();
+        infec.put("infection2.ref", ref);
+        infec.put("infection2.damage", damage);
+        infec.put("infection2.type", type);
+        return infec;
     }
 
     public void upgrade (String stat) {

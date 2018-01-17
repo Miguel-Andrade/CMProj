@@ -27,7 +27,6 @@ import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
@@ -66,6 +65,9 @@ import com.kingoftheill.app1.presentation.ui.util.CustomInfoWindowAdapter;
 import com.kingoftheill.app1.presentation.ui.util.SectionsPageAdapter;
 import com.kingoftheill.app1.presentation.ui.util.SectionsPageAdapter2;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -247,6 +249,8 @@ public class MapActivity extends AppCompatActivity
 
         // PLAYER DETAILS
         player_image.setOnClickListener(v ->
+                //(SlidingUpPanelLayout) findViewById(R.id.sliding_layout).pane;
+        //);
                 Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show());
 
 

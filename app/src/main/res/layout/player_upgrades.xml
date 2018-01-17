@@ -107,7 +107,7 @@
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="426dp" />
 
-    <TextView
+    <Button
         android:id="@+id/disRange"
         android:layout_width="150dp"
         android:layout_height="25dp"
@@ -121,7 +121,7 @@
         android:textSize="15sp"
         android:textStyle="bold" />
 
-    <TextView
+    <Button
         android:id="@+id/disDamage"
         android:layout_width="150dp"
         android:layout_height="25dp"
@@ -137,21 +137,19 @@
         android:textSize="15sp"
         android:textStyle="bold" />
 
-    <TextView
+    <Button
         android:id="@+id/disResistence"
         android:layout_width="150dp"
         android:layout_height="25dp"
-        android:layout_alignBaseline="@+id/deaths"
-        android:layout_alignBottom="@+id/deaths"
         android:layout_alignStart="@+id/disDamage"
-        android:layout_alignLeft="@+id/disDamage"
+        android:layout_alignTop="@+id/deaths"
         android:background="@drawable/edittext"
         android:textAlignment="center"
         android:textColor="#080706"
         android:textSize="15sp"
         android:textStyle="bold" />
 
-    <TextView
+    <Button
         android:id="@+id/defense"
         android:layout_width="150dp"
         android:layout_height="25dp"
@@ -229,14 +227,12 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"/>
 
-    <TextView
+    <Button
         android:id="@+id/attack"
         android:layout_width="150dp"
         android:layout_height="25dp"
-        android:layout_alignBaseline="@+id/infected"
-        android:layout_alignBottom="@+id/infected"
         android:layout_alignStart="@+id/defense"
-        android:layout_alignLeft="@+id/defense"
+        android:layout_below="@+id/deaths"
         android:background="@drawable/edittext"
         android:textAlignment="center"
         android:textColor="#080706"

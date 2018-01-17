@@ -224,6 +224,7 @@ public class BattleActivity extends AppCompatActivity {
 
             Intent intent = new Intent(BattleActivity.this, UpgradesActivity.class);
             intent.putExtra("battleResult", battleResult);
+            intent.putExtra("enimie", ENIMIE.getId());
             new Timer().schedule(new TimerTask() {
                 public void run() {
                     BattleActivity.this.runOnUiThread(() -> {

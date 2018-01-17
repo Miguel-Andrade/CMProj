@@ -1,10 +1,13 @@
 package com.kingoftheill.app1.presentation.ui.activities;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -15,7 +18,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 import com.kingoftheill.app1.R;
+import com.kingoftheill.app1.domain.model.utilities.PlayerLevels;
 import com.kingoftheill.app1.domain.model.utilities.PlayersXPLevels;
 import com.kingoftheill.app1.domain2.PlayerFC;
 
@@ -30,17 +35,18 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
     private String mUsername;
 
     private static DocumentReference PLAYER;
+    private static DocumentReference ENIMIE;
 
     private PlayerFC playerFC;
 
-    private TextView deaths, infected, recoveries, hp, range, damage, resistence, defense, playerName,
-            playerLevel, diseaseLevel, attack, numUpgrades;
+    private TextView deaths, infected, recoveries, hp, playerName,
+            playerLevel, diseaseLevel,  numUpgrades;
     TextView killed;
-    private int nKills, nDeaths, nInfected, nRecoveries, nHp, nRange, nDamage, nResistence, nDefense, nPLvl, nDLvl;
-    private Button b1;
+    private int nKills, nDeaths, nInfected, nRecoveries;
+    private Button b1, damage, resistence, defense, attack, range;
     private ProgressBar pbPLVL, pbDLVL;
-    private int upgrades;
     private ProgressBar pb;
+    private ObjectAnimator progressAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,19 +62,19 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         mUsername = mFirebaseUser.getUid();
 
         PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
+        ENIMIE = mFirebaseFirestore.document("Users/" + getIntent().getStringExtra("enimie"));
 
         pbPLVL = findViewById(R.id.pbPLVL);
         playerName = findViewById(R.id.playerName);
         playerLevel = findViewById(R.id.Plevel);
         diseaseLevel = findViewById(R.id.Dlevel);
         hp = findViewById(R.id.hp);
-        range = findViewById(R.id.range);
+        range = findViewById(R.id.disRange);
         pbDLVL = findViewById(R.id.pbDLVL);
-        damage = findViewById(R.id.damage);
-        resistence = findViewById(R.id.resistence);
+        damage = findViewById(R.id.disDamage);
+        resistence = findViewById(R.id.disResistence);
         defense = findViewById(R.id.defense);
         attack = findViewById(R.id.attack);
-        defense = findViewById(R.id.defense);
         numUpgrades = findViewById(R.id.numUpgrades);
 
         //UPDATE THE PLAYER
@@ -90,7 +96,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        //winner(getIntent().getStringExtra("battleResult"));
+        winner(getIntent().getStringExtra("battleResult"));
 
         killed = findViewById(R.id.kills);
         nKills = 2;
@@ -108,132 +114,132 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         nRecoveries = 1;
         recoveries.setText("Recoveries: "+ nRecoveries);
 
-        addTextViewClickListener();
-
         Button bt1 = findViewById(R.id.button1);
         bt1.setOnClickListener(this);
-
-        /*v -> {
-            Intent intent = new Intent(UpgradesActivity.this, MapActivity.class);
-            startActivity(intent);
-        });*/
+        range.setOnClickListener(this);
+        damage.setOnClickListener(this);
+        resistence.setOnClickListener(this);
+        attack.setOnClickListener(this);
+        defense.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View v) {
+        WriteBatch batch = mFirebaseFirestore.batch();
+        if (v.getId() == R.id.button1) {
+            startActivity(new Intent(this, MapActivity.class));
+        }
+        else {
+            if (playerFC.getNumUpgrades() > 0) {
+                switch (v.getId()) {
+                    case R.id.range:
+                        batch.update(PLAYER, "range", playerFC.getDisRange() + 1);
+                        break;
 
-        /*if (v.)
+                    case R.id.resistence:
+                        batch.update(PLAYER, "range", playerFC.getDisResistence() + 1);
+                        break;
 
-        switch (v.getId()) {
+                    case R.id.damage:
+                        batch.update(PLAYER, "range", playerFC.getDisDamage() + 1);
+                        break;
 
-            case R.id.oneButton:
-                // do your code
+                    case R.id.attack:
+                        batch.update(PLAYER, "range", playerFC.getDisBtAttack() + 1);
+                        break;
+
+                    case R.id.defense:
+                        batch.update(PLAYER, "range", playerFC.getDisBtDefense() + 1);
+                        break;
+                    default:
+                        break;
+                }
+                batch.update(PLAYER, "range", playerFC.getNumUpgrades() - 1);
+                batch.commit().addOnSuccessListener(aVoid ->
+                        Toast.makeText(this, "Stat Upgraded", Toast.LENGTH_SHORT))
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(this, "Error on Upgrading Stat", Toast.LENGTH_SHORT);
+                            Log.e(TAG, e.getMessage());
+                        });
+            }
+        }
+    }
+
+    public void winner(String status) {
+        int[] result = new int[2];
+        result[0] = 0;
+        WriteBatch batch = mFirebaseFirestore.batch();
+        switch (status) {
+            case "winner":
+                result[0] = 10 + Integer.parseInt(getIntent().getStringExtra("level"));
                 break;
 
-            case R.id.twoButton:
-                // do your code
-                break;
-
-            case R.id.threeButton:
-                // do your code
+            case "looser":
+                result[0] = 5;
                 break;
 
             default:
+                result[0] = 10;
                 break;
         }
-*/
+
+        int currxp = playerFC.getCurrXP()+result[0];
+        int level = playerFC.getLevel();
+        int disXp = playerFC.getDisCurrXP()+result[0];
+        int dislevel = playerFC.getDisLevel();
+        dislevel += disXp/10;
+        disXp = disXp % 10;
+
+        int ya = PlayersXPLevels.valueOf("LEVEL_" + level).highBound();
+        while (true){
+            if (currxp >= ya)
+                level++;
+            else
+                break;
+        }
+
+        pbPLVL.setMax(ya);
+        pbDLVL.setMax(10*dislevel);
+        progressAnimator = ObjectAnimator.ofInt(pbPLVL, "progress", currxp);
+        progressAnimator.setDuration(500);
+        progressAnimator.setInterpolator(new DecelerateInterpolator());
+        progressAnimator.start();
+
+        batch.update(PLAYER, "currXP", currxp);
+        batch.update(PLAYER, "level",level);
+        batch.update(PLAYER, "disCurrXP", disXp);
+        batch.update(PLAYER, "disLevel", dislevel);
+        batch.update(PLAYER, "numUpgrades", disXp/10);
+        if (status.equals("looser") && (playerFC.getInfection1() != null || playerFC.getInfection2() != null)) {
+            ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
+               if (documentSnapshot.exists()) {
+                   PlayerFC ene = documentSnapshot.toObject(PlayerFC.class);
+                   int val = 2*ene.getDisDamage()+ PlayerLevels.valueOf("LEVEL_" + ene.getLevel()).damage();
+                   if (playerFC.getInfection1() == null && playerFC.getInfection2() == null) {
+
+                       batch.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
+                   } else if (playerFC.getInfection1() != null && ((int)playerFC.getInfection2().get("type") != ene.getType())) {
+
+                       batch.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
+                   } else {
+
+                       batch.update(PLAYER, PlayerFC.newInfection2(val, documentSnapshot.getId(), ene.getType()));
+                   }
+               }
+            });
+        }
+        batch.commit().addOnSuccessListener(aVoid -> {
+                if (status.equals("winner"))
+                    Toast.makeText(this, "You Infected Your Opponent", Toast.LENGTH_SHORT);
+                else if (status.equals("looser"))
+                    Toast.makeText(this, "You've Been Infected", Toast.LENGTH_SHORT);
+                else
+                    Toast.makeText(this, "Try Harder Next Time", Toast.LENGTH_SHORT);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error on Battle Result", Toast.LENGTH_SHORT);
+                    Log.e(TAG, e.getMessage());
+        });
     }
-
-    private void addTextViewClickListener() {
-        hp.setOnClickListener(view -> {
-            if(upgrades > 0) {
-                nHp += 10;
-                hp.setText("HP: " + nHp);
-                upgrades-=1;
-                PLAYER.update("life", playerFC.getLife()+1)
-                        .addOnSuccessListener(aVoid ->
-                                Toast.makeText(this, "Stat Upgraded", Toast.LENGTH_SHORT))
-                        .addOnFailureListener(e -> {
-                                Toast.makeText(this, "Stat Upgraded", Toast.LENGTH_SHORT);
-                                Log.e(TAG, e.getMessage());
-                                });
-            }
-        });
-        range.setOnClickListener(view -> {
-            if(upgrades > 0) {
-                nRange += 2;
-                range.setText("Range: " + nRange);
-                upgrades-=1;
-            }
-        });
-        damage.setOnClickListener(view -> {
-            if(upgrades > 0) {
-                nDamage += 2;
-                damage.setText("Damage: " + nDamage);
-                upgrades-=1;
-            }
-        });
-        resistence.setOnClickListener(view -> {
-            if(upgrades > 0) {
-                nResistence += 2;
-                resistence.setText("Resistence: " + nResistence);
-                upgrades-=1;
-            }
-        });
-        attack.setOnClickListener(view -> {
-            if(upgrades > 0) {
-                //nAttack += 2;
-                //attack.setText("Attack: " + nAttack);
-                upgrades-=1;
-            }
-        });
-        defense.setOnClickListener(view -> {
-            if(upgrades > 0) {
-                nDefense += 2;
-                defense.setText("Defense: " + nDefense);
-                upgrades-=1;
-            }
-        });
-
-    }
-
-//    public void winner(String status) {
-//        int[] result = new int[2];
-//        result[0] = 0;
-//        if (name.equals(attacker.getName()) && status.equals("winner")) {
-//            winner = attacker;
-//            looser = defender;
-//            result[0] = 10 + looser.getLevel();
-//
-//        } else if (name.equals(defender.getName()) && status.equals("winner")){
-//            winner = defender;
-//            looser = attacker;
-//            result[0] = 10 + looser.getLevel();
-//
-//        } else {
-//            result[0] = 10;
-//            result[1] = 0;
-//            return result;
-//        }
-//
-//        winner.setCurrXP(result[0]);
-//        PlayersXPLevels plxp = PlayersXPLevels.valueOf("LEVEL_" + playerFC.getLevel());
-//        while (playerFC.getCurrXP() >= plxp.highBound()) {
-//            winner.levelUp();
-//
-//            winner.getDisease().setCurrXP(result[0]);
-//            Disease dis = winner.getDisease();
-//            result[1] = 0;
-//            while (dis.getCurrXP() >= (10*dis.getLevel())) {
-//                int xpNextLevel = dis.getCurrXP() - (10*dis.getLevel());
-//                dis.setCurrXPZero();
-//                dis.levelUp();
-//                dis.setCurrXP(xpNextLevel);
-//                result[1]++;
-//            }
-//        }
-//        looser.setInfected(new Infection(winner.getName(), winner.getDisease().getName(), winner.getTotalDamage()));
-//        return result;
-//    }
 }
