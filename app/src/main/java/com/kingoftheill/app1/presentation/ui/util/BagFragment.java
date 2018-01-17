@@ -152,39 +152,47 @@ public class BagFragment extends Fragment {
                                             else
                                                 val = itemValueFlag + p.getLife();
 
-                                            PLAYER.update("life", val);
+                                            PLAYER.update("life", val).addOnSuccessListener(aVoid ->
+                                                    Toast.makeText(getContext(),"You Have Healed!",Toast.LENGTH_SHORT).show());
                                             break;
                                         case ("resistance"):
                                             val = p.getResistance() + itemValueFlag;
-                                            PLAYER.update("resistance", val);
+                                            PLAYER.update("resistance", val).addOnSuccessListener(aVoid ->
+                                                    Toast.makeText(getContext(),"You Have Increased Resistance!",Toast.LENGTH_SHORT).show());
                                             break;
                                         case ("cure0"):
                                             if(p.getType() != 0) {
-                                                    if((p.getInfection1()!= null) && p.getInfection1().get("type").equals(0)){
-                                                        PLAYER.update("infection1", FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Influenza!",Toast.LENGTH_SHORT));
+                                                    if(p.getInfection1()!= null && ((Long)p.getInfection1().get("type")).intValue() == 0){
+                                                        PLAYER.update("infection1", FieldValue.delete()).addOnSuccessListener(aVoid ->
+                                                                Toast.makeText(getContext(),"You Have Cured Influenza!",Toast.LENGTH_SHORT).show());
                                                     }
-                                                    if((p.getInfection2()!= null) && p.getInfection2().get("type").equals(0)){
-                                                        PLAYER.update("infection2",FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Influenza!", Toast.LENGTH_SHORT));
+                                                    if((p.getInfection2()!= null) &&((Long)p.getInfection1().get("type")).intValue() == 0){
+                                                        PLAYER.update("infection2",FieldValue.delete()).addOnSuccessListener(aVoid ->
+                                                                Toast.makeText(getContext(),"You Have Cured Influenza!", Toast.LENGTH_SHORT).show());
                                                     }
                                             }
                                             break;
                                         case ("cure1"):
                                             if(p.getType() != 1){
-                                                if((p.getInfection1()!= null) && p.getInfection1().get("type").equals(1)){
-                                                    PLAYER.update("infection1", FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Bubonic Plague!",Toast.LENGTH_SHORT));
+                                                if((p.getInfection1()!= null) && ((Long)p.getInfection1().get("type")).intValue() == 1){
+                                                    PLAYER.update("infection1", FieldValue.delete()).addOnSuccessListener(aVoid ->
+                                                            Toast.makeText(getContext(),"You Have Cured Bubonic Plague!",Toast.LENGTH_SHORT).show());
                                                 }
-                                                if((p.getInfection2()!= null) && p.getInfection2().get("type").equals(1)){
-                                                    PLAYER.update("infection2",FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Bubonic Plague!",Toast.LENGTH_SHORT));
+                                                if((p.getInfection2()!= null) &&((Long)p.getInfection1().get("type")).intValue() == 1){
+                                                    PLAYER.update("infection2",FieldValue.delete()).addOnSuccessListener(aVoid ->
+                                                            Toast.makeText(getContext(),"You Have Cured Bubonic Plague!",Toast.LENGTH_SHORT).show());
                                                 }
                                             }
                                             break;
                                         case ("cure2"):
                                             if(p.getType() != 2){
-                                                if((p.getInfection1()!= null) && p.getInfection1().get("type").equals(2)){
-                                                    PLAYER.update("infection1", FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Smallpox!",Toast.LENGTH_SHORT));
+                                                if((p.getInfection1()!= null) && ((Long)p.getInfection1().get("type")).intValue() == 2){
+                                                    PLAYER.update("infection1", FieldValue.delete()).addOnSuccessListener(aVoid ->
+                                                            Toast.makeText(getContext(),"You Have Cured Smallpox!",Toast.LENGTH_SHORT).show());
                                                 }
-                                                if((p.getInfection2()!= null) && p.getInfection2().get("type").equals(2)){
-                                                    PLAYER.update("infection2",FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Smallpox!",Toast.LENGTH_SHORT));
+                                                if((p.getInfection2()!= null) && ((Long)p.getInfection1().get("type")).intValue() == 2){
+                                                    PLAYER.update("infection2",FieldValue.delete()).addOnSuccessListener(aVoid ->
+                                                            Toast.makeText(getContext(),"You Have Cured Smallpox!",Toast.LENGTH_SHORT).show());
                                                 }
                                             }
                                             break;

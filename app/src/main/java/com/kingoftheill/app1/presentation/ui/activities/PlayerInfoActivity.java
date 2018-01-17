@@ -72,13 +72,13 @@ public class PlayerInfoActivity extends AppCompatActivity {
                 playerName.setText(playerFC.getName());
                 pbPLVL.setProgress(playerFC.getCurrXP());
                 pbDLVL.setProgress(playerFC.getDisCurrXP());
-                hp.setText(playerFC.getLife() + "");
-                diseaseLevel.setText(playerFC.getDisLevel() + "");
-                playerLevel.setText(playerFC.getLevel() + "");
-                range.setText(playerFC.getTotalRange() + "");
-                resistence.setText(playerFC.getTotalResistance() + "");
-                damage.setText(playerFC.getTotalDamage() + "");
-                defense.setText(playerFC.getTotalBtDefense() + "");
+                hp.setText("HP: "+playerFC.getLife() + "");
+                diseaseLevel.setText("DLvl "+playerFC.getDisLevel() + "");
+                playerLevel.setText("PLvl "+playerFC.getLevel() + "");
+                range.setText("Range "+playerFC.getTotalRange() + "");
+                resistence.setText("Resistance "+playerFC.getTotalResistance() + "");
+                damage.setText("Damage "+playerFC.getTotalDamage() + "");
+                defense.setText("Defense "+playerFC.getTotalBtDefense() + "");
                 if (playerFC.getType() != getIntent().getIntExtra("type", 0)) {
                 if (!getIntent().getExtras().getBoolean("attack")) {
                     b1.setEnabled(false);

@@ -177,27 +177,32 @@ public class MapActivity extends AppCompatActivity
                         c1.setTime(curr);
                         Calendar c2 = Calendar.getInstance();
                         c2.setTime(dbTime);
-                        long millis1 = c1.getTimeInMillis();
-                        long millis2 = c2.getTimeInMillis();
+                        long millis1 = System.currentTimeMillis();
+                        long millis2 = dbTime.getTime();
 
                         // Calculate difference in milliseconds
-                        long diff = millis2 - millis1;
+                        long diff = millis1 - millis2;
 
                         int diffMinutes = (int) (diff / (60 * 1000));
-                        int numDeVezesParaTirarVida = (int) (diffMinutes/10);
+                        int numDeVezesParaTirarVida = (int)(diffMinutes/2);
 
-//                        if(numDeVezesParaTirarVida > 0){
-//                           int currVida = documentSnapshot.get("life") - (numDeVezesParaTirarVida * documentSnapshot.get("XXX"))
-//                        } //TODO
+                        int currVida = ((Long)documentSnapshot.get("life")).intValue();
+                        if(numDeVezesParaTirarVida > 0){
+                            if(documentSnapshot.get("infection1") != null){
+                                currVida -= (numDeVezesParaTirarVida * ((Long)documentSnapshot.get("infection1.damage")).intValue());
+                            }
+                            if(documentSnapshot.get("infection2") != null){
+                                currVida -= (numDeVezesParaTirarVida * ((Long)documentSnapshot.get("infection2.damage")).intValue());
+                            }
+                        }
+                        PLAYER.update("life", currVida);
+                        PLAYER.update("lifeCKTimestamp", curr);
                     }
                 });
 
 
-
-                //PLAYER.update("life", currVida);
-                PLAYER.update("lifeCKTimestamp", curr);
             }
-        } , 0, 10, TimeUnit.MINUTES);
+        } , 0, 2, TimeUnit.MINUTES);
 
 
         //UPDATE THE PLAYER
