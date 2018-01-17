@@ -163,6 +163,8 @@ public class MapActivity extends AppCompatActivity
                     pg.setProgressWithAnimation(playerFC.getCurrXP());
                     lifepg.setProgress(playerFC.getLife());
                     disxppg.setProgress(playerFC.getDisCurrXP());
+
+                    isPlayerDead(playerFC);
             }
         });
 
@@ -193,6 +195,15 @@ public class MapActivity extends AppCompatActivity
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
     }
+
+
+    private void isPlayerDead(PlayerFC p){
+        if(p.getLife()<= 0){
+            Intent intent = new Intent(this, DeathActivity.class);
+            startActivity(intent);
+        }
+    }
+
 
     @Override
     public void onPause() {
@@ -313,6 +324,7 @@ public class MapActivity extends AppCompatActivity
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
     }
+
 
     @Override
     public void onConnectionSuspended(int i) {}

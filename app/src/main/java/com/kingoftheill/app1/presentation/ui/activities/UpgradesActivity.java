@@ -90,7 +90,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        winner(getIntent().getStringExtra("battleResult"));
+        //winner(getIntent().getStringExtra("battleResult"));
 
         killed = findViewById(R.id.kills);
         nKills = 2;
@@ -198,42 +198,42 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void winner(String status) {
-        int[] result = new int[2];
-        result[0] = 0;
-        if (name.equals(attacker.getName()) && status.equals("winner")) {
-            winner = attacker;
-            looser = defender;
-            result[0] = 10 + looser.getLevel();
-
-        } else if (name.equals(defender.getName()) && status.equals("winner")){
-            winner = defender;
-            looser = attacker;
-            result[0] = 10 + looser.getLevel();
-
-        } else {
-            result[0] = 10;
-            result[1] = 0;
-            return result;
-        }
-
-        winner.setCurrXP(result[0]);
-        PlayersXPLevels plxp = PlayersXPLevels.valueOf("LEVEL_" + playerFC.getLevel());
-        while (playerFC.getCurrXP() >= plxp.highBound()) {
-            winner.levelUp();
-
-            winner.getDisease().setCurrXP(result[0]);
-            Disease dis = winner.getDisease();
-            result[1] = 0;
-            while (dis.getCurrXP() >= (10*dis.getLevel())) {
-                int xpNextLevel = dis.getCurrXP() - (10*dis.getLevel());
-                dis.setCurrXPZero();
-                dis.levelUp();
-                dis.setCurrXP(xpNextLevel);
-                result[1]++;
-            }
-        }
-        looser.setInfected(new Infection(winner.getName(), winner.getDisease().getName(), winner.getTotalDamage()));
-        return result;
-    }
+//    public void winner(String status) {
+//        int[] result = new int[2];
+//        result[0] = 0;
+//        if (name.equals(attacker.getName()) && status.equals("winner")) {
+//            winner = attacker;
+//            looser = defender;
+//            result[0] = 10 + looser.getLevel();
+//
+//        } else if (name.equals(defender.getName()) && status.equals("winner")){
+//            winner = defender;
+//            looser = attacker;
+//            result[0] = 10 + looser.getLevel();
+//
+//        } else {
+//            result[0] = 10;
+//            result[1] = 0;
+//            return result;
+//        }
+//
+//        winner.setCurrXP(result[0]);
+//        PlayersXPLevels plxp = PlayersXPLevels.valueOf("LEVEL_" + playerFC.getLevel());
+//        while (playerFC.getCurrXP() >= plxp.highBound()) {
+//            winner.levelUp();
+//
+//            winner.getDisease().setCurrXP(result[0]);
+//            Disease dis = winner.getDisease();
+//            result[1] = 0;
+//            while (dis.getCurrXP() >= (10*dis.getLevel())) {
+//                int xpNextLevel = dis.getCurrXP() - (10*dis.getLevel());
+//                dis.setCurrXPZero();
+//                dis.levelUp();
+//                dis.setCurrXP(xpNextLevel);
+//                result[1]++;
+//            }
+//        }
+//        looser.setInfected(new Infection(winner.getName(), winner.getDisease().getName(), winner.getTotalDamage()));
+//        return result;
+//    }
 }
