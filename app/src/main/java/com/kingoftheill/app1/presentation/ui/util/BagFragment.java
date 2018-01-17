@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.kingoftheill.app1.R;
@@ -29,6 +30,7 @@ import com.kingoftheill.app1.domain2.PlayerItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PropertyPermission;
 
 public class BagFragment extends Fragment {
     private List<PlayerItem> PlayerItems;
@@ -158,32 +160,36 @@ public class BagFragment extends Fragment {
                                             break;
                                         case ("cure0"):
                                             if(p.getType() != 0) {
-                                                //PLAYER.update(/*CAMPO DA DOENÇA INFECTADO*/, null);
+                                                    if((p.getInfection1()!= null) && p.getInfection1().get("type").equals(0)){
+                                                        PLAYER.update("infection1", FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Influenza!",Toast.LENGTH_SHORT));
+                                                    }
+                                                    if((p.getInfection2()!= null) && p.getInfection2().get("type").equals(0)){
+                                                        PLAYER.update("infection2",FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Influenza!", Toast.LENGTH_SHORT));
+                                                    }
                                             }
                                             break;
                                         case ("cure1"):
                                             if(p.getType() != 1){
-                                                //PLAYER.update(/*CAMPO DA DOENÇA INFECTADO*/, null);
+                                                if((p.getInfection1()!= null) && p.getInfection1().get("type").equals(1)){
+                                                    PLAYER.update("infection1", FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Bubonic Plague!",Toast.LENGTH_SHORT));
+                                                }
+                                                if((p.getInfection2()!= null) && p.getInfection2().get("type").equals(1)){
+                                                    PLAYER.update("infection2",FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Bubonic Plague!",Toast.LENGTH_SHORT));
+                                                }
                                             }
                                             break;
                                         case ("cure2"):
                                             if(p.getType() != 2){
-                                                //PLAYER.update(/*CAMPO DA DOENÇA INFECTADO*/, null);
+                                                if((p.getInfection1()!= null) && p.getInfection1().get("type").equals(2)){
+                                                    PLAYER.update("infection1", FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Smallpox!",Toast.LENGTH_SHORT));
+                                                }
+                                                if((p.getInfection2()!= null) && p.getInfection2().get("type").equals(2)){
+                                                    PLAYER.update("infection2",FieldValue.delete()).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),"You Have Cured Smallpox!",Toast.LENGTH_SHORT));
+                                                }
                                             }
                                             break;
                                         default: PLAYER.update(itemStatFlag, itemValueFlag);
                                     }
-                                    if (itemStatFlag.equals("life")) {
-                                        int temp = task.getResult().toObject(PlayerFC.class).getLife();
-                                        if (temp + itemValueFlag > 100)
-                                            val = 100;
-                                        else
-                                            val = itemValueFlag + temp;
-
-                                        PLAYER.update("life", val);
-                                    }
-                                    else
-                                        PLAYER.update(itemStatFlag, itemValueFlag);//.addOnSuccessListener().addOnFailureListener();
                                 }
                                 else
                                     Log.w(TAG, "Error on getting player for update");

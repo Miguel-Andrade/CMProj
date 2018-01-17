@@ -247,14 +247,14 @@ public class MapActivity extends AppCompatActivity
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // PLAYER DETAILS
         player_image.setOnClickListener(v ->
                 //(SlidingUpPanelLayout) findViewById(R.id.sliding_layout).pane;
-        //);
+                //);
         {
-                Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show();
-                PLAYER.update( PlayerFC.newInfection1(2, PLAYER.getId(), 0));
+            Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show();
+            PLAYER.update( PlayerFC.newInfection1(2, PLAYER.getId(), 0));
         });
+
 
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
