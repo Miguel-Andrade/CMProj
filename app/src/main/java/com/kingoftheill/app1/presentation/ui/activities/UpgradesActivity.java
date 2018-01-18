@@ -49,6 +49,8 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
     private ObjectAnimator progressAnimator;
     private boolean flag = false;
 
+    private int l;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +90,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                 pbDLVL.setProgress(playerFC.getDisCurrXP());
                 hp.setText("HP: " + playerFC.getLife());
                 diseaseLevel.setText("Disease Level: " + playerFC.getDisLevel());
-                playerLevel.setText("Player Level: " + playerFC.getLevel()+"");
+                playerLevel.setText("Player Level: " + playerFC.getLevel());
                 range.setText("Range: " + playerFC.getDisRange());
                 resistence.setText("Resistance: " + playerFC.getDisResistence());
                 damage.setText("Damage: " + playerFC.getDisDamage());
@@ -106,6 +108,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
+
         Button bt1 = findViewById(R.id.button1);
         bt1.setOnClickListener(this);
         range.setOnClickListener(this);
@@ -125,31 +128,39 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         else {
             if (playerFC.getNumUpgrades() > 0) {
                 switch (v.getId()) {
-                    case R.id.range:
+                    case R.id.disRange:
                         batch.update(PLAYER, "disRange", playerFC.getDisRange() + 1);
                         break;
 
-                    case R.id.resistence:
+                    case R.id.disResistence:
                         batch.update(PLAYER, "disResistence", playerFC.getDisResistence() + 1);
                         break;
 
-                    case R.id.damage:
+                    case R.id.disDamage:
                         batch.update(PLAYER, "disDamage", playerFC.getDisDamage() + 1);
                         break;
 
                     case R.id.attack:
-                        batch.update(PLAYER, "disAttack", playerFC.getDisBtAttack() + 1);
+                        batch.update(PLAYER, "disBtAttack", playerFC.getDisBtAttack() + 1);
                         break;
 
                     case R.id.defense:
-                        batch.update(PLAYER, "disDefense", playerFC.getDisBtDefense() + 1);
+                        batch.update(PLAYER, "disBtDefense", playerFC.getDisBtDefense() + 1);
                         break;
                     default:
                         break;
                 }
+                if (playerFC.getNumUpgrades() - 1 <=0 ) {
+                    range.setEnabled(false);
+                    damage.setEnabled(false);
+                    resistence.setEnabled(false);
+                    attack.setEnabled(false);
+                    defense.setEnabled(false);
+                }
                 batch.update(PLAYER, "numUpgrades", playerFC.getNumUpgrades() - 1);
-                batch.commit().addOnSuccessListener(aVoid ->
-                        Toast.makeText(this, "Stat Upgraded", Toast.LENGTH_SHORT))
+                batch.commit().addOnSuccessListener(aVoid -> {
+                        Toast.makeText(getApplicationContext(), "Stat Upgraded", Toast.LENGTH_SHORT);
+                })
                         .addOnFailureListener(e -> {
                             Toast.makeText(this, "Error on Upgrading Stat", Toast.LENGTH_SHORT);
                             Log.e(TAG, e.getMessage());
@@ -162,9 +173,15 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         int[] result = new int[2];
         result[0] = 0;
         WriteBatch batch = mFirebaseFirestore.batch();
+
+        ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
+            if(documentSnapshot.exists()) {
+               l = documentSnapshot.getLong("level").intValue();
+            }
+        });
         switch (status) {
             case "winner":
-                result[0] = 10 + Integer.parseInt(getIntent().getStringExtra("level"));
+                result[0] = 10 + l;
                 break;
 
             case "looser":
@@ -181,13 +198,8 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         int disXp = playerFC.getDisCurrXP()+result[0];
         int dislevel = playerFC.getDisLevel();
 
-        //dis level up
-        dislevel += disXp/10;
-        disXp = disXp % 10;
-
         //player level up
         int ya = PlayersXPLevels.valueOf("LEVEL_" + level).highBound();
-        PlayerLevels yup = PlayerLevels.valueOf("LEVEL_" + level);
         while (true){
             if (currxp >= ya) {
                 level++;
@@ -207,14 +219,14 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         batch.update(PLAYER, "currXP", currxp);
         batch.update(PLAYER, "level",level);
         batch.update(PLAYER, "disCurrXP", disXp);
-        batch.update(PLAYER, "disLevel", dislevel);
-        batch.update(PLAYER, "numUpgrades", disXp/10);
+        batch.update(PLAYER, "disLevel", (1 + disXp/10));
+        batch.update(PLAYER, "numUpgrades", playerFC.getNumUpgrades() + (1 + disXp/10) - dislevel);
         batch.update(PLAYER, "life", PlayerLevels.valueOf("LEVEL_" + level).life());
-        batch.update(PLAYER, "resistence", PlayerLevels.valueOf("LEVEL_" + level).resistance());
+        batch.update(PLAYER, "resistance", PlayerLevels.valueOf("LEVEL_" + level).resistance());
         batch.update(PLAYER, "damage", PlayerLevels.valueOf("LEVEL_" + level).damage());
         batch.update(PLAYER, "range", PlayerLevels.valueOf("LEVEL_" + level).range());
 
-        if (status.equals("looser") && (playerFC.getInfection1() != null || playerFC.getInfection2() != null)) {
+        if (status.equals("looser") && (playerFC.getInfection1() == null || playerFC.getInfection2() == null)) {
             ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
                if (documentSnapshot.exists()) {
                    PlayerFC ene = documentSnapshot.toObject(PlayerFC.class);

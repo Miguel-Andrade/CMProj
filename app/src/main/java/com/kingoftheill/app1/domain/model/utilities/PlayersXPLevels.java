@@ -6,8 +6,12 @@ public enum PlayersXPLevels {
 	LEVEL_3 (3, 25, 37),
 	LEVEL_4 (4, 38, 54),
 	LEVEL_5 (5, 55, 71),
-	LEVEL_6 (6, 1, 10),
-	LEVEL_7 (7, 1, 10);
+	LEVEL_6 (6, 71, 81),
+	LEVEL_7 (7, 81, 91),
+	LEVEL_8 (8, 91, 101),
+	LEVEL_9 (9, 101, 111),
+	LEVEL_10 (10, 111, 121),
+	LEVEL_11 (11, 121, 131);
 	
 	private int level;
 	private int lowBound;

@@ -224,11 +224,6 @@ public class BattleActivity extends AppCompatActivity {
             intent.putExtra("battleResult", battleResult);
             intent.putExtra("enimie", ENIMIE.getId());
 
-            ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
-                if(documentSnapshot.exists())
-                    intent.putExtra("level", documentSnapshot.getLong("level").intValue());
-            });
-
             new Timer().schedule(new TimerTask() {
                 public void run() {
                     BattleActivity.this.runOnUiThread(() -> {

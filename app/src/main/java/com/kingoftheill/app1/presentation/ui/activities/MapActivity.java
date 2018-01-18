@@ -226,6 +226,7 @@ public class MapActivity extends AppCompatActivity
                     pg.setProgressWithAnimation(playerFC.getCurrXP());
                     lifepg.setMax(100 + ((playerFC.getLevel() - 1)* 5));
                     lifepg.setProgress(playerFC.getLife());
+                    disxppg.setMax(10*playerFC.getDisLevel());
                     disxppg.setProgress(playerFC.getDisCurrXP());
 
                     isPlayerDead(playerFC);
