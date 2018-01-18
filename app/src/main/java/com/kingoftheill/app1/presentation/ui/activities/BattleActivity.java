@@ -81,7 +81,7 @@ public class BattleActivity extends AppCompatActivity {
             PLAYER.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
-                    battleValue = p.getTotalBtDefense();
+                    battleValue = p.getDisBtDefense();
                 }
             });
         }
@@ -91,7 +91,7 @@ public class BattleActivity extends AppCompatActivity {
             PLAYER.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
-                    battleValue = p.getTotalBtAttack();
+                    battleValue = + p.getDisBtAttack();
                 }
             });
         }

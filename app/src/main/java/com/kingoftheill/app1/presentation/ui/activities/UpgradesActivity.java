@@ -176,10 +176,14 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         int level = playerFC.getLevel();
         int disXp = playerFC.getDisCurrXP()+result[0];
         int dislevel = playerFC.getDisLevel();
+
+        //dis level up
         dislevel += disXp/10;
         disXp = disXp % 10;
 
+        //player level up
         int ya = PlayersXPLevels.valueOf("LEVEL_" + level).highBound();
+        PlayerLevels yup = PlayerLevels.valueOf("LEVEL_" + level);
         while (true){
             if (currxp >= ya) {
                 level++;
@@ -201,6 +205,11 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         batch.update(PLAYER, "disCurrXP", disXp);
         batch.update(PLAYER, "disLevel", dislevel);
         batch.update(PLAYER, "numUpgrades", disXp/10);
+        batch.update(PLAYER, "life", PlayerLevels.valueOf("LEVEL_" + level).life());
+        batch.update(PLAYER, "resistence", PlayerLevels.valueOf("LEVEL_" + level).resistance());
+        batch.update(PLAYER, "damage", PlayerLevels.valueOf("LEVEL_" + level).damage());
+        batch.update(PLAYER, "range", PlayerLevels.valueOf("LEVEL_" + level).range());
+
         if (status.equals("looser") && (playerFC.getInfection1() != null || playerFC.getInfection2() != null)) {
             ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
                if (documentSnapshot.exists()) {

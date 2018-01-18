@@ -22,10 +22,6 @@ public class PlayerFC {
     private int damage;
     private int resistance;
 
-    //BATTLE
-    private int btAttack;
-    private int btDefense;
-
     //COMMONS_STATS
     private int level;
     private int currXP;
@@ -148,22 +144,6 @@ public class PlayerFC {
 
     public void setResistance(int resistance) {
         this.resistance += resistance;
-    }
-
-    public int getBtAttack() {
-        return btAttack;
-    }
-
-    public void setBtAttack(int btAttack) {
-        this.btAttack += btAttack;
-    }
-
-    public int getBtDefense() {
-        return btDefense;
-    }
-
-    public void setBtDefense(int btDefense) {
-        this.btDefense += btDefense;
     }
 
     public int getLevel() {
@@ -309,40 +289,6 @@ public class PlayerFC {
         infec.put("infection2.type", type);
         return infec;
     }
-
-    public void upgrade (String stat) {
-        switch (stat) {
-            case "disRange":
-                disRange++;
-                break;
-
-            case "disDamage":
-                disDamage++;
-                break;
-
-            case "disResistence":
-                disResistence++;
-                break;
-
-            case "disBtAttack":
-                disBtAttack++;
-                break;
-
-            case "disBtDefense":
-                disBtDefense++;
-                break;
-        }
-    }
-
-    public int getTotalRange() { return range+disRange;}
-
-    public int getTotalResistance() { return resistance + disResistence;}
-
-    public int getTotalDamage() { return damage + disDamage; }
-
-    public int getTotalBtAttack() { return btAttack + disBtAttack; }
-
-    public int getTotalBtDefense() { return btDefense + disBtDefense;}
 
     public int getDeaths() {
         return deaths;

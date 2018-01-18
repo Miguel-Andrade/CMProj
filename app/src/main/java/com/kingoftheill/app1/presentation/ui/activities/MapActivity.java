@@ -473,7 +473,7 @@ public class MapActivity extends AppCompatActivity
                 mGoogleMap.getUiSettings().setAllGesturesEnabled(false);
                 mGoogleMap.getUiSettings().setMapToolbarEnabled(false);
                 mLastKnownLocation = null;
-                getLocationPermission();
+                //  getLocationPermission();
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
