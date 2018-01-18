@@ -15,8 +15,7 @@
         tools:layout_editor_absoluteY="118dp"
         android:layout_alignBottom="@+id/Plevel"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"/>
+        android:layout_alignParentRight="true"/>
 
     <TextView
         android:id="@+id/kills"
@@ -218,8 +217,7 @@
         tools:layout_editor_absoluteY="118dp"
         android:layout_alignTop="@+id/Dlevel"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"/>
+        android:layout_alignParentRight="true"/>
 
     <Button
         android:id="@+id/attack"
@@ -235,8 +233,9 @@
 
     <TextView
         android:id="@+id/numUpgrades"
-        android:layout_width="40dp"
-        android:layout_height="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
         android:layout_alignStart="@+id/pbPLVL"
         android:layout_below="@+id/playerName"
         android:layout_marginTop="21dp"

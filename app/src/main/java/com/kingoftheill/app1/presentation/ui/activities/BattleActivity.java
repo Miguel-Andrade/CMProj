@@ -77,12 +77,6 @@ public class BattleActivity extends AppCompatActivity {
         PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
         ENIMIE = mFirebaseFirestore.document("Users/" + getIntent().getStringExtra("ref"));
 
-        ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
-            if(documentSnapshot.exists()){
-                P2.setText(documentSnapshot.getString("name"));
-            }
-        });
-
         if (getIntent().getExtras().getBoolean("defender")) {
             attacker = false;
             BATTLE = mFirebaseFirestore.document("Battles/" + getIntent().getExtras().get("ref"));
@@ -91,6 +85,12 @@ public class BattleActivity extends AppCompatActivity {
                     P1.setText(documentSnapshot.getString("name"));
                     PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
                     battleValue = p.getDisBtDefense();
+                }
+            });
+
+            ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
+                if(documentSnapshot.exists()){
+                    P2.setText(documentSnapshot.getString("name"));
                 }
             });
         }
