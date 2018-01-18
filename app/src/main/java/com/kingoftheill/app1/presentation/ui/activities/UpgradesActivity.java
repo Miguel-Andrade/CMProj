@@ -96,7 +96,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                 damage.setText("Damage: " + playerFC.getDisDamage());
                 defense.setText("Defense: " + playerFC.getDisBtDefense());
                 attack.setText("Attack: " + playerFC.getDisBtAttack());
-                numUpgrades.setText(playerFC.getNumUpgrades() +"");
+                numUpgrades.setText("Upgrades: "+playerFC.getNumUpgrades() +"");
                 killed.setText("Kills: " + playerFC.getKills());
                 deaths.setText("Deaths: " + playerFC.getDeaths());
                 recoveries.setText("Recoveries: " + playerFC.getRecoveries());

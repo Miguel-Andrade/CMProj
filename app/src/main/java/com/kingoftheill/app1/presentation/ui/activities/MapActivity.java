@@ -5,6 +5,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -161,6 +162,7 @@ public class MapActivity extends AppCompatActivity
         player_image = findViewById(R.id.player_image);
         pg = findViewById(R.id.player_xp);
         ProgressBar lifepg = findViewById(R.id.life);
+        lifepg.setDrawingCacheBackgroundColor(Color.RED); //TODO
         ProgressBar disxppg = findViewById(R.id.disease_xp);
         TextView name = findViewById(R.id.name);
 
@@ -258,8 +260,10 @@ public class MapActivity extends AppCompatActivity
                 //(SlidingUpPanelLayout) findViewById(R.id.sliding_layout).pane;
         //);
         {
-                Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show();
-                PLAYER.update( PlayerFC.newInfection1(2, PLAYER.getId(), 0));
+            Intent i = new Intent(this, PlayerInfoActivity.class);
+            startActivity(i);
+//                Toast.makeText(getApplicationContext(),"hhahah", Toast.LENGTH_SHORT).show();
+//                PLAYER.update( PlayerFC.newInfection1(2, PLAYER.getId(), 0));
         });
 
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);

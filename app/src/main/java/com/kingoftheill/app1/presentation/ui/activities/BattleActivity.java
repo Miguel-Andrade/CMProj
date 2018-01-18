@@ -29,7 +29,7 @@ public class BattleActivity extends AppCompatActivity {
     private ProgressBar pb;
     private int battleValue;
     private int progressValue;
-    private TextView tField;
+    private TextView tField, P1, P2;
     private ImageButton but1;
     private Button but2;
 
@@ -58,6 +58,8 @@ public class BattleActivity extends AppCompatActivity {
         but1 = findViewById(R.id.butt);
         pb = findViewById(R.id.barra);
         tField = findViewById(R.id.mTextField);
+        P1 = findViewById(R.id.P1);
+        P2 = findViewById(R.id.P2);
 
         ProgressBar loading = findViewById(R.id.loading);
         loading.setVisibility(View.VISIBLE);
@@ -75,11 +77,18 @@ public class BattleActivity extends AppCompatActivity {
         PLAYER = mFirebaseFirestore.document("Users/" + mUsername);
         ENIMIE = mFirebaseFirestore.document("Users/" + getIntent().getStringExtra("ref"));
 
+        ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
+            if(documentSnapshot.exists()){
+                P2.setText(documentSnapshot.getString("name"));
+            }
+        });
+
         if (getIntent().getExtras().getBoolean("defender")) {
             attacker = false;
             BATTLE = mFirebaseFirestore.document("Battles/" + getIntent().getExtras().get("ref"));
             PLAYER.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
+                    P1.setText(documentSnapshot.getString("name"));
                     PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
                     battleValue = p.getDisBtDefense();
                 }
