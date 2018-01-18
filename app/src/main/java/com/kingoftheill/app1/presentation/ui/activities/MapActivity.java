@@ -661,7 +661,7 @@ public class MapActivity extends AppCompatActivity
 
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
-                if (!key.equals(mUsername))
+                if (!key.equals(mUsername) && (mMarkers.size()>0))
                     mMarkers.get(key).setPosition(new LatLng(location.latitude, location.longitude));
             }
 
