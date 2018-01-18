@@ -685,11 +685,6 @@ public class MapActivity extends AppCompatActivity
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                Marker m = mGoogleMap.addMarker(new MarkerOptions()
-                        .title(key)
-                        .position(new LatLng(location.latitude, location.longitude))
-                        .icon(BitmapDescriptorFactory.fromBitmap(myMarker("item", 1))));
-
                 mFirebaseFirestore.document("/Items/" + key).get()
                             .addOnSuccessListener(documentSnapshot -> {
                                         if (documentSnapshot.exists()) {
@@ -697,14 +692,19 @@ public class MapActivity extends AppCompatActivity
                                             o.put("ref", documentSnapshot.getReference());
                                             o.put("image", documentSnapshot.get("image"));
                                             o.put("user", false);
+                                            MarkerOptions w = new MarkerOptions()
+                                                    .title(key)
+                                                    .position(new LatLng(location.latitude, location.longitude))
+                                                    .icon(BitmapDescriptorFactory.fromBitmap(myMarker("item", 1)))
+                                                    .title(documentSnapshot.getString("name"));
+                                            Marker m = mGoogleMap.addMarker(w);
                                             m.setTag(o);
-                                            m.setTitle((String) documentSnapshot.get("name"));
+                                            mItemsMarkers.put(key, m);
                                         }
                                     }
                             )
                             .addOnFailureListener(e ->
                                     Log.e("Error on markerTag", e.getMessage()));
-                mItemsMarkers.put(key, m);
             }
 
             @Override
