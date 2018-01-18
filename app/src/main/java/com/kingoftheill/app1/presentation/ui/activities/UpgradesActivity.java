@@ -40,6 +40,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
     private static DocumentReference ENIMIE;
 
     private PlayerFC playerFC;
+    private PlayerFC ene;
 
     private TextView deaths, infected, recoveries, hp, playerName,
             playerLevel, diseaseLevel,  numUpgrades;
@@ -50,6 +51,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
     private boolean flag = false;
 
     private int l;
+    private String refda;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,13 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                     winner(getIntent().getStringExtra("battleResult"));
                     flag = true;
                 }
+            }
+        });
+
+        ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                ene = documentSnapshot.toObject(PlayerFC.class);
+                refda = documentSnapshot.getId();
             }
         });
 
@@ -229,25 +238,17 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         bt.update(PLAYER, "range", PlayerLevels.valueOf("LEVEL_" + level).range());
 
         if (status.equals("looser") && (playerFC.getInfection1() == null || playerFC.getInfection2() == null)) {
-            ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
-               if (documentSnapshot.exists()) {
-                   PlayerFC ene = documentSnapshot.toObject(PlayerFC.class);
-                   int val = 2*ene.getDisDamage()+ PlayerLevels.valueOf("LEVEL_" + ene.getLevel()).damage();
-                   if (playerFC.getInfection1() == null && playerFC.getInfection2() == null) {
-
-                       bt.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
-                       bt.update(ENIMIE, "infected",ene.getInfected()+1);
-                   } else if (playerFC.getInfection1() != null && (((Long)playerFC.getInfection2().get("type")).intValue() != ene.getType())) {
-
-                       bt.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
-                       bt.update(ENIMIE, "infected",ene.getInfected()+1);
-                   } else {
-
-                       bt.update(PLAYER, PlayerFC.newInfection2(val, documentSnapshot.getId(), ene.getType()));
-                       bt.update(ENIMIE, "infected",ene.getInfected()+1);
-                   }
-               }
-            });
+            int val = 2*ene.getDisDamage()+ PlayerLevels.valueOf("LEVEL_" + ene.getLevel()).damage();
+            if (playerFC.getInfection1() == null && playerFC.getInfection2() == null) {
+                bt.update(PLAYER, PlayerFC.newInfection1(val, refda, ene.getType()));
+                bt.update(ENIMIE, "infected",ene.getInfected()+1);
+            } else if (playerFC.getInfection1() != null && (((Long)playerFC.getInfection2().get("type")).intValue() != ene.getType())) {
+                bt.update(PLAYER, PlayerFC.newInfection1(val, refda, ene.getType()));
+                bt.update(ENIMIE, "infected",ene.getInfected()+1);
+            } else {
+                bt.update(PLAYER, PlayerFC.newInfection2(val, refda, ene.getType()));
+                bt.update(ENIMIE, "infected",ene.getInfected()+1);
+            }
         }
 
         //Update timestamp
