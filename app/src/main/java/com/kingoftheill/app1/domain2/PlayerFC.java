@@ -2,6 +2,7 @@ package com.kingoftheill.app1.domain2;
 
 import com.kingoftheill.app1.domain.model.utilities.PlayerLevels;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,14 @@ public class PlayerFC {
     private HashMap<String, Object> infection1;
     private HashMap<String, Object> infection2;
 
+    //Statistics
+    private int kills;
+    private int deaths;
+    private int recoveries;
+    private int infected;
+    private int daysAlive;
+    private Date born;
+
     public PlayerFC() {
     }
 
@@ -63,6 +72,12 @@ public class PlayerFC {
         setLife(PlayerLevels.LEVEL_1.life());
         setRange(PlayerLevels.LEVEL_1.range());
         setResistance(PlayerLevels.LEVEL_1.resistance());
+        setKills(0);
+        setDeaths(0);
+        setRecoveries(0);
+        setDaysAlive(0);
+        setInfected(0);
+        setBorn(new Date());
     }
 
     public static Map<String, Object> setDis(int type) {
@@ -329,4 +344,51 @@ public class PlayerFC {
 
     public int getTotalBtDefense() { return btDefense + disBtDefense;}
 
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+    }
+
+    public int getRecoveries() {
+        return recoveries;
+    }
+
+    public void setRecoveries(int recoveries) {
+        this.recoveries = recoveries;
+    }
+
+    public int getInfected() {
+        return infected;
+    }
+
+    public void setInfected(int infected) {
+        this.infected = infected;
+    }
+
+    public int getDaysAlive() {
+        return daysAlive;
+    }
+
+    public void setDaysAlive(int daysAlive) {
+        this.daysAlive = daysAlive;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
+
+    public Date getBorn() {
+        return born;
+    }
+
+    public void setBorn(Date born) {
+        this.born = born;
+    }
 }

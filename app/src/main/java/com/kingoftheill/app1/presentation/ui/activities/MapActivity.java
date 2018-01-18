@@ -167,39 +167,37 @@ public class MapActivity extends AppCompatActivity
         //UPDATE PLAYER LIFE EVERY 10MIN
         scheduleTaskExecutor= Executors.newScheduledThreadPool(1);
         // This schedule a task to run every 10 minutes:
-        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                Date curr = new Date();
-                PLAYER.get().addOnSuccessListener(documentSnapshot -> {
-                    if(documentSnapshot.exists() && (documentSnapshot.get("infection1")!= null || documentSnapshot.get("infection2")!=null)){
-                        Date dbTime = (Date) documentSnapshot.get("lifeCKTimestamp");
+        scheduleTaskExecutor.scheduleAtFixedRate(() -> {
+            Date curr = new Date();
+            PLAYER.get().addOnSuccessListener(documentSnapshot -> {
+                if(documentSnapshot.exists() && (documentSnapshot.get("infection1")!= null || documentSnapshot.get("infection2")!=null)){
+                    Date dbTime = (Date) documentSnapshot.get("lifeCKTimestamp");
 
-                        long millis1 = System.currentTimeMillis();
-                        long millis2 = dbTime.getTime();
+                    long millis1 = System.currentTimeMillis();
+                    long millis2 = dbTime.getTime();
 
-                        // Calculate difference in milliseconds
-                        long diff = millis1 - millis2;
+                    // Calculate difference in milliseconds
+                    long diff = millis1 - millis2;
 
-                        int diffMinutes = (int) (diff / (60 * 1000));
-                        int numDeVezesParaTirarVida = (int)(diffMinutes/2);
+                    int diffMinutes = (int) (diff / (60 * 1000));
+                    int numDeVezesParaTirarVida = diffMinutes/2;
 
-                        int currVida = ((Long)documentSnapshot.get("life")).intValue();
-                        if(numDeVezesParaTirarVida > 0){
-                            if(documentSnapshot.get("infection1") != null){
-                                currVida -= (numDeVezesParaTirarVida * ((Long)documentSnapshot.get("infection1.damage")).intValue());
-                            }
-                            if(documentSnapshot.get("infection2") != null){
-                                currVida -= (numDeVezesParaTirarVida * ((Long)documentSnapshot.get("infection2.damage")).intValue());
-                            }
-                            PLAYER.update("life", currVida);
+                    int currVida = ((Long)documentSnapshot.get("life")).intValue();
+                    if(numDeVezesParaTirarVida > 0){
+                        if(documentSnapshot.get("infection1") != null){
+                            currVida -= (numDeVezesParaTirarVida * ((Long)documentSnapshot.get("infection1.damage")).intValue());
                         }
-                        PLAYER.update("lifeCKTimestamp", curr);
+                        if(documentSnapshot.get("infection2") != null){
+                            currVida -= (numDeVezesParaTirarVida * ((Long)documentSnapshot.get("infection2.damage")).intValue());
+                        }
+                        PLAYER.update("life", currVida);
                     }
-                });
+                    PLAYER.update("lifeCKTimestamp", curr);
+                }
+            });
 
 
-            }
-        } , 0, 2, TimeUnit.MINUTES);
+        }, 0, 2, TimeUnit.MINUTES);
 
         //UPDATE THE PLAYER
         PLAYER.addSnapshotListener(this, (documentSnapshot, e) -> {

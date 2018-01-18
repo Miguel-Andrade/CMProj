@@ -44,7 +44,6 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
     private TextView deaths, infected, recoveries, hp, playerName,
             playerLevel, diseaseLevel,  numUpgrades;
     TextView killed;
-    private int nKills, nDeaths, nInfected, nRecoveries;
     private Button b1, damage, resistence, defense, attack, range;
     private ProgressBar pbPLVL, pbDLVL;
     private ObjectAnimator progressAnimator;
@@ -92,6 +91,10 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                 defense.setText("Defense: " + playerFC.getDisBtDefense());
                 attack.setText("Attack: " + playerFC.getDisBtAttack());
                 numUpgrades.setText(playerFC.getNumUpgrades() +"");
+                killed.setText("Kills: " + playerFC.getKills());
+                deaths.setText("Deaths: " + playerFC.getDeaths());
+                recoveries.setText("Recoveries: " + playerFC.getRecoveries());
+                infected.setText("Infected: " + playerFC.getInfected());
 
                 if (!flag) {
                     winner(getIntent().getStringExtra("battleResult"));
@@ -99,24 +102,6 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-
-
-        killed = findViewById(R.id.kills);
-        nKills = 2;
-        killed.setText("Kills: "+ nKills);
-
-        deaths = findViewById(R.id.deaths);
-        nDeaths = 0;
-        deaths.setText("Deaths: "+ nDeaths);
-
-        infected = findViewById(R.id.infected);
-        nInfected = 8;
-        infected.setText("Infected: "+ nInfected);
-
-        recoveries = findViewById(R.id.recoveries);
-        nRecoveries = 1;
-        recoveries.setText("Recoveries: "+ nRecoveries);
-
         Button bt1 = findViewById(R.id.button1);
         bt1.setOnClickListener(this);
         range.setOnClickListener(this);
@@ -224,12 +209,15 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                    if (playerFC.getInfection1() == null && playerFC.getInfection2() == null) {
 
                        batch.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
+                       batch.update(ENIMIE, "infected",ene.getInfected()+1);
                    } else if (playerFC.getInfection1() != null && (((Long)playerFC.getInfection2().get("type")).intValue() != ene.getType())) {
 
                        batch.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
+                       batch.update(ENIMIE, "infected",ene.getInfected()+1);
                    } else {
 
                        batch.update(PLAYER, PlayerFC.newInfection2(val, documentSnapshot.getId(), ene.getType()));
+                       batch.update(ENIMIE, "infected",ene.getInfected()+1);
                    }
                }
             });

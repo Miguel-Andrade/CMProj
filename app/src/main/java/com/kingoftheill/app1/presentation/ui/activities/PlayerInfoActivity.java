@@ -19,7 +19,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
     private TextView deaths, infected, recoveries, hp, range, damage, resistence, defense, playerName, playerLevel, diseaseLevel;
     TextView killed;
-    private int nKills, nDeaths, nInfected, nRecoveries, nHp, nRange, nDamage, nResistence, nDefense, nPLvl, nDLvl;
+    private int nHp, nRange, nDamage, nResistence, nDefense, nPLvl, nDLvl;
     private Button b1;
     private ProgressBar pbPLVL, pbDLVL;
 
@@ -64,6 +64,12 @@ public class PlayerInfoActivity extends AppCompatActivity {
         damage = findViewById(R.id.damage);
         resistence = findViewById(R.id.resistence);
         defense = findViewById(R.id.defense);
+        killed = findViewById(R.id.kills);
+        deaths = findViewById(R.id.deaths);
+        recoveries = findViewById(R.id.recoveries);
+        infected = findViewById(R.id.infected);
+
+        b1 = findViewById(R.id.infect);
 
         //UPDATE THE PLAYER
         ATTACKER.addSnapshotListener(this, (documentSnapshot, e) -> {
@@ -79,6 +85,10 @@ public class PlayerInfoActivity extends AppCompatActivity {
                 resistence.setText("Resistance "+playerFC.getTotalResistance() + "");
                 damage.setText("Damage "+playerFC.getTotalDamage() + "");
                 defense.setText("Defense "+playerFC.getTotalBtDefense() + "");
+                killed.setText("Kills: " + playerFC.getKills());
+                deaths.setText("Deaths: " + playerFC.getDeaths());
+                recoveries.setText("Recoveries: " + playerFC.getRecoveries());
+                infected.setText("Infected: " + playerFC.getInfected());
                 if (playerFC.getType() != getIntent().getIntExtra("type", 0)) {
                 if (!getIntent().getExtras().getBoolean("attack")) {
                     b1.setEnabled(false);
@@ -91,25 +101,6 @@ public class PlayerInfoActivity extends AppCompatActivity {
                 }
             }
         });
-
-        killed = findViewById(R.id.kills);
-        nKills = 2;
-        killed.setText("Kills: " + nKills);
-
-        deaths = findViewById(R.id.deaths);
-        nDeaths = 0;
-        deaths.setText("Deaths: " + nDeaths);
-
-        infected = findViewById(R.id.infected);
-        nInfected = 8;
-        infected.setText("Infected: " + nInfected);
-
-        recoveries = findViewById(R.id.recoveries);
-        nRecoveries = 1;
-        recoveries.setText("Recoveries: " + nRecoveries);
-
-
-        b1 = findViewById(R.id.infect);
 
     }
 
