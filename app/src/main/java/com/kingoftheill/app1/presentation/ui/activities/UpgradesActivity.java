@@ -85,7 +85,9 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         PLAYER.addSnapshotListener(this, (documentSnapshot, e) -> {
             if (documentSnapshot.exists()) {
                 playerFC = documentSnapshot.toObject(PlayerFC.class);
-                playerName.setText(playerFC.getName());
+                playerName.setText(getIntent().getStringExtra("battleResult"));
+                pbDLVL.setMax(10*playerFC.getDisLevel());
+                pbPLVL.setMax(PlayersXPLevels.valueOf("LEVEL_" + playerFC.getLevel()).highBound());
                 pbPLVL.setProgress(playerFC.getCurrXP());
                 pbDLVL.setProgress(playerFC.getDisCurrXP());
                 hp.setText("HP: " + playerFC.getLife());
@@ -172,7 +174,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
     public void winner(String status) {
         int[] result = new int[2];
         result[0] = 0;
-        WriteBatch batch = mFirebaseFirestore.batch();
+        WriteBatch bt = mFirebaseFirestore.batch();
 
         ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
             if(documentSnapshot.exists()) {
@@ -216,15 +218,15 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         progressAnimator.setInterpolator(new DecelerateInterpolator());
         progressAnimator.start();
 
-        batch.update(PLAYER, "currXP", currxp);
-        batch.update(PLAYER, "level",level);
-        batch.update(PLAYER, "disCurrXP", disXp);
-        batch.update(PLAYER, "disLevel", (1 + disXp/10));
-        batch.update(PLAYER, "numUpgrades", playerFC.getNumUpgrades() + (1 + disXp/10) - dislevel);
-        batch.update(PLAYER, "life", PlayerLevels.valueOf("LEVEL_" + level).life());
-        batch.update(PLAYER, "resistance", PlayerLevels.valueOf("LEVEL_" + level).resistance());
-        batch.update(PLAYER, "damage", PlayerLevels.valueOf("LEVEL_" + level).damage());
-        batch.update(PLAYER, "range", PlayerLevels.valueOf("LEVEL_" + level).range());
+        bt.update(PLAYER, "currXP", currxp);
+        bt.update(PLAYER, "level",level);
+        bt.update(PLAYER, "disCurrXP", disXp);
+        bt.update(PLAYER, "disLevel", (1 + disXp/10));
+        bt.update(PLAYER, "numUpgrades", playerFC.getNumUpgrades() + (1 + disXp/10) - dislevel);
+        bt.update(PLAYER, "life", PlayerLevels.valueOf("LEVEL_" + level).life());
+        bt.update(PLAYER, "resistance", PlayerLevels.valueOf("LEVEL_" + level).resistance());
+        bt.update(PLAYER, "damage", PlayerLevels.valueOf("LEVEL_" + level).damage());
+        bt.update(PLAYER, "range", PlayerLevels.valueOf("LEVEL_" + level).range());
 
         if (status.equals("looser") && (playerFC.getInfection1() == null || playerFC.getInfection2() == null)) {
             ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
@@ -233,24 +235,24 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
                    int val = 2*ene.getDisDamage()+ PlayerLevels.valueOf("LEVEL_" + ene.getLevel()).damage();
                    if (playerFC.getInfection1() == null && playerFC.getInfection2() == null) {
 
-                       batch.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
-                       batch.update(ENIMIE, "infected",ene.getInfected()+1);
+                       bt.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
+                       bt.update(ENIMIE, "infected",ene.getInfected()+1);
                    } else if (playerFC.getInfection1() != null && (((Long)playerFC.getInfection2().get("type")).intValue() != ene.getType())) {
 
-                       batch.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
-                       batch.update(ENIMIE, "infected",ene.getInfected()+1);
+                       bt.update(PLAYER, PlayerFC.newInfection1(val, documentSnapshot.getId(), ene.getType()));
+                       bt.update(ENIMIE, "infected",ene.getInfected()+1);
                    } else {
 
-                       batch.update(PLAYER, PlayerFC.newInfection2(val, documentSnapshot.getId(), ene.getType()));
-                       batch.update(ENIMIE, "infected",ene.getInfected()+1);
+                       bt.update(PLAYER, PlayerFC.newInfection2(val, documentSnapshot.getId(), ene.getType()));
+                       bt.update(ENIMIE, "infected",ene.getInfected()+1);
                    }
                }
             });
         }
 
         //Update timestamp
-        batch.update(PLAYER, "lifeCKTimestamp", new Date());
-        batch.commit().addOnSuccessListener(aVoid -> {
+        bt.update(PLAYER, "lifeCKTimestamp", new Date());
+        bt.commit().addOnSuccessListener(aVoid -> {
                 if (status.equals("winner"))
                     Toast.makeText(this, "You Infected Your Opponent", Toast.LENGTH_SHORT);
                 else if (status.equals("looser"))
