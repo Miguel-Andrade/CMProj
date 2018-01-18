@@ -34,6 +34,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:layout_marginTop="10dp"
                     android:weightSum="2">
 
                 <LinearLayout
@@ -70,39 +71,6 @@
             </LinearLayout>
 
         </com.facebook.shimmer.ShimmerFrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:orientation="horizontal"
-            android:weightSum="3">
-
-
-            <ImageView
-                android:id="@+id/iconPick1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:src="@drawable/bubonic_plague_doc_icon_3" />
-
-            <ImageView
-                android:id="@+id/iconPick2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:src="@drawable/king_of_the_ill" />
-
-            <ImageView
-                android:id="@+id/iconPick3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:src="@drawable/calendula_flower_icon" />
-        </LinearLayout>
 
     </LinearLayout>
 

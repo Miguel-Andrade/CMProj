@@ -185,10 +185,16 @@ public class MapActivity extends AppCompatActivity
                     int currVida = ((Long)documentSnapshot.get("life")).intValue();
                     if(numDeVezesParaTirarVida > 0){
                         if(documentSnapshot.get("infection1") != null){
-                            currVida -= (numDeVezesParaTirarVida * ((Long)documentSnapshot.get("infection1.damage")).intValue());
+                            int resistance = ((Long)(documentSnapshot.get("resistance"))).intValue() + ((Long)(documentSnapshot.get("disResistence"))).intValue();
+                            int diffDamage = (((Long)documentSnapshot.get("infection1.damage")).intValue()) - resistance;
+                            if(diffDamage > 0)
+                                currVida -= (numDeVezesParaTirarVida * diffDamage);
                         }
                         if(documentSnapshot.get("infection2") != null){
-                            currVida -= (numDeVezesParaTirarVida * ((Long)documentSnapshot.get("infection2.damage")).intValue());
+                            int resistance = ((Long)(documentSnapshot.get("resistance"))).intValue() + ((Long)(documentSnapshot.get("disResistence"))).intValue();
+                            int diffDamage = (((Long)documentSnapshot.get("infection2.damage")).intValue()) - resistance;
+                            if(diffDamage > 0)
+                                currVida -= (numDeVezesParaTirarVida * diffDamage);
                         }
                         PLAYER.update("life", currVida);
                     }
