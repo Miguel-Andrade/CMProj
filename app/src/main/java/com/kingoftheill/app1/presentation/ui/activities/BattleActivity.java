@@ -85,22 +85,31 @@ public class BattleActivity extends AppCompatActivity {
                     P1.setText(documentSnapshot.getString("name"));
                     PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
                     battleValue = p.getDisBtDefense();
+
+                    ENIMIE.get().addOnSuccessListener(documentSnapshot2 -> {
+                        if(documentSnapshot2.exists()){
+                            P2.setText(documentSnapshot2.getString("name"));
+                        }
+                    });
                 }
             });
 
-            ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
-                if(documentSnapshot.exists()){
-                    P2.setText(documentSnapshot.getString("name"));
-                }
-            });
+
         }
         else {
             battle = new Battle(PLAYER, ENIMIE);
             attacker = true;
             PLAYER.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
+                    P1.setText(documentSnapshot.getString("name"));
                     PlayerFC p = documentSnapshot.toObject(PlayerFC.class);
                     battleValue = + p.getDisBtAttack();
+
+                    ENIMIE.get().addOnSuccessListener(documentSnapshot2 -> {
+                        if(documentSnapshot2.exists()){
+                            P2.setText(documentSnapshot2.getString("name"));
+                        }
+                    });
                 }
             });
         }
