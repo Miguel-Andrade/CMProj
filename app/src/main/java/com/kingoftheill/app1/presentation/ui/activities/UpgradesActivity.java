@@ -122,28 +122,28 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
             if (playerFC.getNumUpgrades() > 0) {
                 switch (v.getId()) {
                     case R.id.range:
-                        batch.update(PLAYER, "range", playerFC.getDisRange() + 1);
+                        batch.update(PLAYER, "disRange", playerFC.getDisRange() + 1);
                         break;
 
                     case R.id.resistence:
-                        batch.update(PLAYER, "range", playerFC.getDisResistence() + 1);
+                        batch.update(PLAYER, "disResistence", playerFC.getDisResistence() + 1);
                         break;
 
                     case R.id.damage:
-                        batch.update(PLAYER, "range", playerFC.getDisDamage() + 1);
+                        batch.update(PLAYER, "disDamage", playerFC.getDisDamage() + 1);
                         break;
 
                     case R.id.attack:
-                        batch.update(PLAYER, "range", playerFC.getDisBtAttack() + 1);
+                        batch.update(PLAYER, "disAttack", playerFC.getDisBtAttack() + 1);
                         break;
 
                     case R.id.defense:
-                        batch.update(PLAYER, "range", playerFC.getDisBtDefense() + 1);
+                        batch.update(PLAYER, "disDefense", playerFC.getDisBtDefense() + 1);
                         break;
                     default:
                         break;
                 }
-                batch.update(PLAYER, "range", playerFC.getNumUpgrades() - 1);
+                batch.update(PLAYER, "numUpgrades", playerFC.getNumUpgrades() - 1);
                 batch.commit().addOnSuccessListener(aVoid ->
                         Toast.makeText(this, "Stat Upgraded", Toast.LENGTH_SHORT))
                         .addOnFailureListener(e -> {

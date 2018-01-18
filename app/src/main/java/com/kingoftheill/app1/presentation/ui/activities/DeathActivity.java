@@ -13,12 +13,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.PlayerFC;
 import com.kingoftheill.app1.domain2.PlayerItem;
+
+import java.util.Date;
 
 public class DeathActivity extends AppCompatActivity {
 
@@ -31,6 +34,8 @@ public class DeathActivity extends AppCompatActivity {
 
     private String mUsername;
     private static DocumentReference PLAYER;
+    private static DocumentReference PKILLER1;
+    private static DocumentReference PKILLER2;
     private static CollectionReference PLAYER_ITEMS;
 
     private Button ContinueB;
@@ -56,6 +61,29 @@ public class DeathActivity extends AppCompatActivity {
                 batch.update(PLAYER, "life", 100);
                 batch.update(PLAYER, "level", 1);
                 batch.update(PLAYER, "currXP", 0);
+                batch.update(PLAYER, "infection1", FieldValue.delete());
+                batch.update(PLAYER, "infection2", FieldValue.delete());
+                batch.update(PLAYER, "disCurrXP", 0);
+                batch.update(PLAYER, "dateBorn", new Date());
+                int deaths = documentSnapshot.getLong("deaths").intValue();
+                batch.update(PLAYER, "deaths", deaths+1);
+
+                PKILLER1 = mFirebaseFirestore.document("Users/" + documentSnapshot.getString("infection1.ref"));
+                PKILLER1.get().addOnSuccessListener(documentSnapshot1 -> {
+                    if(documentSnapshot1.exists()){
+                        int kills = documentSnapshot1.getLong("kills").intValue();
+                        batch.update(PKILLER1, "kills", kills+1);
+                    }
+                });
+
+                PKILLER2 = mFirebaseFirestore.document("Users/" + documentSnapshot.getString("infection2.ref"));
+                PKILLER2.get().addOnSuccessListener(documentSnapshot1 -> {
+                    if(documentSnapshot1.exists()){
+                        int kills = documentSnapshot1.getLong("kills").intValue();
+                        batch.update(PKILLER2, "kills", kills+1);
+                    }
+                });
+
                 for (int i = 0; i <= 29; i++) {
                     if (i <= 9) {
                         DocumentReference item = mFirebaseFirestore.document("Users/" + mFirebaseUser.getUid() + "/Items/0" + i);
