@@ -74,6 +74,10 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         defense = findViewById(R.id.defense);
         attack = findViewById(R.id.attack);
         numUpgrades = findViewById(R.id.numUpgrades);
+        killed = findViewById(R.id.kills);
+        deaths = findViewById(R.id.deaths);
+        recoveries = findViewById(R.id.recoveries);
+        infected = findViewById(R.id.infected);
 
         //UPDATE THE PLAYER
         PLAYER.addSnapshotListener(this, (documentSnapshot, e) -> {
