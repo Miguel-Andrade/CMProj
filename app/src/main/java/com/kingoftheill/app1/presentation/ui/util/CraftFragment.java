@@ -24,6 +24,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.WriteBatch;
 import com.kingoftheill.app1.R;
 import com.kingoftheill.app1.domain2.PlayerItem;
 import com.kingoftheill.app1.domain2.Receita;
@@ -88,7 +89,7 @@ public class CraftFragment extends Fragment {
                 .setQuery(RECEITAS, Receita.class)
                 .build();
 
-        adapter = new FirestoreRecyclerAdapter<Receita, CraftFragment.ViewHolder>(options) {
+        adapter = new FirestoreRecyclerAdapter<Receita, ViewHolder>(options) {
             @Override
             public void onBindViewHolder(CraftFragment.ViewHolder holder, int position, Receita model) {
                 // Bind the Chat object to the ChatHolder
@@ -105,50 +106,44 @@ public class CraftFragment extends Fragment {
 
                     craft_button.setOnClickListener(v -> {
 
+
                         PLAYER_ITEMS.whereEqualTo("itemId", model.getResult()).get().addOnSuccessListener(documentSnapshot -> {
                             List<PlayerItem> pItem = documentSnapshot.toObjects(PlayerItem.class);
                             //if(isPotCrafted()) {
                                 if (!pItem.isEmpty()) {
+                                    WriteBatch batch = mFirebaseFirestore.batch();
                                     //ADD CRAFTED ITEM TO INVENTORY
-                                    documentSnapshot.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItem.get(0).getQuantity() + 1);
+                                    //documentSnapshot.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItem.get(0).getQuantity() + 1);
 
                                     //REMOVE ITEMS USED IN CRAFT FROM INVENTORY
                                     PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(0)).get().addOnSuccessListener(documentSnapshot2 -> {
                                         List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
                                         if (!pItems.isEmpty()) {
-                                            documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
-                                        } else {
-                                            Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(1)).get().addOnSuccessListener(documentSnapshot2 -> {
-                                        List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
-                                        if (!pItems.isEmpty()) {
-                                            documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
-                                        } else {
-                                            Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(2)).get().addOnSuccessListener(documentSnapshot2 -> {
-                                        List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
-                                        if (!pItems.isEmpty()) {
-                                            documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
-                                        } else {
-                                            Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(3)).get().addOnSuccessListener(documentSnapshot2 -> {
-                                        List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
-                                        if (!pItems.isEmpty()) {
-                                            documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
-                                        } else {
-                                            Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(4)).get().addOnSuccessListener(documentSnapshot2 -> {
-                                        List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
-                                        if (!pItems.isEmpty()) {
-                                            documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(1)).get().addOnSuccessListener(documentSnapshot3 -> {
+                                                List<PlayerItem> pItems1 = documentSnapshot3.toObjects(PlayerItem.class);
+                                                if (!pItems1.isEmpty()) {
+                                                    PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(2)).get().addOnSuccessListener(documentSnapshot4 -> {
+                                                        List<PlayerItem> pItems2 = documentSnapshot4.toObjects(PlayerItem.class);
+                                                        if (!pItems2.isEmpty()) {
+                                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(3)).get().addOnSuccessListener(documentSnapshot5 -> {
+                                                                List<PlayerItem> pItems3 = documentSnapshot5.toObjects(PlayerItem.class);
+                                                                if (!pItems3.isEmpty()) {
+                                                                    PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(4)).get().addOnSuccessListener(documentSnapshot6 -> {
+                                                                        List<PlayerItem> pItems4 = documentSnapshot6.toObjects(PlayerItem.class);
+                                                                        if (!pItems4.isEmpty()) {
+                                                                            batch.update(pItems.get(0).getItemId() , "quantity", pItems.get(0).getQuantity()-1);
+                                                                            batch.update(pItems1.get(0).getItemId() , "quantity", pItems1.get(0).getQuantity()-1);
+                                                                            batch.update(pItems2.get(0).getItemId() , "quantity", pItems2.get(0).getQuantity()-1);
+                                                                            batch.update(pItems3.get(0).getItemId() , "quantity", pItems3.get(0).getQuantity()-1);
+                                                                            batch.update(pItems4.get(0).getItemId() , "quantity", pItems4.get(0).getQuantity()-1);
+                                                                            batch.update(pItem.get(0).getItemId() , "quantity", pItem.get(0).getQuantity()+1);
+                                                                            batch.commit()
+                                                                                    .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Craft Complete!", Toast.LENGTH_SHORT).show());
+                                                                        }
+                                                                    });                                                                }
+                                                            });                                                        }
+                                                    });                                                }
+                                            });
                                         } else {
                                             Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
                                         }
@@ -158,51 +153,42 @@ public class CraftFragment extends Fragment {
                                     PLAYER_ITEMS.whereEqualTo("quantity", 0).limit(1).get().addOnSuccessListener(documentSnapshot2 -> {
                                         List<PlayerItem> pItems = documentSnapshot2.toObjects(PlayerItem.class);
                                         if (!pItems.isEmpty()) {
-                                            PlayerItem pi = new PlayerItem(model.getResult(), 1, model.getImage());
-                                            documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().set(pi);
+                                            WriteBatch batch = mFirebaseFirestore.batch();
 
                                             //REMOVE ITEMS USED IN CRAFT FROM INVENTORY
-                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(0)).get().addOnSuccessListener(documentSnapshot3 -> {
-                                                List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
-                                                if (!pItems.isEmpty()) {
-                                                    documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
+                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(0)).get().addOnSuccessListener(documentSnapshot7 -> {
+                                                List<PlayerItem> pItems6 = documentSnapshot7.toObjects(PlayerItem.class);
+                                                if (!pItems6.isEmpty()) {
+                                                    PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(1)).get().addOnSuccessListener(documentSnapshot3 -> {
+                                                        List<PlayerItem> pItems1 = documentSnapshot3.toObjects(PlayerItem.class);
+                                                        if (!pItems1.isEmpty()) {
+                                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(2)).get().addOnSuccessListener(documentSnapshot4 -> {
+                                                                List<PlayerItem> pItems2 = documentSnapshot4.toObjects(PlayerItem.class);
+                                                                if (!pItems2.isEmpty()) {
+                                                                    PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(3)).get().addOnSuccessListener(documentSnapshot5 -> {
+                                                                        List<PlayerItem> pItems3 = documentSnapshot5.toObjects(PlayerItem.class);
+                                                                        if (!pItems3.isEmpty()) {
+                                                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(4)).get().addOnSuccessListener(documentSnapshot6 -> {
+                                                                                List<PlayerItem> pItems4 = documentSnapshot6.toObjects(PlayerItem.class);
+                                                                                if (!pItems4.isEmpty()) {
+                                                                                    batch.update(pItems6.get(0).getItemId() , "quantity", pItems.get(0).getQuantity()-1);
+                                                                                    batch.update(pItems1.get(0).getItemId() , "quantity", pItems1.get(0).getQuantity()-1);
+                                                                                    batch.update(pItems2.get(0).getItemId() , "quantity", pItems2.get(0).getQuantity()-1);
+                                                                                    batch.update(pItems3.get(0).getItemId() , "quantity", pItems3.get(0).getQuantity()-1);
+                                                                                    batch.update(pItems4.get(0).getItemId() , "quantity", pItems4.get(0).getQuantity()-1);
+                                                                                    PlayerItem pi = new PlayerItem(model.getResult(), 1, model.getImage());
+                                                                                    batch.set(documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference(), pi);
+                                                                                    batch.commit()
+                                                                                            .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Craft Complete!", Toast.LENGTH_SHORT).show());
+                                                                                }
+                                                                            });                                                                }
+                                                                    });                                                        }
+                                                            });                                                }
+                                                    });
                                                 } else {
                                                     Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
-                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(1)).get().addOnSuccessListener(documentSnapshot3 -> {
-                                                List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
-                                                if (!pItems.isEmpty()) {
-                                                    documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
-                                                } else {
-                                                    Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(2)).get().addOnSuccessListener(documentSnapshot3 -> {
-                                                List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
-                                                if (!pItems.isEmpty()) {
-                                                    documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
-                                                } else {
-                                                    Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(3)).get().addOnSuccessListener(documentSnapshot3 -> {
-                                                List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
-                                                if (!pItems.isEmpty()) {
-                                                    documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
-                                                } else {
-                                                    Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                            PLAYER_ITEMS.whereEqualTo("itemId", model.getIds().get(4)).get().addOnSuccessListener(documentSnapshot3 -> {
-                                                List<PlayerItem> pItems2 = documentSnapshot2.toObjects(PlayerItem.class);
-                                                if (!pItems.isEmpty()) {
-                                                    documentSnapshot2.getDocumentChanges().get(0).getDocument().getReference().update("quantity", pItems.get(0).getQuantity()-1);
-                                                } else {
-                                                    Toast.makeText(getContext(), "You have missing Items!", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                            Toast.makeText(getContext(), "Craft Complete!", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(getContext(), "Your Inventory is Full!", Toast.LENGTH_SHORT).show();
                                         }
@@ -233,13 +219,13 @@ public class CraftFragment extends Fragment {
 
 
             @Override
-            public CraftFragment.ViewHolder onCreateViewHolder(ViewGroup group, int i) {
+            public ViewHolder onCreateViewHolder(ViewGroup group, int i) {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
                 // layout called R.layout.message for each item
                 View view = LayoutInflater.from(group.getContext())
                         .inflate(R.layout.receita_grid, group, false);
 
-                return new CraftFragment.ViewHolder(view);
+                return new ViewHolder(view);
             }
 
             @Override

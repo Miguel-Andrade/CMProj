@@ -557,7 +557,7 @@ public class MapActivity extends AppCompatActivity
                             .addOnSuccessListener(aVoid -> Toast.makeText(this, "Item Collected", Toast.LENGTH_SHORT).show());
                 }
                 else {
-                    PLAYER_ITEMS.whereEqualTo("itemId", "").limit(1).get().addOnSuccessListener(documentSnapshots -> {
+                    PLAYER_ITEMS.whereEqualTo("quantity", 0).limit(1).get().addOnSuccessListener(documentSnapshots -> {
                         if (!documentSnapshots.isEmpty()) {
                             PlayerItem pl = new PlayerItem(ref, 1, image);
                             documentSnapshots.getDocumentChanges().get(0).getDocument().getReference().set(pl)

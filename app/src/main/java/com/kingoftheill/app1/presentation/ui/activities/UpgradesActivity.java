@@ -113,12 +113,12 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
+        /*ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 ene = documentSnapshot.toObject(PlayerFC.class);
                 refda = documentSnapshot.getId();
             }
-        });
+        });*/
 
         Button bt1 = findViewById(R.id.button1);
         bt1.setOnClickListener(this);
@@ -188,6 +188,7 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         ENIMIE.get().addOnSuccessListener(documentSnapshot -> {
             if(documentSnapshot.exists()) {
                l = documentSnapshot.getLong("level").intValue();
+               ene = documentSnapshot.toObject(PlayerFC.class);
             }
         });
         switch (status) {
@@ -238,16 +239,17 @@ public class UpgradesActivity extends AppCompatActivity implements View.OnClickL
         bt.update(PLAYER, "range", PlayerLevels.valueOf("LEVEL_" + level).range());
 
         if (status.equals("looser") && (playerFC.getInfection1() == null || playerFC.getInfection2() == null)) {
-            int val = 2*ene.getDisDamage()+ PlayerLevels.valueOf("LEVEL_" + ene.getLevel()).damage();
+            //int val = 2*ene.getDisDamage()+ PlayerLevels.valueOf("LEVEL_" + ene.getLevel()).damage();
+            int val = 20;
             if (playerFC.getInfection1() == null && playerFC.getInfection2() == null) {
-                bt.update(PLAYER, PlayerFC.newInfection1(val, refda, ene.getType()));
-                bt.update(ENIMIE, "infected",ene.getInfected()+1);
+                bt.update(PLAYER, PlayerFC.newInfection1(val, ENIMIE.getId(), 0));
+                //bt.update(ENIMIE, "infected",ene.getInfected()+1);
             } else if (playerFC.getInfection1() != null && (((Long)playerFC.getInfection2().get("type")).intValue() != ene.getType())) {
-                bt.update(PLAYER, PlayerFC.newInfection1(val, refda, ene.getType()));
-                bt.update(ENIMIE, "infected",ene.getInfected()+1);
+                bt.update(PLAYER, PlayerFC.newInfection1(val, ENIMIE.getId(), 0));
+                //bt.update(ENIMIE, "infected",ene.getInfected()+1);
             } else {
-                bt.update(PLAYER, PlayerFC.newInfection2(val, refda, ene.getType()));
-                bt.update(ENIMIE, "infected",ene.getInfected()+1);
+                bt.update(PLAYER, PlayerFC.newInfection2(val, ENIMIE.getId(), 0));
+                //bt.update(ENIMIE, "infected",ene.getInfected()+1);
             }
         }
 
